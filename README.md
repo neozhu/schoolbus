@@ -2,16 +2,14 @@
 
 
 [![Build](https://github.com/neozhu/schoolbus/actions/workflows/dotnet.yml/badge.svg)](https://github.com/neozhu/schoolbus/actions/workflows/dotnet.yml)
-[![CodeQL](https://github.com/neozhu/schoolbus/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/neozhu/schoolbus/actions/workflows/codeql-analysis.yml)
 
+Providing better safety and security to the students while they are commuting from school to home or vice-versa is the topmost priority of every school management.
 
-This is a repository for creating a Blazor Server application following the principles of Clean Architecture. It has a
-nice user interface, and an efficient code generator that allows you to quickly build amazing web application with .net
-Blazor technology.
+With School Bus Transport Management System the whole transportation tracking process becomes easy. Along with school authorities, parents can also keep track on the movement of buses, its locations, and routing. Using the transport management system to track the vehicles offers guardians a complete peace of mind as they can have a complete overview of their child movements.
 
 ## Live Demo
 
-- School Bus Transport Management System :https://schoolbus.blazorserver.com/
+- https://schoolbus.blazorserver.com/
 
 ## Screenshots and video
 
