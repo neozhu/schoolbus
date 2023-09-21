@@ -9,6 +9,7 @@ public class Message : BaseAuditableEntity, IMustHaveTenant
 {
     public string? From { get; set; }
     public string? To { get; set; }
+    public string? Phone { get; set; }
     public string? Content { get; set; }
     public DateTime? SentTime { get; set; }
     public DateTime? ReadTime { get; set; }
