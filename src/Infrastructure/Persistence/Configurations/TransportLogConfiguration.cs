@@ -13,8 +13,8 @@ public class TransportLogConfiguration : IEntityTypeConfiguration<TransportLog>
     public void Configure(EntityTypeBuilder<TransportLog> builder)
     {
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
-        builder.HasOne(t => t.Itinerary).WithMany().HasForeignKey(x => x.ItineraryId).IsRequired();
-        builder.HasOne(t => t.Student).WithMany().HasForeignKey(x => x.StudentId).IsRequired();
+        builder.HasOne(t => t.Itinerary).WithMany(x=>x.TransportLogs).HasForeignKey(x => x.ItineraryId);
+        builder.HasOne(t => t.Student).WithMany(x => x.TransportLogs).HasForeignKey(x => x.StudentId);
         builder.Ignore(e => e.DomainEvents);
     }
 }

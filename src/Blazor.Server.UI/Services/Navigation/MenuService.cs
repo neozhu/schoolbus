@@ -13,51 +13,46 @@ public class MenuService : IMenuService
             SectionItems = new List<MenuSectionItemModel>
             {
                 new() { Title = "Home", Icon = Icons.Material.Filled.Home, Href = "/" },
+
                 new()
                 {
-                    Title = "E-Commerce",
-                    Icon = Icons.Material.Filled.ShoppingCart,
-                    PageStatus = PageStatus.Completed,
-                    IsParent = true,
-                    MenuItems = new List<MenuSectionSubItemModel>
-                    {
-                        new()
-                        {
-                            Title = "Products",
-                            Href = "/pages/products",
-                            PageStatus = PageStatus.Completed
-                        },
-                        new()
-                        {
-                            Title = "Documents",
-                            Href = "/pages/documents",
-                            PageStatus = PageStatus.Completed
-                        }
-                    }
+                    Title = "School",
+                    Roles = new[] { RoleName.Admin, RoleName.Users },
+                    Icon = Icons.Material.Filled.Castle,
+                    Href = "/pages/schools",
+                    PageStatus = PageStatus.Completed
                 },
                 new()
                 {
-                    Title = "Analytics",
+                    Title = "Bus",
                     Roles = new[] { RoleName.Admin, RoleName.Users },
-                    Icon = Icons.Material.Filled.Analytics,
-                    Href = "/analytics",
-                    PageStatus = PageStatus.ComingSoon
+                    Icon = Icons.Material.Filled.DirectionsBus,
+                    Href = "/pages/buses",
+                    PageStatus = PageStatus.Completed
                 },
                 new()
                 {
-                    Title = "Banking",
+                    Title = "Pilot",
                     Roles = new[] { RoleName.Admin, RoleName.Users },
-                    Icon = Icons.Material.Filled.Money,
-                    Href = "/banking",
-                    PageStatus = PageStatus.ComingSoon
+                    Icon = Icons.Material.Filled.FollowTheSigns,
+                    Href = "/pages/pilots",
+                    PageStatus = PageStatus.Completed
                 },
                 new()
                 {
-                    Title = "Booking",
+                    Title = "Student",
                     Roles = new[] { RoleName.Admin, RoleName.Users },
-                    Icon = Icons.Material.Filled.CalendarToday,
-                    Href = "/booking",
-                    PageStatus = PageStatus.ComingSoon
+                    Icon = Icons.Material.Filled.Groups,
+                    Href = "/pages/students",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Parent",
+                    Roles = new[] { RoleName.Admin, RoleName.Users },
+                    Icon = Icons.Material.Filled.EscalatorWarning,
+                    Href = "/pages/parents",
+                    PageStatus = PageStatus.Completed
                 }
             }
         },

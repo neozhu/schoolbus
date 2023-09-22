@@ -15,7 +15,6 @@ public class PilotConfiguration : IEntityTypeConfiguration<Pilot>
         builder.Property(t => t.LastName).HasMaxLength(50).IsRequired();
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.Navigation(e => e.Tenant).AutoInclude();
-        builder.HasMany(t => t.Itineraries).WithOne().HasForeignKey(x => x.PilotId).IsRequired();
         builder.Ignore(e => e.DomainEvents);
     }
 }

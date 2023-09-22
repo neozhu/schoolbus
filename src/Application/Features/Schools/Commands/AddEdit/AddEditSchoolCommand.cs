@@ -28,6 +28,7 @@ public class AddEditSchoolCommand : ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
+            CreateMap<SchoolDto,AddEditSchoolCommand>(MemberList.None);
             CreateMap<AddEditSchoolCommand, School>(MemberList.None);
         }
     }

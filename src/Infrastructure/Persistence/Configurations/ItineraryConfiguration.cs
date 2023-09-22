@@ -15,13 +15,12 @@ public class ItineraryConfiguration : IEntityTypeConfiguration<Itinerary>
         builder.Property(t => t.Name).HasMaxLength(50).IsRequired();
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.Navigation(e => e.Tenant).AutoInclude();
-        builder.HasOne(t => t.School).WithMany().HasForeignKey(x => x.SchoolId).IsRequired(); 
+        builder.HasOne(t => t.School).WithMany(x=>x.Itineraries).HasForeignKey(x => x.SchoolId);
         builder.Navigation(e => e.School).AutoInclude();
-        builder.HasOne(t => t.Bus).WithMany().HasForeignKey(x => x.BusId).IsRequired(); 
+        builder.HasOne(t => t.Bus).WithMany(x => x.Itineraries).HasForeignKey(x => x.BusId);
         builder.Navigation(e => e.Bus).AutoInclude();
-        builder.HasOne(t => t.Pilot).WithMany().HasForeignKey(x => x.PilotId).IsRequired(); 
+        builder.HasOne(t => t.Pilot).WithMany(x => x.Itineraries).HasForeignKey(x => x.PilotId);
         builder.Navigation(e => e.Pilot).AutoInclude();
-        builder.HasMany(t => t.TransportLogs).WithOne(x => x.Itinerary).HasForeignKey(x => x.ItineraryId).IsRequired();
         builder.Ignore(e => e.DomainEvents);
     }
 }

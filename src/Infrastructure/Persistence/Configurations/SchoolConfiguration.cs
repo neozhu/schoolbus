@@ -15,8 +15,6 @@ public class SchoolConfiguration : IEntityTypeConfiguration<School>
         builder.Property(t => t.Name).HasMaxLength(50).IsRequired();
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.Navigation(e => e.Tenant).AutoInclude();
-        //builder.HasMany(t => t.Students).WithOne(t => t.School).HasForeignKey(t => t.SchoolId).IsRequired();
-        //builder.HasMany(t => t.Itineraries).WithOne(t => t.School).HasForeignKey(t => t.SchoolId).IsRequired();
         builder.Ignore(e => e.DomainEvents);
     }
 }

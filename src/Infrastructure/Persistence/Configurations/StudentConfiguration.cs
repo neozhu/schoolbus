@@ -14,10 +14,9 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
     {
         builder.Property(t => t.LastName).HasMaxLength(50).IsRequired();
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
-        builder.HasOne(t => t.School).WithMany().HasForeignKey(x => x.SchoolId);
+        builder.HasOne(t => t.School).WithMany(x=>x.Students).HasForeignKey(x => x.SchoolId);
         builder.Navigation(e => e.Tenant).AutoInclude();
         builder.Navigation(e => e.School).AutoInclude();
-        builder.HasMany(t => t.TransportLogs).WithOne(x => x.Student).HasForeignKey(x => x.StudentId).IsRequired();
         builder.Ignore(e => e.DomainEvents);
     }
 }

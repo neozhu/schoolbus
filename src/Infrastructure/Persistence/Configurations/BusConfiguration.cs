@@ -15,7 +15,6 @@ public class BusConfiguration : IEntityTypeConfiguration<Bus>
         builder.Property(t => t.PlatNumber).HasMaxLength(50).IsRequired();
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.Navigation(e => e.Tenant).AutoInclude();
-        builder.HasMany(t => t.Itineraries).WithOne(t => t.Bus).HasForeignKey(t => t.BusId).IsRequired();
         builder.Ignore(e => e.DomainEvents);
     }
 }

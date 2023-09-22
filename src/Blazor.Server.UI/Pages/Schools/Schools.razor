@@ -38,7 +38,7 @@
                 <MudIcon Icon="@Icons.Material.Filled.Window" Size="Size.Large" />
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.caption">@Title</MudText>
-                    <MudEnumSelect Style="min-width:120px" TEnum="SchoolListView" ValueChanged="OnChangedListView" Value="Query.ListView" Dense="true" Label="List View">
+                    <MudEnumSelect Style="min-width:220px" TEnum="SchoolListView" ValueChanged="OnChangedListView" Value="Query.ListView" Dense="true" Label="List View">
                     </MudEnumSelect>
                 </div>
             </div>
@@ -190,7 +190,7 @@
                 </div>
             </CellTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Contact" Title="@L[_currentDto.GetMemberDescription(x=>x.Name)]">
+        <PropertyColumn Property="x => x.Contact" Title="@L[_currentDto.GetMemberDescription(x=>x.Contact)]">
             <CellTemplate>
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.body2">@context.Item.Contact</MudText>

@@ -12,7 +12,7 @@
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Name)]" @bind-Value="model.Name" For="@(() => model.Name)" Required="true" RequiredError="@L["name is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="12">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Address)]" @bind-Value="model.Address" For="@(() => model.Address)" Required="false" RequiredError="@L["address is required!"]"></MudTextField>
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Address)]" @bind-Value="model.Address" For="@(() => model.Address)" Required="true" RequiredError="@L["address is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Contact)]" @bind-Value="model.Contact" For="@(() => model.Contact)" Required="false" RequiredError="@L["contact is required!"]"></MudTextField>
@@ -29,7 +29,7 @@
     <DialogActions>
         <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
         <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
-        <MudButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
+        <MudLoadingButton Loading="@_saving" OnClick="Submit">@ConstantString.Save</MudLoadingButton>
     </DialogActions>
 </MudDialog>
 
