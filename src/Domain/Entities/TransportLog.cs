@@ -12,6 +12,7 @@ public  class TransportLog: BaseAuditableEntity, IMustHaveTenant
     public virtual Student Student { get; set; } = null!;
     public int ItineraryId { get; set; }
     public virtual Itinerary Itinerary { get; set; } = null!;
+    public string? DeviceId { get; set; }
     public DateTime SwipeDateTime { get; set; } = DateTime.Now;
     public string? Location { get; set; }
     public double? Longitude { get; set; }

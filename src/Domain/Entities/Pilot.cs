@@ -15,4 +15,5 @@ public class Pilot : BaseAuditableEntity, IMustHaveTenant
     public string? Status { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;
+    public virtual ICollection<Itinerary> Itineraries { get; set; } = new HashSet<Itinerary>();
 }

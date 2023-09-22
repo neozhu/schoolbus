@@ -14,9 +14,13 @@ public class Student : BaseAuditableEntity, IMustHaveTenant
     public string? Phone { get; set; }
     public string? Description { get; set; }
     public string? Status { get; set; }
-    public virtual List<Parent> Parents { get; } = new();
+    public virtual ICollection<Parent> Parents { get; set; } = new HashSet<Parent>();
     public int SchoolId { get; set; }
     public virtual School School { get; set; } = null!;
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;
+
+    public virtual ICollection<TransportLog>  TransportLogs{ get; set; } = new HashSet<TransportLog>();
+
+
 }

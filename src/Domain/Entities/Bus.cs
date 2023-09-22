@@ -13,5 +13,5 @@ public class Bus : BaseAuditableEntity, IMustHaveTenant
     public string? Description { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;
-
+    public virtual ICollection<Itinerary> Itineraries { get; set; } = new HashSet<Itinerary>();
 }

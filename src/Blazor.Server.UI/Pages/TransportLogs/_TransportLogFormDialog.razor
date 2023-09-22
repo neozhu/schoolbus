@@ -1,0 +1,114 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.AddEdit
+
+@inherits MudComponentBase
+@inject IStringLocalizer<TransportLogs> L
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
+            <MudGrid>
+                @*TODO: define mudform that should be edit fields, for example:*@
+                <MudItem xs="12" md="6">
+                    <MudNumericField Label="@L[model.GetMemberDescription(x=>x.StudentId)]" @bind-Value="model.StudentId" For="@(() => model.StudentId)" Min="0" Required="false" RequiredError="@L["student id is required!"]"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField Label="@L[model.GetMemberDescription(x=>x.ItineraryId)]" @bind-Value="model.ItineraryId" For="@(() => model.ItineraryId)" Min="0" Required="false" RequiredError="@L["itinerary id is required!"]"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.DeviceId)]" @bind-Value="model.DeviceId" For="@(() => model.DeviceId)" Required="false" RequiredError="@L["device id is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.SwipeDateTime)]" @bind-Value="model.SwipeDateTime" For="@(() => model.SwipeDateTime)" Required="false" RequiredError="@L["swipe date time is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Location)]" @bind-Value="model.Location" For="@(() => model.Location)" Required="false" RequiredError="@L["location is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField Label="@L[model.GetMemberDescription(x=>x.Longitude)]" @bind-Value="model.Longitude" For="@(() => model.Longitude)" Min="0.00" Required="false" RequiredError="@L["longitude is required!"]"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField Label="@L[model.GetMemberDescription(x=>x.Latitude)]" @bind-Value="model.Latitude" For="@(() => model.Latitude)" Min="0.00" Required="false" RequiredError="@L["latitude is required!"]"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.CheckType)]" @bind-Value="model.CheckType" For="@(() => model.CheckType)" Required="false" RequiredError="@L["check type is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.UpOrDown)]" @bind-Value="model.UpOrDown" For="@(() => model.UpOrDown)" Required="false" RequiredError="@L["up or down is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Comments)]" @bind-Value="model.Comments" For="@(() => model.Comments)" Required="false" RequiredError="@L["comments is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.TenantId)]" @bind-Value="model.TenantId" For="@(() => model.TenantId)" Required="false" RequiredError="@L["tenant id is required!"]"></MudTextField>
+                </MudItem>
+
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
+        <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
+        <MudButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    MudForm? _form;
+    private bool _saving = false;
+    private bool _savingnew = false;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+    AddEditTransportLogCommandValidator _modelValidator = new();
+    [EditorRequired][Parameter] public AddEditTransportLogCommand model { get; set; } = null!;
+    [Inject] private IMediator _mediator { get; set; } = default!;
+    async Task Submit()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+    async Task SaveAndNew()
+    {
+        try
+        {
+            _savingnew = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+                await Task.Delay(300);
+                model = new AddEditTransportLogCommand() { };
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _savingnew = false;
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

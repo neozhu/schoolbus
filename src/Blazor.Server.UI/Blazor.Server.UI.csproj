@@ -33,4 +33,12 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\EmailTemplates\*" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Pages\Buses\Components\" />
+      <Folder Include="Pages\Parents\Components\" />
+      <Folder Include="Pages\Pilots\Components\" />
+      <Folder Include="Pages\Schools\Components\" />
+      <Folder Include="Pages\Students\Components\" />
+      <Folder Include="Pages\TransportLogs\Components\" />
+    </ItemGroup>
 </Project>

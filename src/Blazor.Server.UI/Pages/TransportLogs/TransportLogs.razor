@@ -1,0 +1,346 @@
+﻿@page "/pages/TransportLogs"
+
+@using BlazorDownloadFile
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Caching
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Specifications
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Delete
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Queries.Pagination
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.AddEdit
+
+@inherits FluxorComponent
+@inject IJSRuntime JS
+@inject IStringLocalizer<TransportLogs> L
+@attribute [Authorize(Policy = Permissions.TransportLogs.View)]
+<PageTitle>@Title</PageTitle>
+<style>
+    .mud-table-toolbar {
+        height: 120px !important;
+    }
+</style>
+
+<MudDataGrid ServerData="@(ServerReload)"
+             FixedHeader="true"
+             FixedFooter="true"
+             Virtualize="true"
+             @bind-RowsPerPage="_defaultPageSize"
+             Height="calc(100vh - 330px)"
+             Loading="@_loading"
+             MultiSelection="true"
+             @bind-SelectedItems="_selectedItems"
+             @bind-SelectedItem="_currentDto"
+             Hover="true" @ref="_table">
+    <ToolBarContent>
+        <div class="d-flex align-start flex-grow-1">
+            <div class="d-flex gap-4">
+                <MudIcon Icon="@Icons.Material.Filled.Window" Size="Size.Large" />
+                <div class="d-flex flex-column">
+                    <MudText Typo="Typo.caption">@Title</MudText>
+                    <MudEnumSelect Style="min-width:120px" TEnum="TransportLogListView" ValueChanged="OnChangedListView" Value="Query.ListView" Dense="true" Label="List View">
+                    </MudEnumSelect>
+                </div>
+            </div>
+            <div class="flex-grow-1" />
+
+            <div class="d-flex flex-column justify-end">
+                <div class="d-flex">
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                        <MudButton DisableElevation Variant="Variant.Outlined"
+                                    Size="Size.Small"
+                                    Disabled="@_loading"
+                                    OnClick="@(()=>OnRefresh())"
+                                    StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Primary"
+                                    Style="margin-right: 4px; margin-bottom:4px">@ConstantString.Refresh</MudButton>
+                         @if (_canCreate)
+                        {
+                            <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
+                                        StartIcon="@Icons.Material.Filled.Add"
+                                        Size="Size.Small"
+                                        Disabled="@_loading"
+                                        OnClick="OnCreate"
+                                        Style="margin-right: 4px; margin-bottom:4px"
+                                        IconColor="Color.Surface">@ConstantString.New</MudButton>
+                            <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
+                                        StartIcon="@Icons.Material.Filled.ContentCopy"
+                                        Size="Size.Small"
+                                        Disabled="@(_selectedItems.Count!=1)"
+                                        OnClick="OnClone"
+                                        Style="margin-right: 4px; margin-bottom:4px"
+                                        IconColor="Color.Surface">@ConstantString.Clone</MudButton>
+                        }
+                        @if (_canDelete)
+                        {
+                            <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Error"
+                                        StartIcon="@Icons.Material.Filled.Delete"
+                                        Disabled="@(!(_selectedItems.Count>0))"
+                                        Size="Size.Small"
+                                        Style="margin-right: 4px; margin-bottom:4px"
+                                        OnClick="OnDeleteChecked"
+                                        IconColor="Color.Surface">@ConstantString.Delete</MudButton>
+                        }
+
+                    </MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                        @if (_canCreate)
+                        {
+                            <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
+                                        StartIcon="@Icons.Material.Filled.Add"
+                                        Size="Size.Small"
+                                        Disabled="@_loading"
+                                        OnClick="OnCreate"
+                                        Style="margin-right: 4px; margin-bottom:4px"
+                                        IconColor="Color.Surface">@ConstantString.New</MudButton>
+                        }
+                        @if (_canDelete)
+                        {
+                            <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Error"
+                                        StartIcon="@Icons.Material.Filled.Delete"
+                                        Disabled="@(!(_selectedItems.Count>0))"
+                                        Size="Size.Small"
+                                        Style="margin-right: 4px; margin-bottom:4px"
+                                        OnClick="OnDeleteChecked"
+                                        IconColor="Color.Surface">@ConstantString.Delete</MudButton>
+                        }
+                    </MudHidden>
+                </div>
+                @if (_canSearch)
+                {
+                    <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Value="@Query.Keyword" Placeholder="@ConstantString.Search" Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"></MudTextField>
+                }
+
+            </div>
+        </div>
+    </ToolBarContent>
+    <Columns>
+        <SelectColumn ShowInFooter="false"></SelectColumn>
+        <TemplateColumn CellStyle="width:60px" Title="@ConstantString.Actions" Sortable="false">
+            <CellTemplate>
+                @if (_canEdit || _canDelete)
+                {
+                    <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" DisableElevation="true" Size="Size.Small"
+                             Dense="true"
+                             EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Info" AnchorOrigin="Origin.CenterLeft">
+                        @if (_canEdit)
+                        {
+                            <MudMenuItem OnClick="@(()=>OnEdit(context.Item))">@ConstantString.Edit</MudMenuItem>
+                        }
+                        @if (_canDelete)
+                        {
+                            <MudMenuItem OnClick="@(()=>OnDelete(context.Item))">@ConstantString.Delete</MudMenuItem>
+                        }
+                    </MudMenu>
+                }
+                else
+                {
+                    <MudIconButton Variant="Variant.Filled" DisableElevation="true"
+                                   Disabled="true"
+                                   Icon="@Icons.Material.Filled.DoNotTouch"
+                                   Size="Size.Small"
+                                   Color="Color.Surface">
+                        @ConstantString.NoAllowed
+                    </MudIconButton>
+                }
+            </CellTemplate>
+        </TemplateColumn>
+
+        <PropertyColumn Property="x => x.Student" Title="@L[_currentDto.GetMemberDescription(x=>x.Student)]" CellClass="d-flex align-items-center">
+            <CellTemplate>
+                <MudAvatar>
+                    @if (string.IsNullOrEmpty(context.Item.Student.ProfilePicture))
+                    {
+                        @context.Item.Student.LastName.First()
+                    }
+                    else
+                    {
+                        <MudImage Src="@context.Item.Student.ProfilePicture"></MudImage>
+                    }
+                </MudAvatar>
+                <div class="ml-2">
+                    <MudText Typo="Typo.body2">@context.Item.Student.UID</MudText>
+                    <MudText Typo="Typo.body2">@context.Item.Student.DisplayName</MudText>
+                </div>
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Itinerary" Title="@L[_currentDto.GetMemberDescription(x=>x.Itinerary)]">
+            <CellTemplate>
+                @context.Item.Itinerary.Name
+            </CellTemplate>
+
+        </PropertyColumn>
+       
+        <PropertyColumn Property="x => x.SwipeDateTime" Title="@L[_currentDto.GetMemberDescription(x=>x.SwipeDateTime)]" />
+        <PropertyColumn Property="x => x.Location" Title="@L[_currentDto.GetMemberDescription(x=>x.Location)]" />
+        <PropertyColumn Property="x => x.Longitude" Title="@L[_currentDto.GetMemberDescription(x=>x.Longitude)]" />
+        <PropertyColumn Property="x => x.Latitude" Title="@L[_currentDto.GetMemberDescription(x=>x.Latitude)]" />
+        <PropertyColumn Property="x => x.CheckType" Title="@L[_currentDto.GetMemberDescription(x=>x.CheckType)]" />
+        <PropertyColumn Property="x => x.UpOrDown" Title="@L[_currentDto.GetMemberDescription(x=>x.UpOrDown)]" />
+        <PropertyColumn Property="x => x.DeviceId" Title="@L[_currentDto.GetMemberDescription(x=>x.DeviceId)]" />
+        <PropertyColumn Property="x => x.Comments" Title="@L[_currentDto.GetMemberDescription(x=>x.Comments)]" />
+    </Columns>
+    <NoRecordsContent>
+        <MudText>@ConstantString.NoRecords</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>@ConstantString.Loading</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudDataGridPager PageSizeOptions="@(new int[]{10,15,30,50,100,500,1000})" />
+    </PagerContent>
+</MudDataGrid>
+
+
+
+@code {
+    public string? Title { get; private set; }
+    private int _defaultPageSize = 15;
+    private HashSet<TransportLogDto> _selectedItems = new HashSet<TransportLogDto>();
+    private MudDataGrid<TransportLogDto> _table = default!;
+    private TransportLogDto _currentDto = new();
+    private bool _loading;
+    private bool _uploading;
+    private bool _downloading;
+    private bool _exporting;
+    [Inject]
+    private IState<UserProfileState> UserProfileState { get; set; } = null!;
+    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
+
+    [Inject]
+    private IMediator Mediator { get; set; } = default!;
+    [Inject]
+    private IMapper Mapper { get; set; } = default!;
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private TransportLogsWithPaginationQuery Query { get; set; } = new();
+    [Inject]
+    private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;
+    private bool _canSearch;
+    private bool _canCreate;
+    private bool _canEdit;
+    private bool _canDelete;
+    private bool _canImport;
+    private bool _canExport;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Title = L[_currentDto.GetClassDescription()];
+        var state = await AuthState;
+        _canCreate = (await AuthService.AuthorizeAsync(state.User, Permissions.TransportLogs.Create)).Succeeded;
+        _canSearch = (await AuthService.AuthorizeAsync(state.User, Permissions.TransportLogs.Search)).Succeeded;
+        _canEdit = (await AuthService.AuthorizeAsync(state.User, Permissions.TransportLogs.Edit)).Succeeded;
+        _canDelete = (await AuthService.AuthorizeAsync(state.User, Permissions.TransportLogs.Delete)).Succeeded;
+        _canImport = (await AuthService.AuthorizeAsync(state.User, Permissions.TransportLogs.Import)).Succeeded;
+        _canExport = (await AuthService.AuthorizeAsync(state.User, Permissions.TransportLogs.Export)).Succeeded;
+    }
+    private async Task<GridData<TransportLogDto>> ServerReload(GridState<TransportLogDto> state)
+    {
+        try
+        {
+            _loading = true;
+            Query.CurrentUser = UserProfile;
+            Query.OrderBy = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "Id";
+            Query.SortDirection = state.SortDefinitions.FirstOrDefault()?.Descending ?? true ? SortDirection.Descending.ToString() : SortDirection.Ascending.ToString();
+            Query.PageNumber = state.Page + 1;
+            Query.PageSize = state.PageSize;
+            var result = await Mediator.Send(Query).ConfigureAwait(false);
+            return new GridData<TransportLogDto>() { TotalItems = result.TotalItems, Items = result.Items };
+        }
+        finally
+        {
+            _loading = false;
+        }
+
+    }
+    private async Task OnSearch(string text)
+    {
+        _selectedItems = new();
+        Query.Keyword = text;
+        await _table.ReloadServerData();
+    }
+    private async Task OnChangedListView(TransportLogListView listview)
+    {
+        Query.ListView = listview;
+        await _table.ReloadServerData();
+    }
+    private async Task OnRefresh()
+    {
+        TransportLogCacheKey.Refresh();
+        _selectedItems = new();
+        Query.Keyword = string.Empty;
+        await _table.ReloadServerData();
+    }
+
+    private async Task OnCreate()
+    {
+        var command = new AddEditTransportLogCommand();
+        var parameters = new DialogParameters
+            {
+                { nameof(_TransportLogFormDialog.model),command },
+            };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = DialogService.Show<_TransportLogFormDialog>
+        (L["Create a new item"], parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+
+    private async Task OnEdit(TransportLogDto dto)
+    {
+        var command = Mapper.Map<AddEditTransportLogCommand>(dto);
+        var parameters = new DialogParameters
+            {
+                { nameof(_TransportLogFormDialog.model),command },
+            };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = DialogService.Show<_TransportLogFormDialog>
+        (L["Edit the item"], parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+
+    private async Task OnDelete(TransportLogDto dto)
+    {
+        var command = new DeleteTransportLogCommand(new int[] { dto.Id });
+        var parameters = new DialogParameters
+           {
+             { nameof(DeleteConfirmation.Command),  command },
+             { nameof(DeleteConfirmation.ContentText), string.Format(ConstantString.DeleteConfirmation, dto.Name) }
+           };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, DisableBackdropClick = true };
+        var dialog = DialogService.Show<DeleteConfirmation>(ConstantString.DeleteConfirmationTitle, parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _table.ReloadServerData();
+            _selectedItems.Remove(dto);
+        }
+    }
+
+    private async Task OnDeleteChecked()
+    {
+        var command = new DeleteTransportLogCommand(_selectedItems.Select(x => x.Id).ToArray());
+        var parameters = new DialogParameters
+                        {
+                             { nameof(DeleteConfirmation.Command),  command },
+                             { nameof(DeleteConfirmation.ContentText), string.Format(ConstantString.DeleteConfirmWithSelected,_selectedItems.Count) }
+                        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, FullWidth = true, DisableBackdropClick = true };
+        var dialog = DialogService.Show<DeleteConfirmation>(ConstantString.DeleteConfirmationTitle, parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _table.ReloadServerData();
+            _selectedItems = new();
+        }
+    }
+
+
+
+}

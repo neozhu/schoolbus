@@ -14,4 +14,6 @@ public class School : BaseAuditableEntity, IMustHaveTenant
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;
 
+    public virtual ICollection<Student> Students { get; set; } = new HashSet<Student>();
+    public virtual ICollection<Itinerary> Itineraries { get; set; } = new HashSet<Itinerary>();
 }

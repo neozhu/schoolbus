@@ -1,0 +1,112 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.Itineraries.Commands.AddEdit
+
+@inherits MudComponentBase
+@inject IStringLocalizer<Itineraries> L
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
+            <MudGrid>
+                @*TODO: define mudform that should be edit fields, for example:*@
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Name)]" @bind-Value="model.Name" For="@(() => model.Name)" Required="true" RequiredError="@L["name is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" Lines="3" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField Label="@L[model.GetMemberDescription(x=>x.BusId)]" @bind-Value="model.BusId" For="@(() => model.BusId)" Min="0" Required="false" RequiredError="@L["bus id is required!"]"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField Label="@L[model.GetMemberDescription(x=>x.PilotId)]" @bind-Value="model.PilotId" For="@(() => model.PilotId)" Min="0" Required="false" RequiredError="@L["pilot id is required!"]"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudNumericField Label="@L[model.GetMemberDescription(x=>x.SchoolId)]" @bind-Value="model.SchoolId" For="@(() => model.SchoolId)" Min="0" Required="false" RequiredError="@L["school id is required!"]"></MudNumericField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.FirstTime)]" @bind-Value="model.FirstTime" For="@(() => model.FirstTime)" Required="false" RequiredError="@L["first time is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.LastTime)]" @bind-Value="model.LastTime" For="@(() => model.LastTime)" Required="false" RequiredError="@L["last time is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.StartingStation)]" @bind-Value="model.StartingStation" For="@(() => model.StartingStation)" Required="false" RequiredError="@L["starting station is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.TerminalStation)]" @bind-Value="model.TerminalStation" For="@(() => model.TerminalStation)" Required="false" RequiredError="@L["terminal station is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudCheckBox Label="@L[model.GetMemberDescription(x=>x.Disabled)]" @bind-Checked="model.Disabled" For="@(() => model.Disabled)"></MudCheckBox>
+                </MudItem>
+
+
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
+        <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
+        <MudButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    MudForm? _form;
+    private bool _saving = false;
+    private bool _savingnew = false;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+    AddEditItineraryCommandValidator _modelValidator = new();
+    [EditorRequired][Parameter] public AddEditItineraryCommand model { get; set; } = null!;
+    [Inject] private IMediator _mediator { get; set; } = default!;
+    async Task Submit()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+    async Task SaveAndNew()
+    {
+        try
+        {
+            _savingnew = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+                await Task.Delay(300);
+                model = new AddEditItineraryCommand() { };
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _savingnew = false;
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

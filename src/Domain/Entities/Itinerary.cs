@@ -22,4 +22,5 @@ public class Itinerary:BaseAuditableEntity, IMustHaveTenant
     public bool Disabled { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;
+    public virtual ICollection<TransportLog> TransportLogs { get; set; } = new HashSet<TransportLog>();
 }
