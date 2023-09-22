@@ -7,11 +7,9 @@ namespace CleanArchitecture.Blazor.Application.Features.Buses.Commands.Import;
     {
         public ImportBusesCommandValidator()
         {
-           // TODO: Implement ImportBusCommandValidator method, for example: 
-           // RuleFor(v => v.Data)
-           //      .NotNull()
-           //      .NotEmpty();
-           throw new System.NotImplementedException();
-        }
+
+        RuleFor(v => v.Data)             .NotNull()             .NotEmpty();
+
+    }
     }
 

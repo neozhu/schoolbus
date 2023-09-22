@@ -48,7 +48,7 @@ namespace CleanArchitecture.Blazor.Application.Features.Pilots.Commands.Import;
         #nullable disable warnings
         public async Task<Result<int>> Handle(ImportPilotsCommand request, CancellationToken cancellationToken)
         {
-           // TODO: Implement ImportPilotsCommandHandler method
+      
            var result = await _excelService.ImportAsync(request.Data, mappers: new Dictionary<string, Func<DataRow, PilotDto, object?>>
             {
                 // TODO: Define the fields that should be read from Excel, for example:

@@ -60,13 +60,6 @@
                                         OnClick="OnCreate"
                                         Style="margin-right: 4px; margin-bottom:4px"
                                         IconColor="Color.Surface">@ConstantString.New</MudButton>
-                            <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
-                                        StartIcon="@Icons.Material.Filled.ContentCopy"
-                                        Size="Size.Small"
-                                        Disabled="@(_selectedItems.Count!=1)"
-                                        OnClick="OnClone"
-                                        Style="margin-right: 4px; margin-bottom:4px"
-                                        IconColor="Color.Surface">@ConstantString.Clone</MudButton>
                         }
                         @if (_canDelete)
                         {
@@ -311,7 +304,7 @@
         var parameters = new DialogParameters
            {
              { nameof(DeleteConfirmation.Command),  command },
-             { nameof(DeleteConfirmation.ContentText), string.Format(ConstantString.DeleteConfirmation, dto.Name) }
+             { nameof(DeleteConfirmation.ContentText), string.Format(ConstantString.DeleteConfirmation, dto.Id) }
            };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, DisableBackdropClick = true };
         var dialog = DialogService.Show<DeleteConfirmation>(ConstantString.DeleteConfirmationTitle, parameters, options);

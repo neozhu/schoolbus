@@ -38,7 +38,7 @@ public class BusesWithPaginationQueryHandler :
 
         public async Task<PaginatedData<BusDto>> Handle(BusesWithPaginationQuery request, CancellationToken cancellationToken)
         {
-           // TODO: Implement BusesWithPaginationQueryHandler method 
+
            var data = await _context.Buses.OrderBy($"{request.OrderBy} {request.SortDirection}")
                                     .ProjectToPaginatedDataAsync<Bus, BusDto>(request.Specification, request.PageNumber, request.PageSize, _mapper.ConfigurationProvider, cancellationToken);
             return data;

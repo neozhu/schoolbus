@@ -28,7 +28,8 @@ public class AddEditBusCommand: ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
-            CreateMap<BusDto, AddEditBusCommand>().ReverseMap();
+            CreateMap<BusDto, AddEditBusCommand>(MemberList.None);
+            CreateMap<AddEditBusCommand, Bus>(MemberList.None);
         }
     }
 }
@@ -50,12 +51,11 @@ public class AddEditBusCommand: ICacheInvalidatorRequest<Result<int>>
         }
         public async Task<Result<int>> Handle(AddEditBusCommand request, CancellationToken cancellationToken)
         {
-            // TODO: Implement AddEditBusCommandHandler method 
-            var dto = _mapper.Map<BusDto>(request);
+
             if (request.Id > 0)
             {
                 var item = await _context.Buses.FindAsync(new object[] { request.Id }, cancellationToken) ?? throw new NotFoundException($"Bus with id: [{request.Id}] not found.");
-                item = _mapper.Map(dto, item);
+                item = _mapper.Map(request, item);
 				// raise a update domain event
 				item.AddDomainEvent(new BusUpdatedEvent(item));
                 await _context.SaveChangesAsync(cancellationToken);
@@ -63,7 +63,7 @@ public class AddEditBusCommand: ICacheInvalidatorRequest<Result<int>>
             }
             else
             {
-                var item = _mapper.Map<Bus>(dto);
+                var item = _mapper.Map<Bus>(request);
                 // raise a create domain event
 				item.AddDomainEvent(new BusCreatedEvent(item));
                 _context.Buses.Add(item);

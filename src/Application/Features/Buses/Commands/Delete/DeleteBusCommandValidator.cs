@@ -7,9 +7,9 @@ public class DeleteBusCommandValidator : AbstractValidator<DeleteBusCommand>
 {
         public DeleteBusCommandValidator()
         {
-           // TODO: Implement DeleteBusCommandValidator method, for example: 
-           // RuleFor(v => v.Id).NotNull().ForEach(v=>v.GreaterThan(0));
-           throw new System.NotImplementedException();
+           
+           RuleFor(v => v.Id).NotNull().ForEach(v=>v.GreaterThan(0));
+         
         }
 }
     

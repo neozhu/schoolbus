@@ -32,7 +32,7 @@ public class GetAllBusesQueryHandler :
 
     public async Task<IEnumerable<BusDto>> Handle(GetAllBusesQuery request, CancellationToken cancellationToken)
     {
-        // TODO: Implement GetAllBusesQueryHandler method 
+  
         var data = await _context.Buses
                      .ProjectTo<BusDto>(_mapper.ConfigurationProvider)
                      .AsNoTracking()

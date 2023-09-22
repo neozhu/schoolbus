@@ -32,7 +32,7 @@ public class GetAllStudentsQueryHandler :
 
     public async Task<IEnumerable<StudentDto>> Handle(GetAllStudentsQuery request, CancellationToken cancellationToken)
     {
-        // TODO: Implement GetAllStudentsQueryHandler method 
+  
         var data = await _context.Students
                      .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
                      .AsNoTracking()

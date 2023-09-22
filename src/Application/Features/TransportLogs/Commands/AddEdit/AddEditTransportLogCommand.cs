@@ -41,6 +41,7 @@ public class AddEditTransportLogCommand: ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
+            CreateMap<TransportLogDto,AddEditTransportLogCommand>(MemberList.None);
             CreateMap<AddEditTransportLogCommand, TransportLog>(MemberList.None);
         }
     }

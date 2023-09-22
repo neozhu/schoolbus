@@ -34,6 +34,7 @@ public class AddEditParentCommand: ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
+            CreateMap<ParentDto,AddEditParentCommand>(MemberList.None);
             CreateMap<AddEditParentCommand, Parent>(MemberList.None);
         }
     }

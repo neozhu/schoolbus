@@ -36,6 +36,7 @@ public class AddEditStudentCommand: ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
+            CreateMap<StudentDto,AddEditStudentCommand>(MemberList.None);
             CreateMap<AddEditStudentCommand, Student>(MemberList.None);
         }
     }

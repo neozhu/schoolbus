@@ -5,6 +5,7 @@ using System.ComponentModel;
 using CleanArchitecture.Blazor.Application.Features.Parents.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Schools.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Tenants.DTOs;
+using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
 using DocumentFormat.OpenXml.Office2010.PowerPoint;
 
 namespace CleanArchitecture.Blazor.Application.Features.Students.DTOs;
@@ -42,7 +43,7 @@ public class StudentDto
     public TenantDto Tenant { get; set; } = null!;
 
     public List<ParentDto> Parents { get; set; } = new List<ParentDto>();
-    //public List<TransportLogDto> TransportLogs { get; set; } = new List<TransportLogDto>();
+    public List<TransportLogDto> TransportLogs { get; set; } = new List<TransportLogDto>();
     private class Mapping : Profile
     {
         public Mapping()

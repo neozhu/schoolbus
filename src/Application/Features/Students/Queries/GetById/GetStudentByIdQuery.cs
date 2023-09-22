@@ -34,7 +34,7 @@ public class GetStudentByIdQueryHandler :
 
     public async Task<StudentDto> Handle(GetStudentByIdQuery request, CancellationToken cancellationToken)
     {
-        // TODO: Implement GetStudentByIdQueryHandler method 
+  
         var data = await _context.Students.ApplySpecification(new StudentByIdSpecification(request.Id))
                      .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
                      .FirstAsync(cancellationToken) ?? throw new NotFoundException($"Student with id: [{request.Id}] not found.");;

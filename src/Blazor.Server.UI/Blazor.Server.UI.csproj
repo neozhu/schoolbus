@@ -35,6 +35,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Pages\Buses\Components\" />
+      <Folder Include="Pages\Messages\Components\" />
       <Folder Include="Pages\Parents\Components\" />
       <Folder Include="Pages\Pilots\Components\" />
       <Folder Include="Pages\Schools\Components\" />

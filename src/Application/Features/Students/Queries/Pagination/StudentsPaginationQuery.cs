@@ -38,7 +38,7 @@ public class StudentsWithPaginationQueryHandler :
 
         public async Task<PaginatedData<StudentDto>> Handle(StudentsWithPaginationQuery request, CancellationToken cancellationToken)
         {
-           // TODO: Implement StudentsWithPaginationQueryHandler method 
+       
            var data = await _context.Students.OrderBy($"{request.OrderBy} {request.SortDirection}")
                                     .ProjectToPaginatedDataAsync<Student, StudentDto>(request.Specification, request.PageNumber, request.PageSize, _mapper.ConfigurationProvider, cancellationToken);
             return data;

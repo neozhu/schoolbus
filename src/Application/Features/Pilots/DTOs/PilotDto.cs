@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
+using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Tenants.DTOs;
 
 namespace CleanArchitecture.Blazor.Application.Features.Pilots.DTOs;
@@ -30,6 +31,8 @@ public class PilotDto
     public string TenantId { get; set; } = null!;
     [Description("Organization")]
     public TenantDto Tenant { get; set; } = null!;
+
+    public List<ItineraryDto> Itineraries { get; set; } = new List<ItineraryDto>();
 
 
     private class Mapping : Profile

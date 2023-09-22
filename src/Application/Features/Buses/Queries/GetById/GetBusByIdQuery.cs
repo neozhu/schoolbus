@@ -34,7 +34,7 @@ public class GetBusByIdQueryHandler :
 
     public async Task<BusDto> Handle(GetBusByIdQuery request, CancellationToken cancellationToken)
     {
-        // TODO: Implement GetBusByIdQueryHandler method 
+ 
         var data = await _context.Buses.ApplySpecification(new BusByIdSpecification(request.Id))
                      .ProjectTo<BusDto>(_mapper.ConfigurationProvider)
                      .FirstAsync(cancellationToken) ?? throw new NotFoundException($"Bus with id: [{request.Id}] not found.");;

@@ -40,6 +40,7 @@ public class AddEditItineraryCommand: ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
+            CreateMap<ItineraryDto,AddEditItineraryCommand>(MemberList.None);
             CreateMap<AddEditItineraryCommand, Itinerary>(MemberList.None);
         }
     }

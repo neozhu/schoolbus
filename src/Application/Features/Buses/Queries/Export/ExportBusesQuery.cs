@@ -35,7 +35,7 @@ public class ExportBusesQueryHandler :
         #nullable disable warnings
         public async Task<Result<byte[]>> Handle(ExportBusesQuery request, CancellationToken cancellationToken)
         {
-            // TODO: Implement ExportBusesQueryHandler method 
+      
             var data = await _context.Buses.ApplySpecification(request.Specification)
                        .OrderBy($"{request.OrderBy} {request.SortDirection}")
                        .ProjectTo<BusDto>(_mapper.ConfigurationProvider)

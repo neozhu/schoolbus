@@ -78,7 +78,7 @@ public static class Permissions
         public const string Import = "Permissions.Itineraries.Import";
     }
     [DisplayName("TransportLogs")]
-    [Description("ItTransportLogsineraries Permissions")]
+    [Description("TransportLogs Permissions")]
     public static class TransportLogs
     {
         public const string View = "Permissions.TransportLogs.View";
@@ -88,6 +88,18 @@ public static class Permissions
         public const string Search = "Permissions.TransportLogs.Search";
         public const string Export = "Permissions.TransportLogs.Export";
         public const string Import = "Permissions.TransportLogs.Import";
+    }
+    [DisplayName("Messages")]
+    [Description("Messages Permissions")]
+    public static class Messages
+    {
+        public const string View = "Permissions.Messages.View";
+        public const string Create = "Permissions.Messages.Create";
+        public const string Edit = "Permissions.Messages.Edit";
+        public const string Delete = "Permissions.Messages.Delete";
+        public const string Search = "Permissions.Messages.Search";
+        public const string Export = "Permissions.Messages.Export";
+        public const string Import = "Permissions.Messages.Import";
     }
     [DisplayName("AuditTrails")]
     [Description("AuditTrails Permissions")]

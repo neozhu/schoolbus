@@ -32,6 +32,7 @@ public class AddEditPilotCommand: ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
+            CreateMap<PilotDto,AddEditPilotCommand>(MemberList.None);
             CreateMap<AddEditPilotCommand, Pilot>(MemberList.None);
         }
     }

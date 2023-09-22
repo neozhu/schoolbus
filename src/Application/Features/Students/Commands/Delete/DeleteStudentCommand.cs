@@ -36,7 +36,6 @@ namespace CleanArchitecture.Blazor.Application.Features.Students.Commands.Delete
         }
         public async Task<Result<int>> Handle(DeleteStudentCommand request, CancellationToken cancellationToken)
         {
-            // TODO: Implement DeleteCheckedStudentsCommandHandler method 
             var items = await _context.Students.Where(x=>request.Id.Contains(x.Id)).ToListAsync(cancellationToken);
             foreach (var item in items)
             {

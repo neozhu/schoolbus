@@ -36,7 +36,7 @@ namespace CleanArchitecture.Blazor.Application.Features.Pilots.Commands.Delete;
         }
         public async Task<Result<int>> Handle(DeletePilotCommand request, CancellationToken cancellationToken)
         {
-            // TODO: Implement DeleteCheckedPilotsCommandHandler method 
+     
             var items = await _context.Pilots.Where(x=>request.Id.Contains(x.Id)).ToListAsync(cancellationToken);
             foreach (var item in items)
             {

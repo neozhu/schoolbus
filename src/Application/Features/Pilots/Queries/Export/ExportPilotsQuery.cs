@@ -35,8 +35,7 @@ public class ExportPilotsQueryHandler :
         #nullable disable warnings
         public async Task<Result<byte[]>> Handle(ExportPilotsQuery request, CancellationToken cancellationToken)
         {
-            // TODO: Implement ExportPilotsQueryHandler method 
-            var data = await _context.Pilots.ApplySpecification(request.Specification)
+              var data = await _context.Pilots.ApplySpecification(request.Specification)
                        .OrderBy($"{request.OrderBy} {request.SortDirection}")
                        .ProjectTo<PilotDto>(_mapper.ConfigurationProvider)
                        .AsNoTracking()
