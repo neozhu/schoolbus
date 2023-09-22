@@ -297,7 +297,7 @@
 
     private async Task OnCreate()
     {
-        var command = new AddEditPilotCommand();
+        var command = new AddEditPilotCommand() {ProfilePicture="/img/driver.webp",  Status="OK" };
         var parameters = new DialogParameters
             {
                 { nameof(_PilotFormDialog.model),command },

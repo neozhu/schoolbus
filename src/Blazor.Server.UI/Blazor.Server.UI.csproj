@@ -41,5 +41,6 @@
       <Folder Include="Pages\Schools\Components\" />
       <Folder Include="Pages\Students\Components\" />
       <Folder Include="Pages\TransportLogs\Components\" />
+      <Folder Include="wwwroot\img\" />
     </ItemGroup>
 </Project>
