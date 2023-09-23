@@ -319,6 +319,8 @@
     [Inject]
     private ITenantService TenantsService { get; set; } = null!;
     [Inject]
+    private IUserDataProvider UserDataProvider { get; set; } = null!;
+    [Inject]
     private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;
     [Inject]
     private IExcelService ExcelService { get; set; } = null!;
@@ -414,6 +416,7 @@
     private async Task OnRefresh()
     {
         await _table.ReloadServerData();
+        await UserDataProvider.Refresh();
     }
     private async Task OnCreate()
     {
