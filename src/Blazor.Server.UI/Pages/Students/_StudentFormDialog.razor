@@ -165,7 +165,7 @@
             {
                 Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
                 await Task.Delay(300);
-                model = new AddEditStudentCommand() { };
+                model = new AddEditStudentCommand() { SchoolId=model.SchoolId,TenantId=model.TenantId, Status=model.Status };
             }
             else
             {

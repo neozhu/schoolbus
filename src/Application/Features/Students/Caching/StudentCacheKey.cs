@@ -16,6 +16,10 @@ public static class StudentCacheKey
     public static string GetByIdCacheKey(string parameters) {
         return $"StudentCacheKey:GetByIdCacheKey,{parameters}";
     }
+    public static string GetBySchoolIdCacheKey(string parameters)
+    {
+        return $"StudentCacheKey:GetBySchoolIdCacheKey,{parameters}";
+    }
     static StudentCacheKey()
     {
         _tokensource = new CancellationTokenSource(refreshInterval);

@@ -1,3 +1,6 @@
+using static MudBlazor.CategoryTypes;
+using Button = MudBlazor.Button;
+
 namespace Blazor.Server.UI.Theme;
 
 public class Theme
@@ -6,7 +9,10 @@ public class Theme
     {
         var theme = new MudTheme()
         {
-            
+            ZIndex = new ZIndex
+            {
+                Dialog=1301
+            },
             Palette = new PaletteLight
             {
                 Primary = "#2d4275",

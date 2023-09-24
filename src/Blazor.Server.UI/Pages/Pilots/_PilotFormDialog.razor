@@ -61,6 +61,7 @@
                     </MudItem>
                 }
              </MudGrid>
+            
          </MudForm>
      </DialogContent>
      <DialogActions>
@@ -70,10 +71,11 @@
      </DialogActions>
  </MudDialog>
 
- @code {
+@code {
     MudForm? _form;
     private bool _saving = false;
     private bool _savingnew = false;
+   
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = default!;
     AddEditPilotCommandValidator _modelValidator = new();

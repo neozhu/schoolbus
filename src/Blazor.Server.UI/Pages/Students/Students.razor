@@ -200,16 +200,20 @@
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]" />
-        <PropertyColumn Property="x => x.Parents" Title="@L[_currentDto.GetMemberDescription(x=>x.Parents)]">
+        <PropertyColumn Property="x => x.Parents" Title="@L[_currentDto.GetMemberDescription(x=>x.Parents)]" >
             <CellTemplate>
-                <MudAvatarGroup Max="2" Spacing="3" MaxColor="Color.Primary">
-                    @foreach(var item in context.Item.Parents)
+            
+                    @foreach (var item in context.Item.Parents)
                     {
-                        <MudAvatar>
-                            <MudImage Src="@item.ProfilePicture"></MudImage>
-                        </MudAvatar>
+                       <MudTooltip Text="@item.DisplayName">
+                            <MudAvatar Size="Size.Small" Class="mr-2">
+                                <MudImage Src="@item.ProfilePicture"></MudImage>
+                            </MudAvatar>
+                       </MudTooltip>
+                           
+                      
                     }
-                </MudAvatarGroup>
+        
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.SchoolId" Title="@L[_currentDto.GetMemberDescription(x=>x.SchoolId)]">

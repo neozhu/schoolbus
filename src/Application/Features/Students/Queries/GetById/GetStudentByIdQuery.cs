@@ -13,8 +13,15 @@ public class GetStudentByIdQuery : ICacheableRequest<StudentDto>
    public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{Id}");
    public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
 }
-
+public class GetStudentBySchoolIdQuery : ICacheableRequest<List<StudentDto>>
+{
+    public required int SchoolId { get; set; }
+    public string? Name { get; set; }
+    public string CacheKey => StudentCacheKey.GetBySchoolIdCacheKey($"{SchoolId}");
+    public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
+}
 public class GetStudentByIdQueryHandler :
+     IRequestHandler<GetStudentBySchoolIdQuery, List<StudentDto>>,
      IRequestHandler<GetStudentByIdQuery, StudentDto>
 {
     private readonly IApplicationDbContext _context;
@@ -37,7 +44,14 @@ public class GetStudentByIdQueryHandler :
   
         var data = await _context.Students.ApplySpecification(new StudentByIdSpecification(request.Id))
                      .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
-                     .FirstAsync(cancellationToken) ?? throw new NotFoundException($"Student with id: [{request.Id}] not found.");;
+                     .FirstAsync(cancellationToken) ?? throw new NotFoundException($"Student with id: [{request.Id}] not found.");
+        return data;
+    }
+    public async Task<List<StudentDto>> Handle(GetStudentBySchoolIdQuery request, CancellationToken cancellationToken)
+    {
+        var data = await _context.Students.ApplySpecification(new StudentBySchoolIdSpecification(request.SchoolId,request.Name))
+                     .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
+                     .ToListAsync(cancellationToken);
         return data;
     }
 }
