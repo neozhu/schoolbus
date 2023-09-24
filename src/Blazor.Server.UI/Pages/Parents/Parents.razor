@@ -202,9 +202,28 @@
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]" />
         <PropertyColumn Property="x => x.Children" Title="@L[_currentDto.GetMemberDescription(x=>x.Children)]">
             <CellTemplate>
+                  <MudAvatarGroup Max="2" Spacing="3" MaxColor="Color.Primary">
+                    @foreach (var item in context.Item.Children)
+                    {
+                        <MudAvatar>
+                            <MudImage Src="@item.ProfilePicture"></MudImage>
+                        </MudAvatar>
+                    }
+                </MudAvatarGroup>
+
             </CellTemplate>
         </PropertyColumn>
-
+        @if (UserProfile.IsSuperAdmin)
+        {
+            <PropertyColumn Property="x => x.Tenant" Title="@L[_currentDto.GetMemberDescription(x=>x.Tenant)]">
+                <CellTemplate>
+                    <div class="d-flex flex-column">
+                        <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
+                        <MudText Typo="Typo.body2">@context.Item.TenantId</MudText>
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
+        }
 
     </Columns>
     <NoRecordsContent>
@@ -302,9 +321,10 @@
 
     private async Task OnCreate()
     {
-        var command = new AddEditParentCommand();
+        var command = new AddEditParentCommand() { ProfilePicture="/img/parents.jpg", TenantId=UserProfile.TenantId};
         var parameters = new DialogParameters
             {
+                { nameof(_ParentFormDialog.UserProfile),UserProfile },
                 { nameof(_ParentFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -324,12 +344,15 @@
                 FirstName = copyitem.FirstName,
                 LastName = copyitem.LastName,
                 Phone = copyitem.Phone,
-                ProfilePicture = "",
+                ProfilePicture = "/img/parents.jpg",
                 Status = "",
+                TenantId=copyitem.TenantId,
                 Description = copyitem.Description,
             };
         var parameters = new DialogParameters
             {
+                { nameof(_ParentFormDialog.UserProfile),UserProfile },
+                { nameof(_ParentFormDialog.model),command },
                 { nameof(_ParentFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };

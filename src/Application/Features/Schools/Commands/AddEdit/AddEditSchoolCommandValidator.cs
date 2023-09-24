@@ -10,6 +10,7 @@ public class AddEditSchoolCommandValidator : AbstractValidator<AddEditSchoolComm
         RuleFor(v => v.Name)
              .MaximumLength(256)
              .NotEmpty();
+        RuleFor(v => v.TenantId).NotEmpty();
 
     }
     public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>

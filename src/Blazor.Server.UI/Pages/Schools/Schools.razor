@@ -9,6 +9,7 @@
 @using CleanArchitecture.Blazor.Application.Features.Schools.Queries.Export
 @using CleanArchitecture.Blazor.Application.Features.Schools.Queries.Pagination
 @using CleanArchitecture.Blazor.Application.Features.Schools.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
 
 @inherits FluxorComponent
 @inject IJSRuntime JS
@@ -198,6 +199,17 @@
                 </div>
             </CellTemplate>
         </PropertyColumn>
+        @if (UserProfile.IsSuperAdmin)
+        {
+            <PropertyColumn Property="x => x.Tenant" Title="@L[_currentDto.GetMemberDescription(x=>x.Tenant)]">
+                <CellTemplate>
+                    <div class="d-flex flex-column">
+                        <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
+                        <MudText Typo="Typo.body2">@context.Item.TenantId</MudText>
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
+        }
     </Columns>
     <NoRecordsContent>
         <MudText>@ConstantString.NoRecords</MudText>
@@ -230,6 +242,8 @@
     private IMediator Mediator { get; set; } = default!;
     [Inject]
     private IMapper Mapper { get; set; } = default!;
+    [Inject]
+    private ISchoolService SchoolService { get; set; } = null!;
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;
 
@@ -289,14 +303,16 @@
         SchoolCacheKey.Refresh();
         _selectedItems = new();
         Query.Keyword = string.Empty;
+        await SchoolService.Refresh();
         await _table.ReloadServerData();
     }
 
     private async Task OnCreate()
     {
-        var command = new AddEditSchoolCommand();
+        var command = new AddEditSchoolCommand() {  TenantId=UserProfile.TenantId};
         var parameters = new DialogParameters
             {
+                { nameof(_SchoolFormDialog.UserProfile),UserProfile },
                 { nameof(_SchoolFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -321,6 +337,7 @@
             };
         var parameters = new DialogParameters
             {
+                { nameof(_SchoolFormDialog.UserProfile),UserProfile },
                 { nameof(_SchoolFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -338,6 +355,7 @@
         var command = Mapper.Map<AddEditSchoolCommand>(dto);
         var parameters = new DialogParameters
             {
+                { nameof(_SchoolFormDialog.UserProfile),UserProfile },
                 { nameof(_SchoolFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };

@@ -1,4 +1,5 @@
-﻿@using CleanArchitecture.Blazor.Application.Features.Parents.Commands.AddEdit
+﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.Parents.Commands.AddEdit
 
 @inherits MudComponentBase
 @inject IStringLocalizer<Parents> L
@@ -7,7 +8,26 @@
     <DialogContent>
         <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
             <MudGrid>
-                @*TODO: define mudform that should be edit fields, for example:*@
+                <MudItem sm="12" xs="12">
+                    <div class="d-flex justify-center">
+                        <MudElement Class="d-flex flex-column  align-center">
+                            <MudAvatar Style="height:128px; width:128px; font-size:2rem;">
+                                <MudImage Src="@model.ProfilePicture"></MudImage>
+                            </MudAvatar>
+                        </MudElement>
+
+                        <MudTooltip Text="@L["Click upload a image."]">
+                            <MudFileUpload T="IBrowserFile" Accept=".jpg, .jpeg, .png, .webp" FilesChanged="UploadProfileImage" Style="margin-top:-10px;margin-left:-15px">
+                                <ButtonTemplate>
+                                    <MudIconButton HtmlTag="label"
+                                                   Icon="@Icons.Material.Filled.PhotoCamera"
+                                                   for="@context">
+                                    </MudIconButton>
+                                </ButtonTemplate>
+                            </MudFileUpload>
+                        </MudTooltip>
+                    </div>
+                </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.LastName)]" @bind-Value="model.LastName" For="@(() => model.LastName)" Required="false" RequiredError="@L["last name is required!"]"></MudTextField>
                 </MudItem>
@@ -15,19 +35,30 @@
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.FirstName)]" @bind-Value="model.FirstName" For="@(() => model.FirstName)" Required="false" RequiredError="@L["first name is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.ProfilePicture)]" @bind-Value="model.ProfilePicture" For="@(() => model.ProfilePicture)" Required="false" RequiredError="@L["profile picture is required!"]"></MudTextField>
-                </MudItem>
-                <MudItem xs="12" md="6">
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Phone)]" @bind-Value="model.Phone" For="@(() => model.Phone)" Required="false" RequiredError="@L["phone is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" Lines="3" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField ReadOnly Label="@L[model.GetMemberDescription(x=>x.Status)]" @bind-Value="model.Status" For="@(() => model.Status)" Required="false" RequiredError="@L["status is required!"]"></MudTextField>
                 </MudItem>
 
-
+                 @if (UserProfile.IsSuperAdmin)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect For="@(() => model.TenantId)"
+                                   Label="@L["Select Organization"]"
+                                   Required="true"
+                                   RequiredError="@L["Organization is required."]"
+                        @bind-Value="@model.TenantId">
+                            @foreach (var item in TenantsService.DataSource)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
             </MudGrid>
         </MudForm>
     </DialogContent>
@@ -47,6 +78,29 @@
     AddEditParentCommandValidator _modelValidator = new();
     [EditorRequired][Parameter] public AddEditParentCommand model { get; set; } = null!;
     [Inject] private IMediator _mediator { get; set; } = default!;
+    [Parameter] public UserProfile UserProfile { get; set; } = null!;
+    [Inject] private IUploadService _uploadService { get; set; } = default!;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
+    private async Task UploadProfileImage(IBrowserFile file)
+    {
+        var filestream = file.OpenReadStream(GlobalVariable.MaxAllowedSize);
+        var imgstream = new MemoryStream();
+        await filestream.CopyToAsync(imgstream);
+        imgstream.Position = 0;
+        using (var outStream = new MemoryStream())
+        {
+            using (var image = Image.Load(imgstream))
+            {
+                image.Mutate(i => i.Resize(new ResizeOptions() { Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop, Size = new SixLabors.ImageSharp.Size(128, 128) }));
+                image.Save(outStream, SixLabors.ImageSharp.Formats.Png.PngFormat.Instance);
+                var result = await _uploadService.UploadAsync(new UploadRequest(Guid.NewGuid().ToString() + ".png", UploadType.ProfilePicture, outStream.ToArray()));
+                model.ProfilePicture = result;
+                Snackbar.Add(L["The avatar has been updated."], MudBlazor.Severity.Info);
+
+            }
+        }
+    }
     async Task Submit()
     {
         try

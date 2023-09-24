@@ -17,10 +17,11 @@ public class AddEditItineraryCommandValidator : AbstractValidator<AddEditItinera
         RuleFor(v => v.TerminalStation)
             .MaximumLength(256)
             .NotEmpty();
-        RuleFor(v => v.SchoolId).GreaterThan(0);
-        RuleFor(v => v.PilotId).GreaterThan(0);
-        RuleFor(v => v.BusId).GreaterThan(0);
-
+        RuleFor(v => v.SchoolId).NotNull();
+        RuleFor(v => v.PilotId).NotNull();
+        RuleFor(v => v.BusId).NotNull();
+        RuleFor(v => v.FirstTime).NotEmpty();
+        RuleFor(v => v.LastTime).NotEmpty();
     }
      public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
      {

@@ -24,7 +24,9 @@ public class AddEditParentCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("Status")]
     public string? Status {get;set;} 
     [Description("Tenant Id")]
-    public string? TenantId {get;set;} 
+    public string? TenantId {get;set;}
+
+    public int[] Children { get; set; } = Array.Empty<int>();
 
 
       public string CacheKey => ParentCacheKey.GetAllCacheKey;

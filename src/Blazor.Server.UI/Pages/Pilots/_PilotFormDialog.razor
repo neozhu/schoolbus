@@ -1,4 +1,5 @@
-﻿@using CleanArchitecture.Blazor.Application.Features.Pilots.Commands.AddEdit
+﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.Pilots.Commands.AddEdit
 
 @inherits MudComponentBase
 @inject IStringLocalizer<Pilots> L
@@ -42,8 +43,23 @@
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField ReadOnly Label="@L[model.GetMemberDescription(x=>x.Status)]" @bind-Value="model.Status" For="@(() => model.Status)" Required="false" RequiredError="@L["status is required!"]"></MudTextField>
+                    <MudTextField ReadOnly Label="@L[model.GetMemberDescription(x=>x.Status)]" @bind-Value="model.Status" For="@(() => model.Status)" ></MudTextField>
                  </MudItem>
+                 @if (UserProfile.IsSuperAdmin)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect For="@(() => model.TenantId)"
+                                   Label="@L["Select Organization"]"
+                                   Required="true"
+                                   RequiredError="@L["Organization is required."]"
+                        @bind-Value="@model.TenantId">
+                            @foreach (var item in TenantsService.DataSource)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
              </MudGrid>
          </MudForm>
      </DialogContent>
@@ -64,6 +80,9 @@
     [EditorRequired][Parameter] public AddEditPilotCommand model { get; set; } = null!;
     [Inject] private IMediator _mediator { get; set; } = default!;
     [Inject] private IUploadService _uploadService { get; set; } = default!;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
+    [Parameter] public UserProfile UserProfile { get; set; } = null!;
     private async Task UploadProfileImage(IBrowserFile file)
     {
         var filestream = file.OpenReadStream(GlobalVariable.MaxAllowedSize);

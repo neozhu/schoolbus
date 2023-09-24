@@ -9,6 +9,7 @@
 @using CleanArchitecture.Blazor.Application.Features.Buses.Queries.Export
 @using CleanArchitecture.Blazor.Application.Features.Buses.Queries.Pagination
 @using CleanArchitecture.Blazor.Application.Features.Buses.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
 
 @inherits FluxorComponent
 @inject IJSRuntime JS
@@ -198,6 +199,17 @@
                 </div>
             </CellTemplate>
         </PropertyColumn>
+        @if (UserProfile.IsSuperAdmin)
+        {
+            <PropertyColumn Property="x => x.Tenant" Title="@L[_currentDto.GetMemberDescription(x=>x.Tenant)]">
+                <CellTemplate>
+                    <div class="d-flex flex-column">
+                        <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
+                        <MudText Typo="Typo.body2">@context.Item.TenantId</MudText>
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
+        }
     </Columns>
     <NoRecordsContent>
         <MudText>@ConstantString.NoRecords</MudText>
@@ -232,7 +244,8 @@
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;
-
+    [Inject]
+    private IBusService BusService { get; set; } = null!;
     private BusesWithPaginationQuery Query { get; set; } = new();
     [Inject]
     private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;
@@ -289,6 +302,7 @@
         BusCacheKey.Refresh();
         _selectedItems = new();
         Query.Keyword = string.Empty;
+        await BusService.Refresh();
         await _table.ReloadServerData();
     }
 
@@ -297,6 +311,7 @@
         var command = new AddEditBusCommand() { Status="OK" };
         var parameters = new DialogParameters
             {
+                { nameof(_BusFormDialog.UserProfile),UserProfile },
                 { nameof(_BusFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -321,6 +336,7 @@
             };
         var parameters = new DialogParameters
             {
+                { nameof(_BusFormDialog.UserProfile),UserProfile },
                 { nameof(_BusFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -338,6 +354,7 @@
         var command = Mapper.Map<AddEditBusCommand>(dto);
         var parameters = new DialogParameters
             {
+                { nameof(_BusFormDialog.UserProfile),UserProfile },
                 { nameof(_BusFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };

@@ -77,33 +77,48 @@ public class ApplicationDbContextInitializer
         // Default tenants
         if (!_context.Tenants.Any())
         {
-            _context.Tenants.Add(new Tenant { Name = "Master", Description = "Master Site" });
-            _context.Tenants.Add(new Tenant { Name = "Slave", Description = "Slave Site" });
+            _context.Tenants.Add(new Tenant { Name = "ORG-1", Description = "a company or customer's instance" });
+            _context.Tenants.Add(new Tenant { Name = "ORG-2", Description = "a company or customer's instance" });
             await _context.SaveChangesAsync();
 
         }
 
         // Default roles
-        var administratorRole = new ApplicationRole(RoleName.Admin) { Description = "Admin Group" };
-        var userRole = new ApplicationRole(RoleName.Basic) { Description = "Basic Group" };
+        var role1 = new ApplicationRole(RoleName.SuperAdmin) { Description = "Super Admin Group" };
+        var role2 = new ApplicationRole(RoleName.OrgAdmin) { Description = "ORG's Admin Group" };
+        var role3 = new ApplicationRole(RoleName.Pilots) { Description = "Pilots's Admin Group" };
+        var role4 = new ApplicationRole(RoleName.Parents) { Description = "Parents's Admin Group" };
+        var role5 = new ApplicationRole(RoleName.Students) { Description = "Students's Admin Group" };
+        var role6 = new ApplicationRole(RoleName.Basic) { Description = "Basic's Admin Group" };
         var permissions = GetAllPermissions();
-        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
+        if (_roleManager.Roles.All(r => r.Name != role1.Name))
         {
-            await _roleManager.CreateAsync(administratorRole);
+            await _roleManager.CreateAsync(role1);
            
             foreach (var permission in permissions)
             {
-                await _roleManager.AddClaimAsync(administratorRole, new Claim(ApplicationClaimTypes.Permission, permission));
+                await _roleManager.AddClaimAsync(role1, new Claim(ApplicationClaimTypes.Permission, permission));
             }
         }
-        if (_roleManager.Roles.All(r => r.Name != userRole.Name))
+        if (_roleManager.Roles.All(r => r.Name != role2.Name))
         {
-            await _roleManager.CreateAsync(userRole);
-            foreach (var permission in permissions)
-            {
-                if (permission.StartsWith("Permissions.Products"))
-                    await _roleManager.AddClaimAsync(userRole, new Claim(ApplicationClaimTypes.Permission, permission));
-            }
+            await _roleManager.CreateAsync(role2);
+        }
+        if (_roleManager.Roles.All(r => r.Name != role3.Name))
+        {
+            await _roleManager.CreateAsync(role3);
+        }
+        if (_roleManager.Roles.All(r => r.Name != role4.Name))
+        {
+            await _roleManager.CreateAsync(role4);
+        }
+        if (_roleManager.Roles.All(r => r.Name != role5.Name))
+        {
+            await _roleManager.CreateAsync(role5);
+        }
+        if (_roleManager.Roles.All(r => r.Name != role6.Name))
+        {
+            await _roleManager.CreateAsync(role6);
         }
         // Default users
         var administrator = new ApplicationUser { UserName = UserName.Administrator, Provider = "Local", IsActive = true, TenantId = _context.Tenants.First().Id, TenantName = _context.Tenants.First().Name, DisplayName = UserName.Administrator, Email = "new163@163.com", EmailConfirmed = true, ProfilePictureDataUrl = "https://s.gravatar.com/avatar/78be68221020124c23c665ac54e07074?s=80" };
@@ -113,12 +128,12 @@ public class ApplicationDbContextInitializer
         if (_userManager.Users.All(u => u.UserName != administrator.UserName))
         {
             await _userManager.CreateAsync(administrator, UserName.DefaultPassword);
-            await _userManager.AddToRolesAsync(administrator, new[] { administratorRole.Name! });
+            await _userManager.AddToRolesAsync(administrator, new[] { role1.Name! });
         }
         if (_userManager.Users.All(u => u.UserName != demo.UserName))
         {
             await _userManager.CreateAsync(demo, UserName.DefaultPassword);
-            await _userManager.AddToRolesAsync(demo, new[] { userRole.Name! });
+            await _userManager.AddToRolesAsync(demo, new[] { role2.Name! });
         }
 
         // Default data

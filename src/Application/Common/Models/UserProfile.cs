@@ -1,3 +1,5 @@
+using CleanArchitecture.Blazor.Application.Constants.Role;
+
 namespace CleanArchitecture.Blazor.Application.Common.Models;
 
 public class UserProfile
@@ -16,6 +18,8 @@ public class UserProfile
     public bool IsActive { get; set; }
     public string? TenantId { get; set; }
     public string? TenantName { get; set; }
+    public bool IsSuperAdmin => AssignedRoles?.Any(x => x.Equals(RoleName.SuperAdmin)) ?? false;
+    public bool IsOrgAdmin => AssignedRoles?.Any(x => x.Equals(RoleName.OrgAdmin)) ?? false;
 
 }
 

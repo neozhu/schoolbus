@@ -24,7 +24,7 @@ public class AddEditStudentCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("Status")]
     public string? Status {get;set;} 
     [Description("School Id")]
-    public int SchoolId {get;set;} 
+    public int? SchoolId {get;set;} 
     [Description("Tenant Id")]
     public string? TenantId {get;set;} 
 

@@ -15,7 +15,7 @@ public class BusDto
     public string? PlatNumber {get;set;} 
     [Description("Device Id")]
     public string? DeviceId {get;set;} 
-    [Description("Status")]
+    [Description("Device Status")]
     public string? Status {get;set;} 
     [Description("Description")]
     public string? Description {get;set;}

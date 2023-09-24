@@ -17,7 +17,7 @@ public class MenuService : IMenuService
                 new()
                 {
                     Title = "School",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin, },
                     Icon = Icons.Material.Filled.Castle,
                     Href = "/pages/schools",
                     PageStatus = PageStatus.Completed
@@ -25,7 +25,7 @@ public class MenuService : IMenuService
                 new()
                 {
                     Title = "Bus",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.DirectionsBus,
                     Href = "/pages/buses",
                     PageStatus = PageStatus.Completed
@@ -33,15 +33,23 @@ public class MenuService : IMenuService
                 new()
                 {
                     Title = "Pilot",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.FollowTheSigns,
                     Href = "/pages/pilots",
                     PageStatus = PageStatus.Completed
                 },
                 new()
                 {
+                    Title = "Itineraries",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.LinearScale,
+                    Href = "/pages/itineraries",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
                     Title = "Student",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.Groups,
                     Href = "/pages/students",
                     PageStatus = PageStatus.Completed
@@ -49,7 +57,7 @@ public class MenuService : IMenuService
                 new()
                 {
                     Title = "Parent",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.EscalatorWarning,
                     Href = "/pages/parents",
                     PageStatus = PageStatus.Completed
@@ -59,7 +67,7 @@ public class MenuService : IMenuService
         new MenuSectionModel
         {
             Title = "MANAGEMENT",
-            Roles = new[] { RoleName.Admin },
+            Roles = new[] { RoleName.SuperAdmin },
             SectionItems = new List<MenuSectionItemModel>
             {
                 new()

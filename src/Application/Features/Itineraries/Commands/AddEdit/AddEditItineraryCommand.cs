@@ -10,15 +10,15 @@ public class AddEditItineraryCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("Id")]
     public int Id { get; set; }
     [Description("Name")]
-    public string Name {get;set;} = String.Empty; 
+    public string Name => $"{StartingStation} - {TerminalStation}";
     [Description("Description")]
     public string? Description {get;set;} 
     [Description("Bus Id")]
-    public int BusId {get;set;} 
+    public int? BusId {get;set;} 
     [Description("Pilot Id")]
-    public int PilotId {get;set;} 
+    public int? PilotId {get;set;} 
     [Description("School Id")]
-    public int SchoolId {get;set;} 
+    public int? SchoolId {get;set;} 
     [Description("First Time")]
     public string? FirstTime {get;set;} 
     [Description("Last Time")]

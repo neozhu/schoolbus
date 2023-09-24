@@ -5,6 +5,7 @@ using CleanArchitecture.Blazor.Application.Common.Behaviours;
 using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
 using CleanArchitecture.Blazor.Application.Common.PublishStrategies;
 using CleanArchitecture.Blazor.Application.Common.Security;
+using CleanArchitecture.Blazor.Application.Services.DataServices;
 using CleanArchitecture.Blazor.Application.Services.MultiTenant;
 using CleanArchitecture.Blazor.Application.Services.Picklist;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,8 +36,8 @@ public static class DependencyInjection
             options.UseReduxDevTools();
         });
         services.AddLazyCache();
-        services.AddScoped<PicklistService>();
-        services.AddScoped<IPicklistService>(sp => {
+        services.AddSingleton<PicklistService>();
+        services.AddSingleton<IPicklistService>(sp => {
             var service = sp.GetRequiredService<PicklistService>();
             service.Initialize();
             return service;
@@ -44,6 +45,24 @@ public static class DependencyInjection
         services.AddSingleton<TenantService>();
         services.AddSingleton<ITenantService>(sp => {
             var service = sp.GetRequiredService<TenantService>();
+            service.Initialize();
+            return service;
+        });
+        services.AddSingleton<BusService>();
+        services.AddSingleton<IBusService>(sp => {
+            var service = sp.GetRequiredService<BusService>();
+            service.Initialize();
+            return service;
+        });
+        services.AddSingleton<PilotService>();
+        services.AddSingleton<IPilotService>(sp => {
+            var service = sp.GetRequiredService<PilotService>();
+            service.Initialize();
+            return service;
+        });
+        services.AddSingleton<SchoolService>();
+        services.AddSingleton<ISchoolService>(sp => {
+            var service = sp.GetRequiredService<SchoolService>();
             service.Initialize();
             return service;
         });

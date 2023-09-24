@@ -14,7 +14,7 @@ public class AddEditStudentCommandValidator : AbstractValidator<AddEditStudentCo
         RuleFor(v => v.LastName)
              .MaximumLength(256)
              .NotEmpty();
-        RuleFor(v => v.SchoolId)
+        RuleFor(v => v.SchoolId).NotNull()
              .GreaterThan(0);
 
     }
