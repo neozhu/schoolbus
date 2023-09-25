@@ -247,7 +247,7 @@
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;
     [Inject]
-    private IPilotService PilotService{ get; set; }
+    private IPilotService PilotService { get; set; } = null!;
 
     private PilotsWithPaginationQuery Query { get; set; } = new();
     [Inject]

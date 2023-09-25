@@ -65,10 +65,27 @@
             </MudGrid>
             <MudGrid>
                 <MudItem xs="12" md="12">
-                    <MudButton OnClick="@(()=>_open=true)">@L["Select Kids"] @selecteditems.Count()</MudButton>
-                    <MudButton>@L["Remove ALL"]</MudButton>
+                    <MudButton OnClick="@(()=>_open=true)">@L["Select Kids"]</MudButton>
+                    <MudButton OnClick="RemoveKids">@L["Remove ALL"]</MudButton>
                 </MudItem>
-
+                @if(model.Children.Any()){
+                    @foreach (var item in model.Children)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudPaper Class="pa-4" Elevation="3">
+                                <MudStack Row="true">
+                                    <MudAvatar Size="Size.Large">
+                                        <MudImage Src="@item.ProfilePicture"></MudImage>
+                                    </MudAvatar>
+                                    <MudStack Justify="Justify.Center" Spacing="0">
+                                        <MudText Typo="Typo.body1">@item.DisplayName</MudText>
+                                        <MudText Typo="Typo.body2">@item.Phone</MudText>
+                                    </MudStack>
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                }else{
                 @if (selecteditems.Any())
                 {
                     @foreach (var item in selecteditems)
@@ -102,6 +119,7 @@
                             </MudStack>
                         </MudPaper>
                     </MudItem>
+                }
                 }
 
 
@@ -201,7 +219,10 @@
             StateHasChanged();
         }
     }
-
+    private async Task RemoveKids()
+    {
+        
+    }
     private async Task UploadProfileImage(IBrowserFile file)
     {
         var filestream = file.OpenReadStream(GlobalVariable.MaxAllowedSize);

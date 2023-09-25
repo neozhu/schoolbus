@@ -12,12 +12,12 @@ public class ParentAdvancedSpecification : Specification<Parent>
         var last30day = Convert.ToDateTime(
             today.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.CurrentCulture) + " 00:00:00",
             CultureInfo.CurrentCulture);
+        Query.Include(x => x.Children);
+        Query.Where(q => q.LastName != null)
+              .Where(q => q.LastName!.Contains(filter.Keyword) || q.FirstName!.Contains(filter.Keyword) || q.Phone!.Contains(filter.Keyword) || q.Description!.Contains(filter.Keyword), !string.IsNullOrEmpty(filter.Keyword))
+              .Where(q => q.CreatedBy == filter.CurrentUser.UserId, filter.ListView == ParentListView.My && filter.CurrentUser is not null)
+              .Where(q => q.Created >= start && q.Created <= end, filter.ListView == ParentListView.CreatedToday)
+              .Where(q => q.Created >= last30day, filter.ListView == ParentListView.Created30Days);
 
-       Query.Where(q => q.LastName != null)
-             .Where(q => q.LastName!.Contains(filter.Keyword) ||  q.FirstName!.Contains(filter.Keyword) || q.Phone!.Contains(filter.Keyword)  || q.Description!.Contains(filter.Keyword), !string.IsNullOrEmpty(filter.Keyword))
-             .Where(q => q.CreatedBy == filter.CurrentUser.UserId, filter.ListView == ParentListView.My && filter.CurrentUser is not null)
-             .Where(q => q.Created >= start && q.Created <= end, filter.ListView == ParentListView.CreatedToday)
-             .Where(q => q.Created >= last30day, filter.ListView == ParentListView.Created30Days);
-       
     }
 }

@@ -17,7 +17,7 @@ public class MenuService : IMenuService
                 new()
                 {
                     Title = "School",
-                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin, },
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.Castle,
                     Href = "/pages/schools",
                     PageStatus = PageStatus.Completed
@@ -67,7 +67,7 @@ public class MenuService : IMenuService
         new MenuSectionModel
         {
             Title = "MANAGEMENT",
-            Roles = new[] { RoleName.SuperAdmin },
+            Roles = new[] { RoleName.SuperAdmin,RoleName.Admin },
             SectionItems = new List<MenuSectionItemModel>
             {
                 new()
