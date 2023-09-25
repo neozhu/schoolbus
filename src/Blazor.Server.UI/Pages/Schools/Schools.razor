@@ -322,6 +322,7 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            SchoolCacheKey.Refresh();
         }
     }
     private async Task OnClone()
@@ -348,6 +349,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems.Remove(copyitem);
+            await SchoolService.Refresh();
         }
     }
     private async Task OnEdit(SchoolDto dto)
@@ -365,6 +367,8 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            await SchoolService.Refresh();
+             
         }
     }
 
@@ -383,6 +387,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems.Remove(dto);
+            await SchoolService.Refresh();
         }
     }
 
@@ -401,6 +406,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems = new();
+            await SchoolService.Refresh();
         }
     }
 

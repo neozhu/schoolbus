@@ -308,7 +308,7 @@
 
     private async Task OnCreate()
     {
-        var command = new AddEditBusCommand() { Status="OK" };
+        var command = new AddEditBusCommand() { Status="OK" , TenantId=UserProfile.TenantId };
         var parameters = new DialogParameters
             {
                 { nameof(_BusFormDialog.UserProfile),UserProfile },
@@ -321,6 +321,7 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            await BusService.Refresh();
         }
     }
     private async Task OnClone()
@@ -347,6 +348,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems.Remove(copyitem);
+            await BusService.Refresh();
         }
     }
     private async Task OnEdit(BusDto dto)
@@ -364,6 +366,7 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            await BusService.Refresh();
         }
     }
 
@@ -382,6 +385,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems.Remove(dto);
+            await BusService.Refresh();
         }
     }
 
@@ -400,6 +404,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems = new();
+            await BusService.Refresh();
         }
     }
 

@@ -4,6 +4,7 @@
 using CleanArchitecture.Blazor.Application.Features.Parents.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Parents.Caching;
 using CleanArchitecture.Blazor.Application.Features.Students.DTOs;
+using CleanArchitecture.Blazor.Domain.Entities;
 
 namespace CleanArchitecture.Blazor.Application.Features.Parents.Commands.AddEdit;
 
@@ -85,7 +86,11 @@ public class AddEditParentCommandHandler : IRequestHandler<AddEditParentCommand,
         {
             var kids = await _context.Students.Where(x => request.RelatedKids.Contains(x.Id)).ToListAsync();
             var item = _mapper.Map<Parent>(request);
-            item.Children = kids;
+            foreach(var kid in request.Children)
+            {
+                var addkid = new ParentStudent() { ParentsId = item.Id,Parent=item, ChildrenId = kid.Id };
+                _context.ParentStudents.Add(addkid);
+            }
             // raise a create domain event
             item.AddDomainEvent(new ParentCreatedEvent(item));
             _context.Parents.Add(item);

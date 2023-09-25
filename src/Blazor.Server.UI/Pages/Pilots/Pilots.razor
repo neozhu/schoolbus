@@ -324,6 +324,7 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            await PilotService.Refresh();
         }
     }
     private async Task OnClone()
@@ -352,6 +353,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems.Remove(copyitem);
+            await PilotService.Refresh();
         }
     }
     private async Task OnEdit(PilotDto dto)
@@ -369,6 +371,7 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            await PilotService.Refresh();
         }
     }
 
@@ -387,6 +390,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems.Remove(dto);
+            await PilotService.Refresh();
         }
     }
 
@@ -405,6 +409,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems = new();
+            await PilotService.Refresh();
         }
     }
 
