@@ -3,6 +3,7 @@
 @using BlazorDownloadFile
 @using CleanArchitecture.Blazor.Application.Features.Students.Caching
 @using CleanArchitecture.Blazor.Application.Features.Students.DTOs
+@using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById;
 @using CleanArchitecture.Blazor.Application.Features.Students.Specifications
 @using CleanArchitecture.Blazor.Application.Features.Students.Commands.Delete
 @using CleanArchitecture.Blazor.Application.Features.Students.Commands.Import
@@ -159,6 +160,7 @@
                     <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" DisableElevation="true" Size="Size.Small"
                              Dense="true"
                              EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Info" AnchorOrigin="Origin.CenterLeft">
+                        <MudMenuItem OnClick="@(()=>OnShowStudentInfo(context.Item))">@L["Show Details"]</MudMenuItem>
                         @if (_canEdit)
                         {
                             <MudMenuItem OnClick="@(()=>OnEdit(context.Item))">@ConstantString.Edit</MudMenuItem>
@@ -200,20 +202,20 @@
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]" />
-        <PropertyColumn Property="x => x.Parents" Title="@L[_currentDto.GetMemberDescription(x=>x.Parents)]" >
+        <PropertyColumn Property="x => x.Parents" Title="@L[_currentDto.GetMemberDescription(x=>x.Parents)]">
             <CellTemplate>
-            
-                    @foreach (var item in context.Item.Parents)
-                    {
-                       <MudTooltip Text="@item.DisplayName">
-                            <MudAvatar Size="Size.Small" Class="mr-2">
-                                <MudImage Src="@item.ProfilePicture"></MudImage>
-                            </MudAvatar>
-                       </MudTooltip>
-                           
-                      
-                    }
-        
+
+                @foreach (var item in context.Item.Parents)
+                {
+                    <MudTooltip Text="@item.DisplayName">
+                        <MudAvatar Size="Size.Small" Class="mr-2">
+                            <MudImage Src="@item.ProfilePicture"></MudImage>
+                        </MudAvatar>
+                    </MudTooltip>
+
+
+                }
+
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.SchoolId" Title="@L[_currentDto.GetMemberDescription(x=>x.SchoolId)]">
@@ -244,9 +246,41 @@
     </PagerContent>
 </MudDataGrid>
 
+<MudDrawer @bind-Open="@_open" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">@L["Student Information"]</MudText>
+    </MudDrawerHeader>
+    <div class="d-flex flex-column gap-2 px-2">
+        @if (_searching == true)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-2" />
+        }
+        else
+        {
+            if (StudentInfo is not null)
+            {
+                <MudPaper Class="d-flex flex-row gap-2 align-content-center justify-space-between" Elevation="3">
+                    <div class="d-flex align-self-center gap-2">
+                    <MudAvatar Size="Size.Large">
+                        <MudImage Src="@StudentInfo.ProfilePicture"></MudImage>
+                    </MudAvatar>
+                    <div class="d-flex flex-column align-self-center flex-grow-1">
+                        <p>@StudentInfo.School.Name</p>
+                        <p>@StudentInfo.DisplayName</p>
+                    </div>
+                    </div>
+                    <div class="d-flex flex-column align-self-center">
+                        <MudBarcode Height="90" Width="90" Value="@StudentInfo.UID"></MudBarcode>
+                    </div>
+                </MudPaper>
+            }
+        }
+    </div>
 
+</MudDrawer>
 
 @code {
+
     public string? Title { get; private set; }
     private int _defaultPageSize = 15;
     private HashSet<StudentDto> _selectedItems = new HashSet<StudentDto>();
@@ -256,6 +290,10 @@
     private bool _uploading;
     private bool _downloading;
     private bool _exporting;
+    private bool _open;
+    private bool _searching;
+
+    private StudentDto? StudentInfo { get; set; }
     [Inject]
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
@@ -307,6 +345,26 @@
         }
 
     }
+
+    async void OnShowStudentInfo(StudentDto item)
+    {
+        _open = true;
+        try
+        {
+            _searching = true;
+            var result = await Mediator.Send(new GetStudentByIdQuery(item.Id));
+            StudentInfo = result;
+
+        }
+        finally
+        {
+            _searching = false;
+            StateHasChanged();
+        }
+
+
+    }
+
     private async Task OnSearch(string text)
     {
         _selectedItems = new();
@@ -328,7 +386,7 @@
 
     private async Task OnCreate()
     {
-        var command = new AddEditStudentCommand() { ProfilePicture="/img/kid.webp", TenantId = UserProfile.TenantId, Status="OK"};
+        var command = new AddEditStudentCommand() { ProfilePicture = "/img/kid.webp", TenantId = UserProfile.TenantId, Status = "OK" };
         var parameters = new DialogParameters
             {
                 { nameof(_StudentFormDialog.UserProfile),UserProfile },
@@ -353,8 +411,8 @@
                 Phone = copyitem.Phone,
                 ProfilePicture = "/img/kid.webp",
                 Status = "",
-                UID="",
-                TenantId=copyitem.TenantId,
+                UID = "",
+                TenantId = copyitem.TenantId,
                 Description = copyitem.Description,
             };
         var parameters = new DialogParameters

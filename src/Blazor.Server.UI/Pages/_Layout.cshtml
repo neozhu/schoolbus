@@ -121,11 +121,11 @@
             var client = new msal.PublicClientApplication(msalConfig);
             var response = await client.loginPopup(loginRequest);
             await dotNetHelper.invokeMethodAsync('ConfirmExternal', provider, response.account.username, response.account.name, response.accessToken);
-            console.log('login with microsoft success');
+            //console.log('login with microsoft success');
             localStorage.setItem('microsoft_client_token', response.account.homeAccountId);
         }
         async function loginWithGoogle(provider, dotNetHelper) {
-            console.log(provider + 'initialize');
+            //console.log(provider + 'initialize');
             client = google.accounts.oauth2.initTokenClient({
                 client_id: auth2Config.clientId,
                 scope: auth2Config.scope,
@@ -179,7 +179,7 @@
                     url: url,
                 }
             });
-            console.log(viewer);
+            //console.log(viewer);
         }
 
         function clearInput(inputId) {
@@ -232,7 +232,7 @@
         function previewImage(url, gallery) {
  
             if (url ==null) return;
-            console.log(url, gallery);
+            //console.log(url, gallery);
             if (isImageUrl(url)) {
                 let images = [];
                 if (gallery != null) {

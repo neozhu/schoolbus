@@ -9,9 +9,13 @@ namespace CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById
 
 public class GetStudentByIdQuery : ICacheableRequest<StudentDto>
 {
-   public required int Id { get; set; }
+   public int Id { get;  }
    public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{Id}");
    public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
+    public GetStudentByIdQuery(int id)
+    {
+        Id = id;
+    }
 }
 public class GetStudentBySchoolIdQuery : ICacheableRequest<List<StudentDto>>
 {
