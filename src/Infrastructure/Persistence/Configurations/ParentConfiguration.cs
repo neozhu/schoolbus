@@ -17,7 +17,8 @@ public class ParentConfiguration : IEntityTypeConfiguration<Parent>
         builder.Property(t => t.LastName).HasMaxLength(50).IsRequired();
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.Navigation(e => e.Tenant).AutoInclude();
-        builder.HasMany(t => t.Children).WithMany(x => x.Parents);
+        builder.HasMany(t => t.Children).WithMany(x => x.Parents).UsingEntity<ParentStudent>(x=>x.HasOne(y=>y.Student).WithMany().HasForeignKey(x=>x.ChildrenId),
+            x=>x.HasOne(y=>y.Parent).WithMany().HasForeignKey(x=>x.ParentsId));
        
         builder.Ignore(e => e.DomainEvents);
     }

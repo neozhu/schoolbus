@@ -67,6 +67,15 @@ public class AddEditParentCommandHandler : IRequestHandler<AddEditParentCommand,
         {
             var item = await _context.Parents.FindAsync(new object[] { request.Id }, cancellationToken) ?? throw new NotFoundException($"Parent with id: [{request.Id}] not found.");
             item = _mapper.Map(request, item);
+            var relatedkids = await _context.ParentStudents.Where(x => x.ParentsId == request.Id).ToListAsync();
+            foreach(var student in request.Children)
+            {
+                if (!relatedkids.Any(x => x.ChildrenId == student.Id))
+                {
+                    var addkid = new ParentStudent() { ParentsId = item.Id, ChildrenId = student.Id };
+                    _context.ParentStudents.Add(addkid);
+                }
+            }
             // raise a update domain event
             item.AddDomainEvent(new ParentUpdatedEvent(item));
             await _context.SaveChangesAsync(cancellationToken);

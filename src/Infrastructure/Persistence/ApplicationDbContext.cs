@@ -37,7 +37,7 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Itinerary> Itineraries { get; set; }
     public DbSet<TransportLog> TransportLogs { get; set; }
     public DbSet<Message> Messages { get; set; }
-
+    public DbSet<ParentStudent> ParentStudents { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

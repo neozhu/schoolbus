@@ -1,5 +1,6 @@
 ﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
 @using CleanArchitecture.Blazor.Application.Features.Parents.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Features.Parents.Commands.Delete;
 @using CleanArchitecture.Blazor.Application.Features.Students.DTOs;
 @using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById;
 @using CleanArchitecture.Blazor.Application.Services.DataServices;
@@ -66,9 +67,10 @@
             <MudGrid>
                 <MudItem xs="12" md="12">
                     <MudButton OnClick="@(()=>_open=true)">@L["Select Kids"]</MudButton>
-                    <MudButton OnClick="RemoveKids">@L["Remove ALL"]</MudButton>
+                    <MudButton OnClick="RemoveKids" Disabled="@(!(selecteditems.Any() || model.Children.Any()))">@L["Remove ALL"]</MudButton>
                 </MudItem>
-                @if(model.Children.Any()){
+                @if (model.Children.Any())
+                {
                     @foreach (var item in model.Children)
                     {
                         <MudItem xs="12" sm="6" md="4">
@@ -85,42 +87,22 @@
                             </MudPaper>
                         </MudItem>
                     }
-                }else{
-                @if (selecteditems.Any())
-                {
-                    @foreach (var item in selecteditems)
-                    {
-                        <MudItem xs="12" sm="6" md="4" >
-                            <MudPaper Class="pa-4" Elevation="3" >
-                                <MudStack Row="true">
-                                    <MudAvatar Size="Size.Large">
-                                        <MudImage Src="@item.ProfilePicture"></MudImage>
-                                    </MudAvatar>
-                                    <MudStack Justify="Justify.Center" Spacing="0">
-                                        <MudText Typo="Typo.body1">@item.DisplayName</MudText>
-                                        <MudText Typo="Typo.body2">@item.Phone</MudText>
-                                    </MudStack>
-                                </MudStack>
-                            </MudPaper>
-                        </MudItem>
-                    }
-
                 }
                 else
                 {
-                    <MudItem xs="12" sm="6" md="4" >
+                    <MudItem xs="12" sm="6" md="4">
                         <MudPaper Class="pa-4" Elevation="3">
                             <MudStack Row="true">
                                 <MudSkeleton SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" Animation="Animation.False" />
                                 <MudStack Justify="Justify.Center" Spacing="0">
-                                    <MudSkeleton Width="120px" Height="20px" Animation="Animation.False"/>
+                                    <MudSkeleton Width="120px" Height="20px" Animation="Animation.False" />
                                     <MudSkeleton Width="120px" Height="20px" Animation="Animation.False" />
                                 </MudStack>
                             </MudStack>
                         </MudPaper>
                     </MudItem>
                 }
-                }
+                
 
 
             </MudGrid>
@@ -152,7 +134,7 @@
         }
         else
         {
-            <MudDataGrid Items="@studentList" MultiSelection="true" @bind-SelectedItems="selecteditems">
+            <MudDataGrid T="StudentDto" Items="@studentList" MultiSelection="true" SelectedItems="@selecteditems" SelectedItemsChanged="@SelectedItemsChanged">
                 <Columns>
                     <SelectColumn T="StudentDto" />
                     <PropertyColumn Property="x => x.DisplayName" Title="@L["Kids Name"]" CellClass="d-flex align-items-center">
@@ -204,7 +186,16 @@
     [Inject]
     private ISchoolService SchoolService { get; set; } = default!;
 
-
+    void SelectedItemsChanged(HashSet<StudentDto> items)
+    {
+        foreach (var item in items)
+        {
+            if (!model.Children.Any(x => x.Id == item.Id))
+            {
+                model.Children.Add(new StudentDto() { Description = item.Description, FirstName = item.FirstName, LastName = item.LastName, Phone = item.Phone, SchoolId = item.SchoolId, Status = item.Status, UID = item.UID, Id = item.Id, ProfilePicture = item.ProfilePicture, TenantId = item.TenantId });
+            }
+        }
+    }
     async void SearchStudents()
     {
         _searching = true;
@@ -221,7 +212,19 @@
     }
     private async Task RemoveKids()
     {
-        
+        if (selecteditems.Any())
+        {
+            selecteditems = new HashSet<StudentDto>();
+        }
+        if (model.Children.Any())
+        {
+            var result = await _mediator.Send(new RemoveAllKidsCommand(model.Id));
+            if (result.Succeeded)
+            {
+                model.Children = new List<StudentDto>();
+            }
+        }
+
     }
     private async Task UploadProfileImage(IBrowserFile file)
     {
@@ -250,8 +253,8 @@
             await _form!.Validate().ConfigureAwait(false);
             if (!_form!.IsValid)
                 return;
-            model.RelatedKids = selecteditems.Select(x => x.Id).ToArray();
-            if (!model.RelatedKids.Any() && !model.Children.Any())
+
+            if (!model.Children.Any())
             {
                 Snackbar.Add(L["Please choose kids"], MudBlazor.Severity.Error);
                 return;
