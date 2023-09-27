@@ -61,6 +61,14 @@ public class MenuService : IMenuService
                     Icon = Icons.Material.Filled.EscalatorWarning,
                     Href = "/pages/parents",
                     PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Scanner",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.QrCodeScanner,
+                    Href = "/pages/scanner",
+                    PageStatus = PageStatus.Completed
                 }
             }
         },

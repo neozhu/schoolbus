@@ -5,6 +5,7 @@ using Blazor.Server.UI.Services.Notifications;
 using Blazor.Server.UI.Services.UserPreferences;
 using BlazorDownloadFile;
 using CleanArchitecture.Blazor.Application.Common.Configurations;
+using Html5QrcodeBlazor.Wrapper;
 using MudBlazor.Services;
 using MudExtensions.Services;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
@@ -57,7 +58,7 @@ public static class ConfigureServices
         builder.Services.AddScoped<IMenuService, MenuService>();
         builder.Services.AddScoped<INotificationService, InMemoryNotificationService>();
         builder.Services.AddHealthChecks();
-
+        builder.Services.AddScoped<Html5QrcodeReader>();
         var privacySettings = builder.Configuration.GetRequiredSection(PrivacySettings.Key).Get<PrivacySettings>();
         if (privacySettings is not { UseGoogleAnalytics: true }) return builder;
 
