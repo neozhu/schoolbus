@@ -41,8 +41,10 @@ public class TransportLogDto
     public string TenantId { get; set; } = null!;
     [Description("Organization")]
     public TenantDto Tenant { get; set; } = null!;
-
-
+    [Description("Done")]
+    public bool Done { get; set; }
+    [Description("Reference Id")]
+    public int? RefId { get; set; }
     private class Mapping : Profile
     {
         public Mapping()

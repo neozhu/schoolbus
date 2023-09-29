@@ -13,6 +13,10 @@ public static class ItineraryCacheKey
     public static string GetByNameCacheKey(string parameters) {
         return $"ItineraryCacheKey:GetByNameCacheKey,{parameters}";
     }
+    public static string GetByPilotCacheKey(string parameters)
+    {
+        return $"ItineraryCacheKey:GetByPilotCacheKey,{parameters}";
+    }
     public static string GetByIdCacheKey(string parameters) {
         return $"ItineraryCacheKey:GetByIdCacheKey,{parameters}";
     }

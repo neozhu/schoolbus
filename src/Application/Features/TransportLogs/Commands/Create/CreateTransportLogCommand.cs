@@ -31,15 +31,17 @@ public class CreateTransportLogCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("Comments")]
     public string? Comments {get;set;} 
     [Description("Tenant Id")]
-    public string? TenantId {get;set;} 
-
-      public string CacheKey => TransportLogCacheKey.GetAllCacheKey;
+    public string? TenantId {get;set;}
+    [Description("Done")]
+    public bool Done { get; set; }
+    [Description("Reference Id")]
+    public int? RefId { get; set; }
+    public string CacheKey => TransportLogCacheKey.GetAllCacheKey;
       public CancellationTokenSource? SharedExpiryTokenSource => TransportLogCacheKey.SharedExpiryTokenSource();
     private class Mapping : Profile
     {
         public Mapping()
         {
-            CreateMap<TransportLogDto,CreateTransportLogCommand>(MemberList.None);
             CreateMap<CreateTransportLogCommand, TransportLog>(MemberList.None);
         }
     }

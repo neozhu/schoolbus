@@ -20,6 +20,8 @@ public  class TransportLog: BaseAuditableEntity, IMustHaveTenant
     public string? CheckType { get; set; }
     public string? UpOrDown { get; set; }
     public string? Comments { get; set; }
+    public int? RefId { get; set; }
+    public bool Done { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;
 }
