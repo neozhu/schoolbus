@@ -1,4 +1,5 @@
-﻿@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.AddEdit
+﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.AddEdit
 
 @inherits MudComponentBase
 @inject IStringLocalizer<TransportLogs> L
@@ -38,9 +39,21 @@
                 <MudItem xs="12" md="6">
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Comments)]" @bind-Value="model.Comments" For="@(() => model.Comments)" Required="false" RequiredError="@L["comments is required!"]"></MudTextField>
                 </MudItem>
-                <MudItem xs="12" md="6">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.TenantId)]" @bind-Value="model.TenantId" For="@(() => model.TenantId)" Required="false" RequiredError="@L["tenant id is required!"]"></MudTextField>
-                </MudItem>
+                @if (UserProfile.IsSuperAdmin)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect For="@(() => model.TenantId)"
+                                   Label="@L["Select Organization"]"
+                                   Required="true"
+                                   RequiredError="@L["Organization is required."]"
+                        @bind-Value="@model.TenantId">
+                            @foreach (var item in TenantsService.DataSource)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
 
             </MudGrid>
         </MudForm>
@@ -56,8 +69,11 @@
     MudForm? _form;
     private bool _saving = false;
     private bool _savingnew = false;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public UserProfile UserProfile { get; set; } = null!;
     AddEditTransportLogCommandValidator _modelValidator = new();
     [EditorRequired][Parameter] public AddEditTransportLogCommand model { get; set; } = null!;
     [Inject] private IMediator _mediator { get; set; } = default!;

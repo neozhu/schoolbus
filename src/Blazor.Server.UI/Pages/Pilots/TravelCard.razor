@@ -1,4 +1,5 @@
 ﻿@using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
+
 <style>
     .rip {
         height: 15px;
@@ -11,7 +12,7 @@
         box-shadow: 0 1px 0 0 #fff, 0 -1px 0 0 #fff;
     }
 </style>
-<MudCard Square="false" Elevation="1" Style="min-width:365px;width:365px;height:150px">
+<MudCard Square="false" Outlined="@(!Active)" Elevation="@Elevation" Style="min-width:365px;width:365px;height:150px">
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar >
@@ -23,7 +24,7 @@
             <MudText Typo="Typo.body2">@Itinerary.Pilot.Phone</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Filled.Coronavirus" Color="Color.Primary" />
+            <MudIconButton Icon="@Icons.Material.Filled.Coronavirus" OnClick="OnClick" Color="Color.Primary" />
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
@@ -46,6 +47,16 @@
 
 @code {
     [Parameter]
+    public bool Active { get; set; }
+    public int Elevation => Active ? 2 : 0;
+    [Parameter]
     [EditorRequired]
     public ItineraryDto Itinerary { get; set; } = null!;
+    [Parameter]
+    public EventCallback<ItineraryDto> SetItinerary { get; set; }
+
+    private void OnClick()
+    {
+        SetItinerary.InvokeAsync(Itinerary);
+    }
 }

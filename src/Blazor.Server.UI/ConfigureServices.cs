@@ -50,7 +50,7 @@ public static class ConfigureServices
             config.SnackbarConfiguration.ShowTransitionDuration = 500;
             config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
         });
-
+        builder.Services.AddGeolocationServices();
         builder.Services.AddMudExtensions();
         builder.Services.AddScoped<LayoutService>();
         builder.Services.AddBlazorDownloadFile();

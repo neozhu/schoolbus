@@ -12,6 +12,8 @@ public class TransportLogConfiguration : IEntityTypeConfiguration<TransportLog>
 {
     public void Configure(EntityTypeBuilder<TransportLog> builder)
     {
+        builder.Property(x => x.Latitude).HasPrecision(16, 10);
+        builder.Property(x => x.Longitude).HasPrecision(16, 10);
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.HasOne(t => t.Itinerary).WithMany(x=>x.TransportLogs).HasForeignKey(x => x.ItineraryId);
         builder.HasOne(t => t.Student).WithMany(x => x.TransportLogs).HasForeignKey(x => x.StudentId);

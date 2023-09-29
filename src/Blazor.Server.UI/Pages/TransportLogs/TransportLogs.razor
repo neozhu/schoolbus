@@ -33,7 +33,7 @@
     <ToolBarContent>
         <div class="d-flex align-start flex-grow-1">
             <div class="d-flex gap-4">
-                <MudIcon Icon="@Icons.Material.Filled.Window" Size="Size.Large" />
+                <MudIcon Icon="@Icons.Material.Filled.History" Size="Size.Large" />
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.caption">@Title</MudText>
                     <MudEnumSelect Style="min-width:120px" TEnum="TransportLogListView" ValueChanged="OnChangedListView" Value="Query.ListView" Dense="true" Label="List View">
@@ -159,17 +159,23 @@
             <CellTemplate>
                 @context.Item.Itinerary.Name
             </CellTemplate>
-
         </PropertyColumn>
-       
         <PropertyColumn Property="x => x.SwipeDateTime" Title="@L[_currentDto.GetMemberDescription(x=>x.SwipeDateTime)]" />
         <PropertyColumn Property="x => x.Location" Title="@L[_currentDto.GetMemberDescription(x=>x.Location)]" />
-        <PropertyColumn Property="x => x.Longitude" Title="@L[_currentDto.GetMemberDescription(x=>x.Longitude)]" />
-        <PropertyColumn Property="x => x.Latitude" Title="@L[_currentDto.GetMemberDescription(x=>x.Latitude)]" />
         <PropertyColumn Property="x => x.CheckType" Title="@L[_currentDto.GetMemberDescription(x=>x.CheckType)]" />
         <PropertyColumn Property="x => x.UpOrDown" Title="@L[_currentDto.GetMemberDescription(x=>x.UpOrDown)]" />
-        <PropertyColumn Property="x => x.DeviceId" Title="@L[_currentDto.GetMemberDescription(x=>x.DeviceId)]" />
         <PropertyColumn Property="x => x.Comments" Title="@L[_currentDto.GetMemberDescription(x=>x.Comments)]" />
+        @if (UserProfile.IsSuperAdmin)
+        {
+            <PropertyColumn Property="x => x.Tenant" Title="@L[_currentDto.GetMemberDescription(x=>x.Tenant)]">
+                <CellTemplate>
+                    <div class="d-flex flex-column">
+                        <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
+                        <MudText Typo="Typo.body2">@context.Item.TenantId</MudText>
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
+        }
     </Columns>
     <NoRecordsContent>
         <MudText>@ConstantString.NoRecords</MudText>
@@ -269,6 +275,7 @@
         var command = new AddEditTransportLogCommand();
         var parameters = new DialogParameters
             {
+                { nameof(_TransportLogFormDialog.UserProfile),UserProfile },
                 { nameof(_TransportLogFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -286,6 +293,7 @@
         var command = Mapper.Map<AddEditTransportLogCommand>(dto);
         var parameters = new DialogParameters
             {
+                { nameof(_TransportLogFormDialog.UserProfile),UserProfile },
                 { nameof(_TransportLogFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };

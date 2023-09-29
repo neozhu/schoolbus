@@ -5,6 +5,7 @@ using CleanArchitecture.Blazor.Application.Common.Behaviours;
 using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
 using CleanArchitecture.Blazor.Application.Common.PublishStrategies;
 using CleanArchitecture.Blazor.Application.Common.Security;
+using CleanArchitecture.Blazor.Application.Services;
 using CleanArchitecture.Blazor.Application.Services.DataServices;
 using CleanArchitecture.Blazor.Application.Services.MultiTenant;
 using CleanArchitecture.Blazor.Application.Services.Picklist;
@@ -67,6 +68,7 @@ public static class DependencyInjection
             return service;
         });
         services.AddScoped<RegisterFormModelFluentValidator>();
+       
         return services;
     }
    

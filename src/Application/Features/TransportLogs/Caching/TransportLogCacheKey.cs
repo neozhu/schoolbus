@@ -16,6 +16,10 @@ public static class TransportLogCacheKey
     public static string GetByIdCacheKey(string parameters) {
         return $"TransportLogCacheKey:GetByIdCacheKey,{parameters}";
     }
+    public static string GetOnBoardCacheKey(string parameters)
+    {
+        return $"TransportLogCacheKey:GetOnBoardCacheKey,{parameters}";
+    }
     static TransportLogCacheKey()
     {
         _tokensource = new CancellationTokenSource(refreshInterval);

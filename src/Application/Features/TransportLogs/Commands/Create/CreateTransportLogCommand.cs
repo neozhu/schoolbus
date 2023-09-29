@@ -6,38 +6,28 @@ using CleanArchitecture.Blazor.Application.Features.TransportLogs.Caching;
 
 namespace CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Create;
 
-public class CreateTransportLogCommand: ICacheInvalidatorRequest<Result<int>>
+public class CreateTransportLogCommand : ICacheInvalidatorRequest<Result<int>>
 {
-    [Description("Id")]
-    public int Id { get; set; }
-    [Description("Student Id")]
-    public int StudentId {get;set;} 
-    [Description("Itinerary Id")]
-    public int ItineraryId {get;set;} 
-    [Description("Device Id")]
-    public string? DeviceId {get;set;} 
+    public required int StudentId { get; set; }
+    public required int ItineraryId { get; set; }
     [Description("Swipe Date Time")]
-    public DateTime SwipeDateTime {get;set;} 
+    public DateTime SwipeDateTime { get; set; } = DateTime.Now;
     [Description("Location")]
-    public string? Location {get;set;} 
+    public required string? Location { get; set; }
     [Description("Longitude")]
-    public double? Longitude {get;set;} 
+    public required double? Longitude { get; set; }
     [Description("Latitude")]
-    public double? Latitude {get;set;} 
+    public required double? Latitude { get; set; }
     [Description("Check Type")]
-    public string? CheckType {get;set;} 
+    public string? CheckType { get; set; } = "Automatic";
     [Description("Up Or Down")]
-    public string? UpOrDown {get;set;} 
+    public string? UpOrDown { get; set; } = "Up";
     [Description("Comments")]
-    public string? Comments {get;set;} 
-    [Description("Tenant Id")]
-    public string? TenantId {get;set;}
-    [Description("Done")]
-    public bool Done { get; set; }
-    [Description("Reference Id")]
-    public int? RefId { get; set; }
+    public string? Comments { get; set; }
+    public required string? DeviceId { get; set; }
+    public required string? TenantId { get; set; }
     public string CacheKey => TransportLogCacheKey.GetAllCacheKey;
-      public CancellationTokenSource? SharedExpiryTokenSource => TransportLogCacheKey.SharedExpiryTokenSource();
+    public CancellationTokenSource? SharedExpiryTokenSource => TransportLogCacheKey.SharedExpiryTokenSource();
     private class Mapping : Profile
     {
         public Mapping()
@@ -46,31 +36,30 @@ public class CreateTransportLogCommand: ICacheInvalidatorRequest<Result<int>>
         }
     }
 }
-    
-    public class CreateTransportLogCommandHandler : IRequestHandler<CreateTransportLogCommand, Result<int>>
+
+public class CreateTransportLogCommandHandler : IRequestHandler<CreateTransportLogCommand, Result<int>>
+{
+    private readonly IApplicationDbContext _context;
+    private readonly IMapper _mapper;
+    private readonly IStringLocalizer<CreateTransportLogCommand> _localizer;
+    public CreateTransportLogCommandHandler(
+        IApplicationDbContext context,
+        IStringLocalizer<CreateTransportLogCommand> localizer,
+        IMapper mapper
+        )
     {
-        private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly IStringLocalizer<CreateTransportLogCommand> _localizer;
-        public CreateTransportLogCommandHandler(
-            IApplicationDbContext context,
-            IStringLocalizer<CreateTransportLogCommand> localizer,
-            IMapper mapper
-            )
-        {
-            _context = context;
-            _localizer = localizer;
-            _mapper = mapper;
-        }
-        public async Task<Result<int>> Handle(CreateTransportLogCommand request, CancellationToken cancellationToken)
-        {
-    
-           var item = _mapper.Map<TransportLog>(request);
-           // raise a create domain event
-	       item.AddDomainEvent(new TransportLogCreatedEvent(item));
-           _context.TransportLogs.Add(item);
-           await _context.SaveChangesAsync(cancellationToken);
-           return  await Result<int>.SuccessAsync(item.Id);
-        }
+        _context = context;
+        _localizer = localizer;
+        _mapper = mapper;
     }
+    public async Task<Result<int>> Handle(CreateTransportLogCommand request, CancellationToken cancellationToken)
+    {
+         
+        var item = _mapper.Map<TransportLog>(request);
+        item.AddDomainEvent(new TransportLogCreatedEvent(item));
+        _context.TransportLogs.Add(item);
+        await _context.SaveChangesAsync(cancellationToken);
+        return await Result<int>.SuccessAsync(item.Id);
+    }
+}
 

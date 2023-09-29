@@ -1,4 +1,6 @@
 using System.Runtime.Versioning;
+using CleanArchitecture.Blazor.Application.Common.Security;
+using CleanArchitecture.Blazor.Application.Services;
 using CleanArchitecture.Blazor.Application.Services.PaddleOCR;
 using CleanArchitecture.Blazor.Infrastructure.Services.PaddleOCR;
 
@@ -13,7 +15,8 @@ public static class ServicesCollectionExtensions
             .AddScoped<IDateTime, DateTimeService>()
             .AddScoped<IExcelService, ExcelService>()
             .AddScoped<IUploadService, UploadService>()
-            .AddTransient<IDocumentOcrJob, DocumentOcrJob>()
+            .AddScoped<IDocumentOcrJob, DocumentOcrJob>()
+            .AddScoped<IGeoAddressService, GeoAddressService>()
             .AddScoped<IPDFService, PDFService>();
     }
 }
