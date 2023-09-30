@@ -196,7 +196,7 @@
                     }
                 </MudAvatar>
                 <div class="ml-2">
-                    <MudText Typo="Typo.body2">@context.Item.UID</MudText>
+                    <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary) !important">@context.Item.UID</MudText>
                     <MudText Typo="Typo.body2">@context.Item.DisplayName</MudText>
                 </div>
             </CellTemplate>
@@ -229,7 +229,7 @@
                 <CellTemplate>
                     <div class="d-flex flex-column">
                         <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
-                        <MudText Typo="Typo.body2">@context.Item.TenantId</MudText>
+                        <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary) !important">@context.Item.TenantId</MudText>
                     </div>
                 </CellTemplate>
             </PropertyColumn>
@@ -265,7 +265,7 @@
                         <MudImage Src="@StudentInfo.ProfilePicture"></MudImage>
                     </MudAvatar>
                     <div class="d-flex flex-column align-self-center flex-grow-1 ml-2">
-                        <p>@StudentInfo.School.Name</p>
+                            <p style="color:var(--mud-palette-text-secondary) !important">@StudentInfo.School.Name</p>
                         <p>@StudentInfo.DisplayName</p>
                     </div>
                     </div>

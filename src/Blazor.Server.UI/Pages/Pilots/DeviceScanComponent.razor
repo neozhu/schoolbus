@@ -39,8 +39,7 @@
                     padding-bottom: 18px;
                 }
 
-            widget[type=ticket] .top img
-         {
+            widget[type=ticket] .top img {
                 padding: 18px 0;
             }
 
@@ -56,7 +55,7 @@
             }
 
                 widget[type=ticket] .top .deetz {
-                    padding-bottom: 10px !important;
+                    padding-bottom: 15px !important;
                 }
 
             widget[type=ticket] .bottom {
@@ -170,37 +169,51 @@
             </div>
             @if (_transportLogs is not null)
             {
-                @foreach (var item in _transportLogs)
+                @if (_transportLogs.Count() > 0)
+                {
+                    @foreach (var item in _transportLogs)
+                    {
+                        <div class="rip"></div>
+                        <div class="bottom d-flex flex-row justify-space-between">
+                            <div class="d-flex flex-row flex-grow-1 align-center pl-3">
+                                <MudAvatar>
+                                    <MudImage Src="@item.Student.ProfilePicture"></MudImage>
+                                </MudAvatar>
+                                <div class="d-flex flex-column ml-3">
+                                    <p>@item.Student.UID</p>
+                                    <p>@item.Student.DisplayName</p>
+                                </div>
+
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Filled.Logout"></MudIconButton>
+                        </div>
+                    }
+                }
+                else
                 {
                     <div class="rip"></div>
-                    <div class="bottom d-flex flex-row justify-space-between">
+                    <div class="bottom d-flex flex-row justify-space-between align-center">
                         <div class="d-flex flex-row flex-grow-1 align-center pl-3">
-                            <MudAvatar>
-                                <MudImage Src="@item.Student.ProfilePicture"></MudImage>
-                            </MudAvatar>
-                            <div class="d-flex flex-column ml-3">
-                                <p>@item.Student.UID</p>
-                                <p>@item.Student.DisplayName</p>
-                            </div>
-                           
+                            <MudSkeleton  SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+                            <p style="color:#99a0b0;margin-left:8px">Waiting for card swipe </p>
                         </div>
-                        <MudIconButton Icon="@Icons.Material.Filled.Logout"></MudIconButton>
+                        <MudSkeleton  SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
                     </div>
                 }
             }
             else
             {
                 <div class="rip"></div>
-                <div class="bottom d-flex flex-row justify-space-between">
-                    <div class="d-fle flex-row">
-                        <MudSkeleton Class="my-5" SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+                <div class="bottom d-flex flex-row justify-space-between align-center">
+                    <div class="d-fle flex-row flex-grow-1 align-center pl-3">
+                        <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
                     </div>
-                    <MudSkeleton Class="my-5" SkeletonType="SkeletonType.Rectangle" Width="50px" Height="50px" />
+                    <MudSkeleton  SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
                 </div>
             }
-           
-            
-           
+
+
+
         </widget>
     </div>
 </div>
@@ -231,7 +244,7 @@
         };
     protected override async Task OnInitializedAsync()
     {
-        await  LoadOnBoardStudents();
+        await LoadOnBoardStudents();
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -270,7 +283,7 @@
     public async Task HandleBarcodeScan(string barcode)
     {
         foundBarcode = barcode.Trim();
-        if (!studentQ.Contains(foundBarcode) && !(_transportLogs?.Any(x => x.Student.UID == foundBarcode)??false))
+        if (!studentQ.Contains(foundBarcode) && !(_transportLogs?.Any(x => x.Student.UID == foundBarcode) ?? false))
         {
             var item = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode));
             if (item is not null)
@@ -296,7 +309,7 @@
                 else
                 {
                     Snackbar.Add($"checkin error.{result.ErrorMessage}", MudBlazor.Severity.Error);
-                    
+
                 }
             }
             else

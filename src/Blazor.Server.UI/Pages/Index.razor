@@ -1,7 +1,9 @@
 @page "/"
+@using CleanArchitecture.Blazor.Application.Features.Dashboard.Dto;
+@using CleanArchitecture.Blazor.Application.Features.Dashboard.Queries;
 @using MudBlazor.Utilities
 @using Blazor.Server.UI.Models
-
+@inherits FluxorComponent
 <PageTitle>@Title</PageTitle>
 <style>
     .lp-app-grid {
@@ -10,11 +12,101 @@
         grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
     }
 </style>
-<MudContainer MaxWidth="MaxWidth.Large">
- 
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudGrid>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.Castle" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalSchools</h2>
+                    <p style="color:#99a0b0">School</p>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.DirectionsBus" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalBuses</h2>
+                    <p style="color:#99a0b0">Bus</p>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.FollowTheSigns" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalPilots</h2>
+                    <p style="color:#99a0b0">Pilot</p>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.LinearScale" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalItineraries</h2>
+                    <p style="color:#99a0b0">Itinerary</p>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.Groups" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalStudents</h2>
+                    <p style="color:#99a0b0">Student</p>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.EscalatorWarning" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalParents</h2>
+                    <p style="color:#99a0b0">Parent</p>
+                </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalTransportLogs</h2>
+                    <p style="color:#99a0b0">Transport Logs</p>
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
 </MudContainer>
-
-@code{
+@code {
+    [Inject]
+    private IState<UserProfileState> UserProfileState { get; set; } = null!;
+    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
     public string Title { get; set; } = "Dashboard";
-    
+    private SummaryDto SummaryInfo=new SummaryDto();
+    [Inject]
+    private IMediator Mediator { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        UserProfileState.StateChanged += StateOnStateChanged;
+        if (!UserProfileState.Value.IsLoading)
+        {
+            var result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
+            SummaryInfo = result;
+            StateHasChanged();
+        }
+    }
+    private void StateOnStateChanged(object? sender, EventArgs args)
+    {
+        InvokeAsync(async () =>
+        {
+            if (!UserProfileState.Value.IsLoading)
+            {
+                var result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
+                SummaryInfo = result;
+                StateHasChanged();
+            }
+        });
+    }
 }

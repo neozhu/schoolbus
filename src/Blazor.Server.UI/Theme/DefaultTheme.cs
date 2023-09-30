@@ -23,7 +23,7 @@ public class Theme
                 AppbarText = "#424242",
                 BackgroundGrey = "#F9FAFC",
                 TextPrimary = "rgba(66,66,66,1)",
-                TextSecondary = "rgba(0,0,0,0.5372549019607843)",
+                TextSecondary = "#99a0b0",
                 Dark = "#110E2D",
                 DarkLighten = "#1A1643",
                 GrayDefault = "#4B5563",
@@ -50,7 +50,7 @@ public class Theme
                 AppbarBackground = "rgba(14,24,36, 0.80)",
                 AppbarText = "rgba(255,255,255, 0.70)",
                 TextPrimary = "#a6b0cf",
-                TextSecondary = "#8a94b8",
+                TextSecondary = "#99a0b0",
                 ActionDefault = "rgba(195,203,228,.80)",
                 ActionDisabled = "rgba(255,255,255, 0.26)",
                 ActionDisabledBackground = "rgba(255,255,255, 0.12)",
@@ -159,6 +159,7 @@ public class Theme
                     FontWeight = 400,
                     LineHeight = 1.43,
                     LetterSpacing = ".01071em"
+                    
                 },
                 Caption = new Caption
                 {
