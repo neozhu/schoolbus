@@ -245,7 +245,7 @@
         };
     protected override async Task OnInitializedAsync()
     {
-        await LoadOnBoardStudents();
+        await LoadOnBoardStudents(Itinerary.Id);
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -261,10 +261,10 @@
             options: _options);
         }
     }
-    private async Task LoadOnBoardStudents()
+    public async Task LoadOnBoardStudents(int id)
     {
-        _transportLogs = await Mediator.Send(new GetOnBoardTransportLogsQuery() { ItineraryId = Itinerary.Id });
-
+        _transportLogs = await Mediator.Send(new GetOnBoardTransportLogsQuery() { ItineraryId = id });
+   
     }
     private async Task Checkout(int id)
     {
@@ -276,7 +276,7 @@
             {
                 studentQ = new Queue<string>(studentQ.Where(x => x != item.Student.UID));
                 Snackbar.Add($"{item.Student.DisplayName} checkout successfully.", MudBlazor.Severity.Info);
-                await this.LoadOnBoardStudents();
+                await this.LoadOnBoardStudents(item.ItineraryId);
             }
 
         }
@@ -319,7 +319,7 @@
                     });
                 if (result.Succeeded)
                 {
-                    await LoadOnBoardStudents();
+                    await LoadOnBoardStudents(Itinerary.Id);
                     Snackbar.Add($"{item.DisplayName} checkin successfully.", MudBlazor.Severity.Success);
                 }
                 else
