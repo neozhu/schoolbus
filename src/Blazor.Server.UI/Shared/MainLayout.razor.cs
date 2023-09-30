@@ -56,7 +56,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     protected override void OnInitialized()
     {
         LayoutService.MajorUpdateOccured += LayoutServiceOnMajorUpdateOccured;
-        LayoutService.SetBaseTheme(Theme.Theme.ApplicationTheme());
         _hotKeysContext = HotKeys.CreateContext().Add(ModKey.Ctrl, Key.K, async () => await OpenCommandPalette(), "Open command palette.");
        
 

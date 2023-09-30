@@ -15,6 +15,7 @@ public class GetTransportLogByIdQuery : ICacheableRequest<TransportLogDto>
 }
 
 public class GetTransportLogByIdQueryHandler :
+   
      IRequestHandler<GetTransportLogByIdQuery, TransportLogDto>
 {
     private readonly IApplicationDbContext _context;
@@ -40,4 +41,5 @@ public class GetTransportLogByIdQueryHandler :
                      .FirstAsync(cancellationToken) ?? throw new NotFoundException($"TransportLog with id: [{request.Id}] not found.");;
         return data;
     }
+    
 }

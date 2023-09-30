@@ -187,7 +187,7 @@
             <CellTemplate>
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.body2">@context.Item.Name</MudText>
-                    <MudText Typo="Typo.body2" Style="color:#99a0b0">@context.Item.Address</MudText>
+                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.Address</MudText>
                 </div>
             </CellTemplate>
         </PropertyColumn>
@@ -195,7 +195,7 @@
             <CellTemplate>
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.body2">@context.Item.Contact</MudText>
-                    <MudText Typo="Typo.body2">@context.Item.Phone</MudText>
+                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.Phone</MudText>
                 </div>
             </CellTemplate>
         </PropertyColumn>
@@ -205,7 +205,7 @@
                 <CellTemplate>
                     <div class="d-flex flex-column">
                         <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
-                        <MudText Typo="Typo.body2">@context.Item.TenantId</MudText>
+                        <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.TenantId</MudText>
                     </div>
                 </CellTemplate>
             </PropertyColumn>

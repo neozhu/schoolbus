@@ -16,6 +16,10 @@ public static class TransportLogCacheKey
     public static string GetByIdCacheKey(string parameters) {
         return $"TransportLogCacheKey:GetByIdCacheKey,{parameters}";
     }
+    public static string GetByStudentIdCacheKey(string parameters)
+    {
+        return $"TransportLogCacheKey:GetByStudentIdCacheKey,{parameters}";
+    }
     public static string GetOnBoardCacheKey(string parameters)
     {
         return $"TransportLogCacheKey:GetOnBoardCacheKey,{parameters}";

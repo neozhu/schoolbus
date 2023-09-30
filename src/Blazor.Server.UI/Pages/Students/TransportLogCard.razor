@@ -1,5 +1,7 @@
-﻿<style>
-    
+﻿@using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Queries.GetAll;
+<style>
+
 
     .main {
         display: flex;
@@ -93,8 +95,8 @@
 
                     .timeline .box .container .cards .card {
                         width: 249px;
-                        height: 113px;
                         padding-top: 25px;
+                        padding-bottom: 15px;
                         background: #FFFFFF;
                         box-shadow: 0 2px 2px 0 #eeeeee40;
                         border-radius: 10px;
@@ -167,7 +169,7 @@
 
     <div class="cardTop">
 
-        <svg width="486px" height="219" viewBox="0 0 497 219" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="466px" height="219" viewBox="0 0 497 219" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M-38.5 196C-38.5 196 34 91 133.5 91C233 91 427 159 532.5 30C638 -99 518 236 518 236L-49 246.5L-38.5 196Z" fill="#FF768E" />
         </svg>
 
@@ -178,8 +180,8 @@
 
     <div class="timeline">
 
-        <h3>Updates</h3>
-        <label>23 in the last 7 hours</label>
+        <h3>Trasport Logs</h3>
+        <label>The latest 4 records</label>
 
 
         <div class="box">
@@ -187,38 +189,52 @@
             <div class="container">
 
                 <div class="lines">
-                    <div class="dot"></div>
-                    <div class="line"></div>
-                    <div class="dot"></div>
-                    <div class="line"></div>
-                    <div class="dot"></div>
-                    <div class="line"></div>
-                    <div class="dot"></div>
-                    <div class="line"></div>
+                    @if (transportLogs is not null && transportLogs.Any())
+                    {
+                        @foreach (var item in transportLogs)
+                        {
+                            <div class="dot"></div>
+                            <div class="line"></div>
+                        }
+                    }
+                    else
+
+                    {
+                        <div class="dot"></div>
+                        <div class="line"></div>
+                    }
+
+
                 </div>
 
                 <div class="cards">
-                    <div class="card">
+                    @if (transportLogs is not null && transportLogs.Any())
+                    {
+                        @foreach (var item in transportLogs)
+                        {
+                            <div class="card">
+                                <h4>@item.SwipeDateTime</h4>
+                                <p style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@item.Location</p>
+                            </div>
+                        }
+                    }
+                    else
 
-                        <h4>16:30</h4>
-                        <p>Believing Is The Absence<br> Of Doubt</p>
-                    </div>
-                    <div class="card mid">
-                        <h4>15:22</h4>
-                        <p>Start With A Baseline</p>
-                    </div>
-                    <div class="card">
-                        <h4>14:15</h4>
-                        <p>Break Through Self Doubt<br> And Fear</p>
-                    </div>
-                    <div class="card">
-                        <h4>19:15</h4>
-                        <p>Break Through Self Doubt<br> And Fear</p>
-                    </div>
+                    {
+                        <div class="card">
+                            <div class="d-flex flex-column gap-2 pa-5">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="60px" />
+                                <div style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">No records found</div>
+                            </div>
+                        </div>
+                    }
+
+
+
                 </div>
             </div>
             <div class="bottom">
-                <div class="btn">Show all updates</div>
+                <a class="btn" href="/pages/transportlogs">Show all Logs</a>
             </div>
         </div>
 
@@ -226,5 +242,16 @@
     </div>
 </div>
 @code {
+    [EditorRequired]
+    [Parameter]
+    public int StudentId { get; set; }
+    [Inject]
+    private IMediator Mediator { get; set; } = default!;
 
+    private List<TransportLogDto>? transportLogs = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        transportLogs = await Mediator.Send(new GetTransportLogByStudentIdQuery(StudentId));
+    }
 }

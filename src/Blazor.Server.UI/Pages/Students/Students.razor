@@ -196,8 +196,9 @@
                     }
                 </MudAvatar>
                 <div class="ml-2">
-                    <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary) !important">@context.Item.UID</MudText>
                     <MudText Typo="Typo.body2">@context.Item.DisplayName</MudText>
+                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.UID</MudText>
+                   
                 </div>
             </CellTemplate>
         </PropertyColumn>
@@ -218,7 +219,7 @@
 
             </CellTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.SchoolId" Title="@L[_currentDto.GetMemberDescription(x=>x.SchoolId)]">
+        <PropertyColumn Property="x => x.School" Title="@L[_currentDto.GetMemberDescription(x=>x.School)]">
             <CellTemplate>
                 @context.Item.School.Name
             </CellTemplate>
@@ -229,7 +230,7 @@
                 <CellTemplate>
                     <div class="d-flex flex-column">
                         <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
-                        <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary) !important">@context.Item.TenantId</MudText>
+                        <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.TenantId</MudText>
                     </div>
                 </CellTemplate>
             </PropertyColumn>
@@ -265,16 +266,16 @@
                         <MudImage Src="@StudentInfo.ProfilePicture"></MudImage>
                     </MudAvatar>
                     <div class="d-flex flex-column align-self-center flex-grow-1 ml-2">
-                            <p style="color:var(--mud-palette-text-secondary) !important">@StudentInfo.School.Name</p>
+                        <p style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@StudentInfo.School.Name</p>
                         <p>@StudentInfo.DisplayName</p>
                     </div>
                     </div>
                     <div class="d-flex flex-column align-self-center">
-                        <MudBarcode Height="90" Width="90" Value="@StudentInfo.UID"></MudBarcode>
+                        <MudBarcode Height="100" Width="100" Value="@StudentInfo.UID"></MudBarcode>
                     </div>
                 </MudPaper>
 
-               <TransportLogCard></TransportLogCard>
+               <TransportLogCard StudentId="@StudentInfo.Id"></TransportLogCard>
             }
         }
     </div>

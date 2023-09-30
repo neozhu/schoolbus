@@ -2,6 +2,7 @@
 @using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById;
 @using CleanArchitecture.Blazor.Application.Features.Students.Specifications;
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Create;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Delete;
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.Queries.GetAll;
 @using CleanArchitecture.Blazor.Application.Services;
@@ -128,12 +129,12 @@
                 <div class="d-flex flex-row justify-space-between">
                     <div class="d-flex flex-column">
                         <div class="bandname -bold">@Itinerary.StartingStation</div>
-                        <div class="tourname align-self-center">@Itinerary.FirstTime</div>
+                        <div class="tourname align-self-center" style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.FirstTime</div>
                     </div>
                     <MudIcon Icon="@Icons.Material.Filled.MultipleStop" Class="align-self-center"></MudIcon>
                     <div class="d-flex flex-column">
                         <div class="bandname -bold">@Itinerary.TerminalStation</div>
-                        <div class="tourname align-self-center">@Itinerary.LastTime</div>
+                        <div class="tourname align-self-center" style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.LastTime</div>
                     </div>
                 </div>
                 @if (cameraBarcodeReader is not null)
@@ -180,12 +181,12 @@
                                     <MudImage Src="@item.Student.ProfilePicture"></MudImage>
                                 </MudAvatar>
                                 <div class="d-flex flex-column ml-3">
-                                    <p>@item.Student.UID</p>
                                     <p>@item.Student.DisplayName</p>
+                                    <p style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@item.Student.UID</p>
                                 </div>
 
                             </div>
-                            <MudIconButton Icon="@Icons.Material.Filled.Logout"></MudIconButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.Logout" OnClick="@(()=>Checkout(item.Id))"></MudIconButton>
                         </div>
                     }
                 }
@@ -194,10 +195,10 @@
                     <div class="rip"></div>
                     <div class="bottom d-flex flex-row justify-space-between align-center">
                         <div class="d-flex flex-row flex-grow-1 align-center pl-3">
-                            <MudSkeleton  SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
                             <p style="color:#99a0b0;margin-left:8px">Waiting for card swipe </p>
                         </div>
-                        <MudSkeleton  SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
+                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
                     </div>
                 }
             }
@@ -208,7 +209,7 @@
                     <div class="d-fle flex-row flex-grow-1 align-center pl-3">
                         <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
                     </div>
-                    <MudSkeleton  SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
                 </div>
             }
 
@@ -264,6 +265,21 @@
     {
         _transportLogs = await Mediator.Send(new GetOnBoardTransportLogsQuery() { ItineraryId = Itinerary.Id });
 
+    }
+    private async Task Checkout(int id)
+    {
+        var result = await Mediator.Send(new CheckoutTransportLogCommand(id) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location });
+        if (result.Succeeded)
+        {
+            var item = _transportLogs?.First(x => x.Id == id);
+            if (item is not null)
+            {
+                studentQ = new Queue<string>(studentQ.Where(x => x != item.Student.UID));
+                Snackbar.Add($"{item.Student.DisplayName} checkout successfully.", MudBlazor.Severity.Info);
+                await this.LoadOnBoardStudents();
+            }
+
+        }
     }
     bool processingScan;
     string foundBarcode;

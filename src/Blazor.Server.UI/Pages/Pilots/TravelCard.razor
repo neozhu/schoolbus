@@ -20,7 +20,7 @@
         </CardHeaderAvatar>
         <CardHeaderContent>
             <MudText Typo="Typo.body2">@Itinerary.Pilot.DisplayName</MudText>
-            <MudText Typo="Typo.body2">@Itinerary.Pilot.Phone</MudText>
+            <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.Pilot.Phone</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
             <MudIconButton Icon="@Icons.Material.Filled.Coronavirus" OnClick="OnClick" Color="Color.Primary" />
@@ -30,7 +30,7 @@
         <div class="d-flex flex-row gap-2 justify-space-between">
             <div class="d-flex flex-column gap-1">
                 <p>@Itinerary.StartingStation</p>
-                <p style="text-align:center">@Itinerary.FirstTime</p>
+                <p style="@($"text-align:center; color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.FirstTime</p>
             </div>
             <div class="d-flex flex-column">
                 <h4 class="mb-0" style="margin-bottom:-5px">@Itinerary.Bus.PlatNumber</h4>
@@ -38,7 +38,7 @@
             </div>
             <div class="d-flex flex-column gap-1">
                 <p>@Itinerary.TerminalStation</p>
-                <p style="text-align:center">@Itinerary.LastTime</p>
+                <p style="@($"text-align:center; color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.LastTime</p>
             </div>
        </div>
     </MudCardContent>

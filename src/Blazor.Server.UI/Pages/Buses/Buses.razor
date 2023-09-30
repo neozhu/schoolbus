@@ -187,15 +187,15 @@
             <CellTemplate>
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.body2">@context.Item.PlatNumber</MudText>
-                    <MudText Typo="Typo.body2"  Style="color:#99a0b0">@context.Item.Description</MudText>
-                </div>
+                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.Description</MudText>
+               </div>
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]">
             <CellTemplate>
                 <div class="d-flex flex-column">
                     <MudText Typo="Typo.body2">@context.Item.Status</MudText>
-                    <MudText Typo="Typo.body2" Style="color:#99a0b0">@context.Item.DeviceId</MudText>
+                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.DeviceId</MudText>
                 </div>
             </CellTemplate>
         </PropertyColumn>
@@ -205,7 +205,7 @@
                 <CellTemplate>
                     <div class="d-flex flex-column">
                         <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
-                        <MudText Typo="Typo.body2" Style="color:#99a0b0">@context.Item.TenantId</MudText>
+                        <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.TenantId</MudText>
                     </div>
                 </CellTemplate>
             </PropertyColumn>

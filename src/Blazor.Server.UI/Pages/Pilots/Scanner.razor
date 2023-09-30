@@ -2,23 +2,27 @@
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.GetAll;
 @inherits FluxorComponent
-<div class="d-flex flex-nowrap gap-4 pa-8 justify-center" style="margin:auto; min-width: 400px; overflow-y: scroll">
-    @if (_itineraries is not null)
-    {
-        @foreach (var item in _itineraries)
+@if (_itineraries is not null && _itineraries.Count() > 1)
+{
+    <div class="d-flex flex-nowrap gap-4 pa-8 justify-center" style="margin:auto; min-width: 400px; overflow-y: scroll">
+        @if (_itineraries is not null)
         {
-            <TravelCard Itinerary="@item" Active=@(item == _itinerary) SetItinerary="SetItinerary"></TravelCard>
+            @foreach (var item in _itineraries)
+            {
+                <TravelCard Itinerary="@item" Active=@(item == _itinerary) SetItinerary="SetItinerary"></TravelCard>
+            }
+
+        }
+        else
+        {
+            <TravelCardSkeleton></TravelCardSkeleton>
         }
 
-    }
-    else
-    {
-        <TravelCardSkeleton></TravelCardSkeleton>
-    }
 
-    
-</div>
-<div class="my-4"></div>
+    </div>
+    <div class="my-4"></div>
+}
+
 @if (_itinerary is not null)
 {
     <DeviceScanComponent Itinerary="@_itinerary" UserProfile="@UserProfile"></DeviceScanComponent>

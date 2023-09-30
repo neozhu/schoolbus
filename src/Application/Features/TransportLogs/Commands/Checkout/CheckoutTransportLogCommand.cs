@@ -10,11 +10,11 @@ public class CheckoutTransportLogCommand : ICacheInvalidatorRequest<Result<int>>
 {
     public int Id { get; }
 
-    public string? Location { get; set; }
+    public  string? Location { get; set; }
 
-    public double? Longitude { get; set; }
+    public  double? Longitude { get; set; }
 
-    public double? Latitude { get; set; }
+    public  double? Latitude { get; set; }
     public string CacheKey => TransportLogCacheKey.GetAllCacheKey;
     public CancellationTokenSource? SharedExpiryTokenSource => TransportLogCacheKey.SharedExpiryTokenSource();
     public CheckoutTransportLogCommand(int id)

@@ -12,6 +12,16 @@ public class GetAllTransportLogsQuery : ICacheableRequest<IEnumerable<TransportL
    public string CacheKey => TransportLogCacheKey.GetAllCacheKey;
    public MemoryCacheEntryOptions? Options => TransportLogCacheKey.MemoryCacheEntryOptions;
 }
+public class GetTransportLogByStudentIdQuery : ICacheableRequest<List<TransportLogDto>>
+{
+    public int StudentId { get; set; }
+    public string CacheKey => TransportLogCacheKey.GetByStudentIdCacheKey($"{StudentId}");
+    public MemoryCacheEntryOptions? Options => TransportLogCacheKey.MemoryCacheEntryOptions;
+    public GetTransportLogByStudentIdQuery(int studentId)
+    {
+        StudentId = studentId;
+    }
+}
 public class GetOnBoardTransportLogsQuery : ICacheableRequest<IEnumerable<TransportLogDto>>
 {
     public required int ItineraryId { get; set; }
@@ -19,6 +29,7 @@ public class GetOnBoardTransportLogsQuery : ICacheableRequest<IEnumerable<Transp
     public MemoryCacheEntryOptions? Options => TransportLogCacheKey.MemoryCacheEntryOptions;
 }
 public class GetAllTransportLogsQueryHandler :
+      IRequestHandler<GetTransportLogByStudentIdQuery, List<TransportLogDto>>,
      IRequestHandler<GetAllTransportLogsQuery, IEnumerable<TransportLogDto>>,
      IRequestHandler<GetOnBoardTransportLogsQuery, IEnumerable<TransportLogDto>>
 {
@@ -35,6 +46,14 @@ public class GetAllTransportLogsQueryHandler :
         _context = context;
         _mapper = mapper;
         _localizer = localizer;
+    }
+    public async Task<List<TransportLogDto>> Handle(GetTransportLogByStudentIdQuery request, CancellationToken cancellationToken)
+    {
+
+        var data = await _context.TransportLogs.ApplySpecification(new TransportLogByStudentIdSpecification(request.StudentId, 4))
+                     .ProjectTo<TransportLogDto>(_mapper.ConfigurationProvider)
+                     .ToListAsync(cancellationToken);
+        return data;
     }
     public async Task<IEnumerable<TransportLogDto>> Handle(GetOnBoardTransportLogsQuery request, CancellationToken cancellationToken)
     {
