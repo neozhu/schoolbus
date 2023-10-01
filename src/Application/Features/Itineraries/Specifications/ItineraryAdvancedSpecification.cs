@@ -14,6 +14,7 @@ public class ItineraryAdvancedSpecification : Specification<Itinerary>
             CultureInfo.CurrentCulture);
 
        Query.Where(q => q.Name != null)
+            .Where(x => x.TenantId == filter.CurrentUser.TenantId, !filter.CurrentUser.IsSuperAdmin)
              .Where(q => q.Name!.Contains(filter.Keyword) || q.Description!.Contains(filter.Keyword), !string.IsNullOrEmpty(filter.Keyword))
              .Where(q => q.CreatedBy == filter.CurrentUser.UserId, filter.ListView == ItineraryListView.My && filter.CurrentUser is not null)
              .Where(q => q.Created >= start && q.Created <= end, filter.ListView == ItineraryListView.CreatedToday)

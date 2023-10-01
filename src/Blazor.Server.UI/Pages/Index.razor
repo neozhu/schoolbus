@@ -1,8 +1,13 @@
 @page "/"
+@using ApexCharts
 @using CleanArchitecture.Blazor.Application.Features.Dashboard.Dto;
 @using CleanArchitecture.Blazor.Application.Features.Dashboard.Queries;
 @using MudBlazor.Utilities
 @using Blazor.Server.UI.Models
+@using Color = MudBlazor.Color
+@using Size=MudBlazor.Size
+@using Theme=Blazor.Server.UI.Theme
+
 @inherits FluxorComponent
 <PageTitle>@Title</PageTitle>
 <style>
@@ -77,6 +82,47 @@
                 </div>
             </MudPaper>
         </MudItem>
+
+        <MudItem xs="12" sm="12" md="6">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <ApexChart @ref="chart1" TItem="TotalOfStudentDto" 
+                           Title="Percentage of Students per School">
+                    <ApexPointSeries TItem="TotalOfStudentDto"
+                                     Items="result.TotalOfStudent"
+                                     SeriesType="SeriesType.Donut"
+                                     Name="Count"
+                                     XValue="@(e => e.SchoolName)"
+                                     YAggregate="@(e => e.Sum(e => e.Count))"
+                                     OrderByDescending="e=>e.Y" />
+                </ApexChart>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="6">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <ApexChart @ref="chart2" TItem="TotalOfTransportDto" 
+                           Title="Percentage of Transports per Itinerary">
+                   <ApexPointSeries TItem="TotalOfTransportDto"
+                                     Items="result.TotalOfTransport"
+                                     SeriesType="SeriesType.Donut"
+                                     Name="Count"
+                                     XValue="@(e => e.ItinerayName)"
+                                     YAggregate="@(e => e.Sum(e => e.Count))"
+                                     OrderByDescending="e=>e.Y" />
+                </ApexChart>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12">
+            <ApexChart @ref="chart3" TItem="TotalOfMonthDto"
+                       Title="Onboard of Students per Month">
+                <ApexPointSeries TItem="TotalOfMonthDto"
+                                 Items="result.TotalOfMonth"
+                                 SeriesType="SeriesType.Bar"
+                                 Name="Count"
+                                 XValue="@(e => e.YearMonth)"
+                                 YAggregate="@(e => e.Sum(e => e.Count))"
+                                 OrderByDescending="e=>e.Y" />
+            </ApexChart>
+        </MudItem>
     </MudGrid>
 </MudContainer>
 @code {
@@ -84,18 +130,34 @@
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
     public string Title { get; set; } = "Dashboard";
-    private SummaryDto SummaryInfo=new SummaryDto();
+    private AggregationResult result = new AggregationResult();
+    private SummaryDto SummaryInfo = new SummaryDto();
     [Inject]
     private IMediator Mediator { get; set; } = default!;
+
+    ApexChart<TotalOfStudentDto>? chart1;
+    ApexChart<TotalOfTransportDto>? chart2;
+    ApexChart<TotalOfMonthDto>? chart3;
     protected override async Task OnInitializedAsync()
     {
         UserProfileState.StateChanged += StateOnStateChanged;
-        if (!UserProfileState.Value.IsLoading)
+        if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
         {
-            var result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
-            SummaryInfo = result;
+            result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
+            SummaryInfo = result.Summary;
             StateHasChanged();
+            if (chart1 is not null && chart2 is not null && chart3 is not null)
+            {
+                await chart1.RenderAsync();
+                await chart2.RenderAsync();
+                await chart3.RenderAsync();
+            }
         }
+    }
+    protected override void Dispose(bool disposing)
+    {
+        UserProfileState.StateChanged -= StateOnStateChanged;
+        base.Dispose(disposing);
     }
     private void StateOnStateChanged(object? sender, EventArgs args)
     {
@@ -103,9 +165,12 @@
         {
             if (!UserProfileState.Value.IsLoading)
             {
-                var result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
-                SummaryInfo = result;
+                result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
+                SummaryInfo = result.Summary;
                 StateHasChanged();
+                await chart1?.RenderAsync();
+                await chart2?.RenderAsync();
+                await chart3?.RenderAsync();
             }
         });
     }

@@ -11,7 +11,7 @@ public class BusesWithPaginationQuery : BusAdvancedFilter, ICacheableRequest<Pag
 {
     public override string ToString()
     {
-        return $"Listview:{ListView}, Search:{Keyword}, {OrderBy}, {SortDirection}, {PageNumber}, {PageSize}";
+        return $"{CurrentUser.UserId},Listview:{ListView}, Search:{Keyword}, {OrderBy}, {SortDirection}, {PageNumber}, {PageSize}";
     }
     public string CacheKey => BusCacheKey.GetPaginationCacheKey($"{this}");
     public MemoryCacheEntryOptions? Options => BusCacheKey.MemoryCacheEntryOptions;

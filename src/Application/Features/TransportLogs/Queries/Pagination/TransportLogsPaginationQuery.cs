@@ -11,7 +11,7 @@ public class TransportLogsWithPaginationQuery : TransportLogAdvancedFilter, ICac
 {
     public override string ToString()
     {
-        return $"Listview:{ListView}, Search:{Keyword}, {OrderBy}, {SortDirection}, {PageNumber}, {PageSize}";
+        return $"{CurrentUser.UserId},Listview:{ListView}, Search:{Keyword}, {OrderBy}, {SortDirection}, {PageNumber}, {PageSize}";
     }
     public string CacheKey => TransportLogCacheKey.GetPaginationCacheKey($"{this}");
     public MemoryCacheEntryOptions? Options => TransportLogCacheKey.MemoryCacheEntryOptions;

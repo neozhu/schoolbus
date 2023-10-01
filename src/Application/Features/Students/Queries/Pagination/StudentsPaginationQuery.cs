@@ -11,7 +11,7 @@ public class StudentsWithPaginationQuery : StudentAdvancedFilter, ICacheableRequ
 {
     public override string ToString()
     {
-        return $"Listview:{ListView}, Search:{Keyword}, {OrderBy}, {SortDirection}, {PageNumber}, {PageSize}";
+        return $"{CurrentUser.UserId},Listview:{ListView}, Search:{Keyword}, {OrderBy}, {SortDirection}, {PageNumber}, {PageSize}";
     }
     public string CacheKey => StudentCacheKey.GetPaginationCacheKey($"{this}");
     public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;

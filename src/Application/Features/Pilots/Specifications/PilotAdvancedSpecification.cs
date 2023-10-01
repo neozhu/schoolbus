@@ -14,6 +14,7 @@ public class PilotAdvancedSpecification : Specification<Pilot>
             CultureInfo.CurrentCulture);
 
        Query.Where(q => q.LastName != null)
+            .Where(x => x.TenantId == filter.CurrentUser.TenantId, !filter.CurrentUser.IsSuperAdmin)
              .Where(q => q.LastName!.Contains(filter.Keyword) || q.FirstName!.Contains(filter.Keyword) || q.Phone!.Contains(filter.Keyword) || q.Description!.Contains(filter.Keyword), !string.IsNullOrEmpty(filter.Keyword))
              .Where(q => q.CreatedBy == filter.CurrentUser.UserId, filter.ListView == PilotListView.My && filter.CurrentUser is not null)
              .Where(q => q.Created >= start && q.Created <= end, filter.ListView == PilotListView.CreatedToday)

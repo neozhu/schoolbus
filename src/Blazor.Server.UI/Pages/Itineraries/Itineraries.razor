@@ -274,6 +274,23 @@
         _canDelete = (await AuthService.AuthorizeAsync(state.User, Permissions.Itineraries.Delete)).Succeeded;
         _canImport = (await AuthService.AuthorizeAsync(state.User, Permissions.Itineraries.Import)).Succeeded;
         _canExport = (await AuthService.AuthorizeAsync(state.User, Permissions.Itineraries.Export)).Succeeded;
+        UserProfileState.StateChanged += StateOnStateChanged;
+    }
+    protected override void Dispose(bool disposing)
+    {
+        UserProfileState.StateChanged -= StateOnStateChanged;
+        base.Dispose(disposing);
+    }
+    private void StateOnStateChanged(object? sender, EventArgs args)
+    {
+        InvokeAsync(async () =>
+        {
+            if (!UserProfileState.Value.IsLoading)
+            {
+                await _table.ReloadServerData();
+                StateHasChanged();
+            }
+        });
     }
     private async Task<GridData<ItineraryDto>> ServerReload(GridState<ItineraryDto> state)
     {
