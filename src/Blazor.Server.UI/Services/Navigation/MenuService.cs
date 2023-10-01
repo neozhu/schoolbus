@@ -77,6 +77,14 @@ public class MenuService : IMenuService
                     Icon = Icons.Material.Filled.History,
                     Href = "/pages/TransportLogs",
                     PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Messages",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Message,
+                    Href = "/pages/messages",
+                    PageStatus = PageStatus.Completed
                 }
             }
         },

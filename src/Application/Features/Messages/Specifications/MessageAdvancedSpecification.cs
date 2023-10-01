@@ -13,11 +13,12 @@ public class MessageAdvancedSpecification : Specification<Message>
             today.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.CurrentCulture) + " 00:00:00",
             CultureInfo.CurrentCulture);
 
-       Query.Where(q => q.From != null)
-             .Where(q => q.Content!.Contains(filter.Keyword) || q.To!.Contains(filter.Keyword) || q.From!.Contains(filter.Keyword), !string.IsNullOrEmpty(filter.Keyword))
-             .Where(q => q.CreatedBy == filter.CurrentUser.UserId, filter.ListView == MessageListView.My && filter.CurrentUser is not null)
-             .Where(q => q.Created >= start && q.Created <= end, filter.ListView == MessageListView.CreatedToday)
-             .Where(q => q.Created >= last30day, filter.ListView == MessageListView.Created30Days);
-       
+        Query.Where(q => q.From != null)
+             .Where(q => q.TenantId == filter.CurrentUser.TenantId, !filter.CurrentUser.IsSuperAdmin)
+              .Where(q => q.Content!.Contains(filter.Keyword) || q.To!.Contains(filter.Keyword) || q.From!.Contains(filter.Keyword), !string.IsNullOrEmpty(filter.Keyword))
+              .Where(q => q.CreatedBy == filter.CurrentUser.UserId, filter.ListView == MessageListView.My && filter.CurrentUser is not null)
+              .Where(q => q.Created >= start && q.Created <= end, filter.ListView == MessageListView.CreatedToday)
+              .Where(q => q.Created >= last30day, filter.ListView == MessageListView.Created30Days);
+
     }
 }

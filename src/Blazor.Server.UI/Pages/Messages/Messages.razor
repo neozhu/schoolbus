@@ -165,7 +165,17 @@
         <PropertyColumn Property="x => x.SentTime" Title="@L[_currentDto.GetMemberDescription(x=>x.SentTime)]" />
         <PropertyColumn Property="x => x.ReadTime" Title="@L[_currentDto.GetMemberDescription(x=>x.ReadTime)]" />
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]" />
-
+        @if (UserProfile.IsSuperAdmin)
+        {
+            <PropertyColumn Property="x => x.Tenant" Title="@L[_currentDto.GetMemberDescription(x=>x.Tenant)]">
+                <CellTemplate>
+                    <div class="d-flex flex-column">
+                        <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
+                        <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary) !important">@context.Item.TenantId</MudText>
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
+        }
     </Columns>
     <NoRecordsContent>
         <MudText>@ConstantString.NoRecords</MudText>
@@ -265,6 +275,7 @@
         var command = new AddEditMessageCommand();
         var parameters = new DialogParameters
             {
+                { nameof(_MessageFormDialog.UserProfile),UserProfile },
                 { nameof(_MessageFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -291,6 +302,7 @@
             };
         var parameters = new DialogParameters
             {
+                { nameof(_MessageFormDialog.UserProfile),UserProfile },
                 { nameof(_MessageFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -308,6 +320,7 @@
         var command = Mapper.Map<AddEditMessageCommand>(dto);
         var parameters = new DialogParameters
             {
+                { nameof(_MessageFormDialog.UserProfile),UserProfile },
                 { nameof(_MessageFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };

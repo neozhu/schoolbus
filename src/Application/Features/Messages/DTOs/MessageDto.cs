@@ -2,6 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
+using CleanArchitecture.Blazor.Application.Features.Tenants.DTOs;
+
 namespace CleanArchitecture.Blazor.Application.Features.Messages.DTOs;
 
 [Description("Messages")]
@@ -22,9 +24,11 @@ public class MessageDto
     [Description("Read Time")]
     public DateTime? ReadTime {get;set;} 
     [Description("Status")]
-    public string? Status {get;set;} 
-    [Description("Tenant Id")]
-    public string? TenantId {get;set;} 
+    public string? Status {get;set;}
+    [Description("Organization Id")]
+    public string TenantId { get; set; } = null!;
+    [Description("Organization")]
+    public TenantDto Tenant { get; set; } = null!;
 
 
     private class Mapping : Profile
