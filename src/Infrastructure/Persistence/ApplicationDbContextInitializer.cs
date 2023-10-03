@@ -74,11 +74,13 @@ public class ApplicationDbContextInitializer
 
     private async Task TrySeedAsync()
     {
+        var tenantId1 = Guid.NewGuid().ToString();
+        var tenantId2 = Guid.NewGuid().ToString();
         // Default tenants
         if (!_context.Tenants.Any())
         {
-            _context.Tenants.Add(new Tenant { Name = "ORG-1", Description = "a company or customer's instance" });
-            _context.Tenants.Add(new Tenant { Name = "ORG-2", Description = "a company or customer's instance" });
+            _context.Tenants.Add(new Tenant {Id= tenantId1, Name = "ORG-1", Description = "a company or customer's instance" });
+            _context.Tenants.Add(new Tenant {Id= tenantId2, Name = "ORG-2", Description = "a company or customer's instance" });
             await _context.SaveChangesAsync();
 
         }
@@ -136,6 +138,22 @@ public class ApplicationDbContextInitializer
             await _userManager.AddToRolesAsync(demo, new[] { role2.Name! });
         }
 
+        if (!_context.Schools.Any())
+        {
+            _context.Schools.Add(new School() { Name = "St Paul's School", TenantId = tenantId1, Phone = "", Contact = "", Address = "Lonsdale Road, London, SW13 9JT, United Kingdom" });
+            _context.Schools.Add(new School() { Name = "Westminster School", TenantId = tenantId1, Phone = "", Contact = "", Address = "17 Dean's Yard, Westminster, London, SW1P 3PB, United Kingdom" });
+            _context.Schools.Add(new School() { Name = "Guildford High School", TenantId = tenantId2, Phone = "", Contact = "", Address = "London Road, Guildford, Surrey, GU1 1SJ, United Kingdom" });
+            _context.Schools.Add(new School() { Name = "King's College School - Wimbledon", TenantId = tenantId2, Phone = "", Contact = "", Address = "Southside, Wimbledon Common, London, SW19 4TT, United Kingdom" });
+            await _context.SaveChangesAsync();
+        }
+        if (!_context.Buses.Any())
+        {
+            _context.Buses.Add(new Bus() {PlatNumber = "H3 YMV", TenantId = tenantId1,  Description= "Yellow bus with 30 seats", DeviceId= "HXXX XXX 01", Status="OK" });
+            _context.Buses.Add(new Bus() { PlatNumber = "FAK 3IT", TenantId = tenantId1, Description = "Yellow bus with 40 seats", DeviceId = "HXXX XXX 02", Status = "OK" });
+            _context.Buses.Add(new Bus() { PlatNumber = "C8 FAK", TenantId = tenantId2, Description = "Yellow bus with 30 seats", DeviceId = "HXXX XXX 03", Status = "OK" });
+            _context.Buses.Add(new Bus() { PlatNumber = "YU51 IA", TenantId = tenantId2, Description = "Yellow bus with 40 seats", DeviceId = "HXXX XXX 04", Status = "OK" });
+            await _context.SaveChangesAsync();
+        }
         // Default data
         // Seed, if necessary
         if (!_context.KeyValues.Any())

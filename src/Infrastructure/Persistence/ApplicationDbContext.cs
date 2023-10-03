@@ -38,6 +38,10 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<TransportLog> TransportLogs { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<ParentStudent> ParentStudents { get; set; }
+
+    public DbSet<TripReport> TripReports { get; set; }
+    public DbSet<TripLog> TripLogs { get; set; }
+    public DbSet<TripAccident> TripAccidents { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

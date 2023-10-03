@@ -90,6 +90,18 @@ public static class Permissions
         public const string Export = "Permissions.TransportLogs.Export";
         public const string Import = "Permissions.TransportLogs.Import";
     }
+    [DisplayName("TripReports")]
+    [Description("TripReports Permissions")]
+    public static class TripReports
+    {
+        public const string View = "Permissions.TripReports.View";
+        public const string Create = "Permissions.TripReports.Create";
+        public const string Edit = "Permissions.TripReports.Edit";
+        public const string Delete = "Permissions.TripReports.Delete";
+        public const string Search = "Permissions.TripReports.Search";
+        public const string Export = "Permissions.TripReports.Export";
+        public const string Import = "Permissions.TripReports.Import";
+    }
     [DisplayName("Messages")]
     [Description("Messages Permissions")]
     public static class Messages

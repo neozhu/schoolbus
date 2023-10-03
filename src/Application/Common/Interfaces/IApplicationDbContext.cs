@@ -28,4 +28,7 @@ public interface IApplicationDbContext
     DbSet<TransportLog> TransportLogs { get; set; }
     DbSet<Message> Messages { get; set; }
     DbSet<ParentStudent> ParentStudents { get; set; }
+    DbSet<TripReport> TripReports { get; set; }
+    DbSet<TripLog> TripLogs { get; set; }
+    DbSet<TripAccident> TripAccidents { get; set; }
 }

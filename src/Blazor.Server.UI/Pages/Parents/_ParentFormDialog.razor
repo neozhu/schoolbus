@@ -81,7 +81,7 @@
                                     </MudAvatar>
                                     <MudStack Justify="Justify.Center" Spacing="0">
                                         <MudText Typo="Typo.body1">@item.DisplayName</MudText>
-                                        <MudText Typo="Typo.body2">@item.Phone</MudText>
+                                        <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@item.UID</MudText>
                                     </MudStack>
                                 </MudStack>
                             </MudPaper>
@@ -121,7 +121,7 @@
     <div class="d-flex flex-column gap-2 px-2">
         <div class="d-flex flex-row gap-2">
             <MudSelect T="int?" @bind-Value="schoolid" Label="@L["School"]" Variant="Variant.Outlined">
-                @foreach (var item in SchoolService.DataSource)
+                @foreach (var item in SchoolService.DataSource.Where(x=>x.TenantId==model.TenantId))
                 {
                     <MudSelectItem T="int?" Value="@item.Id">@item.Name</MudSelectItem>
                 }
@@ -150,8 +150,8 @@
                                 }
                             </MudAvatar>
                             <div class="ml-2">
-                                <MudText Typo="Typo.body2">@context.Item.UID</MudText>
                                 <MudText Typo="Typo.body2">@context.Item.DisplayName</MudText>
+                                <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.UID</MudText>
                             </div>
                         </CellTemplate>
                     </PropertyColumn>
