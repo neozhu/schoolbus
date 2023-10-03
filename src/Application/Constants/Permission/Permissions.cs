@@ -64,6 +64,7 @@ public static class Permissions
         public const string Search = "Permissions.Students.Search";
         public const string Export = "Permissions.Students.Export";
         public const string Import = "Permissions.Students.Import";
+        public const string Assign = "Permissions.Students.Assign";
     }
     [DisplayName("Itineraries")]
     [Description("Itineraries Permissions")]

@@ -2,6 +2,7 @@
 
 @using BlazorDownloadFile
 @using CleanArchitecture.Blazor.Application.Features.Students.Caching
+@using CleanArchitecture.Blazor.Application.Features.Students.Commands.AssignItinerary;
 @using CleanArchitecture.Blazor.Application.Features.Students.DTOs
 @using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById;
 @using CleanArchitecture.Blazor.Application.Features.Students.Specifications
@@ -80,6 +81,16 @@
                                         Style="margin-right: 4px; margin-bottom:4px"
                                         OnClick="OnDeleteChecked"
                                         IconColor="Color.Surface">@ConstantString.Delete</MudButton>
+                        }
+                        @if (_canAssign)
+                        {
+                            <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Info"
+                                        StartIcon="@Icons.Material.Filled.AssignmentInd"
+                                        Disabled="@(!(_selectedItems.Count>0))"
+                                        Size="Size.Small"
+                                        Style="margin-right: 4px; margin-bottom:4px"
+                                        OnClick="OnAssignItinerary"
+                                        IconColor="Color.Surface">@L["Assign Itinerary"]</MudButton>
                         }
                         @if (_canExport)
                         {
@@ -202,6 +213,14 @@
                 </div>
             </CellTemplate>
         </PropertyColumn>
+        <PropertyColumn Property="x => x.Itinerary" Title="@L[_currentDto.GetMemberDescription(x=>x.Itinerary)]">
+            <CellTemplate>
+                <div class="d-flex flex-column">
+                    <MudText Typo="Typo.body2">@context.Item.Itinerary?.Name</MudText>
+                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.Itinerary?.Bus.PlatNumber</MudText>
+                </div>
+            </CellTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]" />
         <PropertyColumn Property="x => x.Parents" Title="@L[_currentDto.GetMemberDescription(x=>x.Parents)]">
             <CellTemplate>
@@ -317,6 +336,7 @@
     private bool _canDelete;
     private bool _canImport;
     private bool _canExport;
+    private bool _canAssign;
 
     protected override async Task OnInitializedAsync()
     {
@@ -328,6 +348,7 @@
         _canDelete = (await AuthService.AuthorizeAsync(state.User, Permissions.Students.Delete)).Succeeded;
         _canImport = (await AuthService.AuthorizeAsync(state.User, Permissions.Students.Import)).Succeeded;
         _canExport = (await AuthService.AuthorizeAsync(state.User, Permissions.Students.Export)).Succeeded;
+        _canAssign = (await AuthService.AuthorizeAsync(state.User, Permissions.Students.Assign)).Succeeded;
     }
     private async Task<GridData<StudentDto>> ServerReload(GridState<StudentDto> state)
     {
@@ -386,7 +407,23 @@
         Query.Keyword = string.Empty;
         await _table.ReloadServerData();
     }
-
+    private async Task OnAssignItinerary()
+    {
+        var command = new AssignItineraryCommand() { TenantId = UserProfile.TenantId, Itinerary = null, Students = _selectedItems.ToList() };
+        var parameters = new DialogParameters
+            {
+                { nameof(AssignItineraryDialog.UserProfile),UserProfile },
+                { nameof(AssignItineraryDialog.model),command },
+            };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = DialogService.Show<AssignItineraryDialog>
+        (L["Assign Itinerary"], parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _table.ReloadServerData();
+        }
+    }
     private async Task OnCreate()
     {
         var command = new AddEditStudentCommand() { ProfilePicture = "/img/kid.webp", TenantId = UserProfile.TenantId, Status = "OK" };

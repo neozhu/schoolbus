@@ -5,11 +5,11 @@ using CleanArchitecture.Blazor.Application.Constants.ClaimTypes;
 
 namespace CleanArchitecture.Blazor.Infrastructure.Services;
 #nullable disable
-public class ApplicationClaimsIdentityFactory : UserClaimsPrincipalFactory<ApplicationUser, ApplicationRole>
+public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<ApplicationUser, ApplicationRole>
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public ApplicationClaimsIdentityFactory(UserManager<ApplicationUser> userManager,
+    public ApplicationUserClaimsPrincipalFactory(UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
         IOptions<IdentityOptions> optionsAccessor) : base(userManager, roleManager, optionsAccessor)
     {

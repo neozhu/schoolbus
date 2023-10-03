@@ -22,5 +22,8 @@ public class Student : BaseAuditableEntity, IMustHaveTenant
 
     public virtual ICollection<TransportLog>  TransportLogs{ get; set; } = new HashSet<TransportLog>();
 
+    public int? ItineraryId { get; set; }
+    public virtual Itinerary? Itinerary { get; set; }
+
 
 }

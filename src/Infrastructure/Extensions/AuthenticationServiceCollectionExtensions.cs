@@ -18,6 +18,7 @@ public static class AuthenticationServiceCollectionExtensions
         services
             .AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
             .AddDefaultTokenProviders();
         services.Configure<IdentityOptions>(options =>
         {
@@ -42,8 +43,7 @@ public static class AuthenticationServiceCollectionExtensions
             options.User.RequireUniqueEmail = true;
 
         });
-        services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationClaimsIdentityFactory>()
-                .AddScoped<IIdentityService, IdentityService>()
+        services.AddScoped<IIdentityService, IdentityService>()
                 .AddAuthorization(options =>
                  {
                      options.AddPolicy("CanPurge", policy => policy.RequireUserName(UserName.Administrator));

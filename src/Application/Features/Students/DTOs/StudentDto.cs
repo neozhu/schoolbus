@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
+using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Parents.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Schools.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Tenants.DTOs;
@@ -37,10 +38,19 @@ public class StudentDto
     [Description("School")]
     public SchoolDto School { get; set; } = new();
 
+    [Description("Assigned Itinerary Id")]
+    public int? ItineraryId { get; set; }
+
+    [Description("Assigned Itinerary")]
+    public ItineraryDto? Itinerary { get; set; }
+
+
     [Description("Organization Id")]
     public string TenantId { get; set; } = null!;
     [Description("Organization")]
     public TenantDto Tenant { get; set; } = null!;
+
+
 
     public List<ParentDto> Parents { get; set; } = new List<ParentDto>();
     public List<TransportLogDto> TransportLogs { get; set; } = new List<TransportLogDto>();

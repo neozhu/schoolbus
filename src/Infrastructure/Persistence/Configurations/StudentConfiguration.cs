@@ -17,6 +17,7 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.HasOne(t => t.School).WithMany(x=>x.Students).HasForeignKey(x => x.SchoolId);
         builder.Navigation(e => e.Tenant).AutoInclude();
         builder.Navigation(e => e.School).AutoInclude();
+        builder.Navigation(e => e.Itinerary).AutoInclude();
         builder.Ignore(e => e.DomainEvents);
     }
 }

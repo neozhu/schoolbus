@@ -21,6 +21,7 @@ public class ItineraryConfiguration : IEntityTypeConfiguration<Itinerary>
         builder.Navigation(e => e.Bus).AutoInclude();
         builder.HasOne(t => t.Pilot).WithMany(x => x.Itineraries).HasForeignKey(x => x.PilotId);
         builder.Navigation(e => e.Pilot).AutoInclude();
+        builder.HasMany(x => x.Students).WithOne(x => x.Itinerary).HasForeignKey(x => x.ItineraryId);
         builder.Ignore(e => e.DomainEvents);
     }
 }

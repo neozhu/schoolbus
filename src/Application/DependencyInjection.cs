@@ -67,6 +67,12 @@ public static class DependencyInjection
             service.Initialize();
             return service;
         });
+        services.AddSingleton<ItineraryService>();
+        services.AddSingleton<IItineraryService>(sp => {
+            var service = sp.GetRequiredService<ItineraryService>();
+            service.Initialize();
+            return service;
+        });
         services.AddScoped<RegisterFormModelFluentValidator>();
        
         return services;
