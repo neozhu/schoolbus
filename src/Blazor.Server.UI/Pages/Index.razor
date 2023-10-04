@@ -82,10 +82,18 @@
                 </div>
             </MudPaper>
         </MudItem>
-
+        <MudItem xs="6" sm="3">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.AirplaneTicket" Color="Color.Info" Size="Size.Large"></MudIcon>
+                <div class="ml-3 d-flex flex-column">
+                    <h2>@SummaryInfo.TotalReports</h2>
+                    <p style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">Trip Reports</p>
+                </div>
+            </MudPaper>
+        </MudItem>
         <MudItem xs="12" sm="12" md="6">
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
-                <ApexChart @ref="chart1" TItem="TotalOfStudentDto" 
+                <ApexChart @ref="chart1" TItem="TotalOfStudentDto" Height="350" Width="400"
                            Title="Percentage of Students per School">
                     <ApexPointSeries TItem="TotalOfStudentDto"
                                      Items="result.TotalOfStudent"
@@ -99,7 +107,7 @@
         </MudItem>
         <MudItem xs="12" sm="12" md="6">
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
-                <ApexChart @ref="chart2" TItem="TotalOfTransportDto" 
+                <ApexChart @ref="chart2" TItem="TotalOfTransportDto" Height="350" Width="400"
                            Title="Percentage of Transports per Itinerary">
                    <ApexPointSeries TItem="TotalOfTransportDto"
                                      Items="result.TotalOfTransport"
@@ -141,16 +149,25 @@
     protected override async Task OnInitializedAsync()
     {
         UserProfileState.StateChanged += StateOnStateChanged;
-        if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
+        
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
-            SummaryInfo = result.Summary;
-            StateHasChanged();
-            if (chart1 is not null && chart2 is not null && chart3 is not null)
+            if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
             {
-                await chart1.RenderAsync();
-                await chart2.RenderAsync();
-                await chart3.RenderAsync();
+                result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
+                SummaryInfo = result.Summary;
+                StateHasChanged();
+                if (chart1 is not null && chart2 is not null && chart3 is not null)
+                {
+                    await chart1.RenderAsync();
+                    await chart2.RenderAsync();
+                    await chart3.RenderAsync();
+                    await chart1.UpdateOptionsAsync(false, false, false);
+                    await chart2.UpdateOptionsAsync(false, false, false);
+                }
             }
         }
     }
@@ -168,9 +185,12 @@
                 result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
                 SummaryInfo = result.Summary;
                 StateHasChanged();
-                await chart1?.RenderAsync();
-                await chart2?.RenderAsync();
-                await chart3?.RenderAsync();
+                await chart1.RenderAsync();
+                chart1.UpdateOptionsAsync(false, false, false);
+                await chart2.RenderAsync();
+                chart2.UpdateOptionsAsync(false, false, false);
+                await chart3.RenderAsync();
+                chart3.UpdateOptionsAsync(false, false, false);
             }
         });
     }

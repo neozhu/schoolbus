@@ -54,8 +54,16 @@ public class CreateTransportLogCommandHandler : IRequestHandler<CreateTransportL
     }
     public async Task<Result<int>> Handle(CreateTransportLogCommand request, CancellationToken cancellationToken)
     {
-         
         var item = _mapper.Map<TransportLog>(request);
+        item.UpOrDown = "Get On";
+        var getonrec = await _context.TransportLogs.Where(x => x.ItineraryId == request.ItineraryId && x.StudentId == request.StudentId && x.SwipeDateTime.Date == request.SwipeDateTime.Date && x.Done == false).FirstOrDefaultAsync();
+        if(getonrec is not null)
+        {
+            getonrec.Done = true;
+            item.UpOrDown = "Get Off";
+            item.RefId = getonrec.Id;
+            item.Done = true;
+        }
         item.AddDomainEvent(new TransportLogCreatedEvent(item));
         _context.TransportLogs.Add(item);
         await _context.SaveChangesAsync(cancellationToken);

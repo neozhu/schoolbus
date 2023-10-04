@@ -264,7 +264,7 @@
     public async Task LoadOnBoardStudents(int id)
     {
         _transportLogs = await Mediator.Send(new GetOnBoardTransportLogsQuery() { ItineraryId = id });
-   
+
     }
     private async Task Checkout(int id)
     {
@@ -299,12 +299,17 @@
     public async Task HandleBarcodeScan(string barcode)
     {
         foundBarcode = barcode.Trim();
-        if (!studentQ.Contains(foundBarcode) && !(_transportLogs?.Any(x => x.Student.UID == foundBarcode) ?? false))
+        if (!studentQ.Contains(foundBarcode) )
         {
-            var item = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode));
-            if (item is not null)
+            var checkresult = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode, Itinerary.TenantId));
+            if (checkresult.Succeeded)
             {
+                var student = checkresult.Data!;
                 studentQ.Enqueue(foundBarcode);
+                if (studentQ.Count > 1)
+                {
+                    studentQ.Dequeue();
+                }
                 var result = await Mediator.Send(new CreateTransportLogCommand()
                     {
                         DeviceId = Itinerary.Bus.DeviceId,
@@ -312,25 +317,25 @@
                         Longitude = _position?.Coords.Longitude,
                         Location = Location,
                         ItineraryId = Itinerary.Id,
-                        StudentId = item.Id,
+                        StudentId = student.Id,
                         TenantId = Itinerary.TenantId,
-                        UpOrDown = "Up",
+                        UpOrDown = "Get On",
                         SwipeDateTime = DateTime.Now,
                     });
                 if (result.Succeeded)
                 {
                     await LoadOnBoardStudents(Itinerary.Id);
-                    Snackbar.Add($"{item.DisplayName} checkin successfully.", MudBlazor.Severity.Success);
+                    Snackbar.Add($"{student.DisplayName} checkin successfully.", MudBlazor.Severity.Success);
                 }
                 else
                 {
-                    Snackbar.Add($"checkin error.{result.ErrorMessage}", MudBlazor.Severity.Error);
+                    Snackbar.Add($"{result.ErrorMessage}", MudBlazor.Severity.Error);
 
                 }
             }
             else
             {
-                Snackbar.Add($"{foundBarcode} checkin error.", MudBlazor.Severity.Error);
+                Snackbar.Add($"{checkresult.ErrorMessage}", MudBlazor.Severity.Error);
             }
 
             await InvokeAsync(StateHasChanged);

@@ -60,7 +60,7 @@ public class CheckoutTransportLogCommandHandler :
             StudentId = item.StudentId,
             Student = null,
             SwipeDateTime = DateTime.Now,
-            UpOrDown = "Down",
+            UpOrDown = "Get Off",
             TenantId = item.TenantId,
             Tenant = null,
 

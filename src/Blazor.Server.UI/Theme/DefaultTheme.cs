@@ -26,9 +26,9 @@ public class Theme
                 TextSecondary = "#99a0b0",
                 Dark = "#110E2D",
                 DarkLighten = "#1A1643",
-                GrayDefault = "#4B5563",
-                GrayLight = "#9CA3AF",
-                GrayLighter = "#adbdccff",
+                GrayDefault = "#BABDBF",
+                GrayLight = "#D1D3D4",
+                GrayLighter = "#E8E9E9",
             },
             PaletteDark = new PaletteDark
             {

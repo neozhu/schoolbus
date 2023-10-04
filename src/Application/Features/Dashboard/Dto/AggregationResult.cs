@@ -24,6 +24,7 @@ public record SummaryDto
     public int TotalPilots { get; set; }
     public int TotalStudents { get; set; }
     public int TotalTransportLogs { get; set; }
+    public int TotalReports { get; set; }
 }
 public record TotalOfMonthDto
 {

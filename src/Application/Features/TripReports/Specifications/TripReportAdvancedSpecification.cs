@@ -13,7 +13,8 @@ public class TripReportAdvancedSpecification : Specification<TripReport>
             today.AddDays(-30).ToString("yyyy-MM-dd", CultureInfo.CurrentCulture) + " 00:00:00",
             CultureInfo.CurrentCulture);
 
-       Query.Where(q => q.TenantId != null)
+       Query.Where(q => q.TenantId==filter.CurrentUser.TenantId, !filter.CurrentUser.IsSuperAdmin)
+            .Where(q => q.Pilot.Phone == filter.CurrentUser.PhoneNumber, filter.CurrentUser.IsPilots)
              .Where(q => q.Comments!.Contains(filter.Keyword) || q.PlatNumber!.Contains(filter.Keyword), !string.IsNullOrEmpty(filter.Keyword))
              .Where(q => q.CreatedBy == filter.CurrentUser.UserId, filter.ListView == TripReportListView.My && filter.CurrentUser is not null)
              .Where(q => q.Created >= start && q.Created <= end, filter.ListView == TripReportListView.CreatedToday)

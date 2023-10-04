@@ -1,0 +1,87 @@
+﻿@inject IStringLocalizer<TripReports> L
+@page "/pages/mytrip"
+
+<div class="main" >
+    <MudContainer MaxWidth="MaxWidth.Small">
+        <MudPaper  Width="100%" Square="true">
+            <MudList Clickable="true">
+                <MudListSubheader>
+                    <MudStack Row="true" Class="align-center justify-space-between">
+                        <MudIcon Icon="@Icons.Material.Filled.Timeline"></MudIcon>
+                        <h3>My Trip</h3>
+                        <MudTooltip Text="@L["Just show runing"]">
+                        <MudSwitch @bind-Checked="@justruning" Color="Color.Primary" />
+                        </MudTooltip>
+                    </MudStack>
+                  
+                </MudListSubheader>
+                <MudListItem Class="d-flex flex-row align-center">
+                    <div class="d-flex flex-row align-center">
+                        <MudTooltip Text="@L["Runing"]">
+                            <MudIcon Icon="@Icons.Material.Filled.DirectionsRun" Color="Color.Primary" Size="Size.Large"></MudIcon>
+                        </MudTooltip>
+                       
+                        <div class="d-flex flex-column ml-2 flex-grow-1">
+                            <MudText Typo="Typo.body2"> Coal Road - Bluff Street </MudText>
+                            <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")"> Time: 7:00 - 9:00 </MudText>
+                        </div>
+                        <div class="d-flex flex-column ml-2 align-center justify-center">
+                            <MudText Typo="Typo.body2"> On Board </MudText>
+                            <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")"> 10 </MudText>
+                        </div>
+                    </div>
+                    
+                </MudListItem>
+                @if (!justruning)
+                {
+                    <MudListItem Class="d-flex flex-row align-center">
+                        <div class="d-flex flex-row align-center">
+                            <MudTooltip Text="@L["Finished"]">
+                                <MudIcon Icon="@Icons.Material.Filled.TagFaces" Color="Color.Success" Size="Size.Large"></MudIcon>
+                            </MudTooltip>
+                            <div class="d-flex flex-column ml-2 flex-grow-1">
+                                <MudText Typo="Typo.body2"> Coal Road - Bluff Street </MudText>
+                                <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")"> Time: 7:00 - 9:00 </MudText>
+                            </div>
+                            <div class="d-flex flex-column ml-2 align-center justify-center">
+                                <MudText Typo="Typo.body2"> On Board </MudText>
+                                <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")"> 10 </MudText>
+                            </div>
+                        </div>
+
+                    </MudListItem>
+                    <MudListItem Class="d-flex flex-row align-center">
+                        <div class="d-flex flex-row align-center">
+                        <MudTooltip Text="@L["Finished"]">
+                            <MudIcon Icon="@Icons.Material.Filled.TagFaces" Color="Color.Success" Size="Size.Large"></MudIcon>
+                        </MudTooltip>
+                        <div class="d-flex flex-column ml-2 flex-grow-1">
+                            <MudText Typo="Typo.body2"> Coal Road - Bluff Street </MudText>
+                            <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")"> Time: 7:00 - 9:00 </MudText>
+                        </div>
+                        <div class="d-flex flex-column ml-2 align-center justify-center">
+                            <MudText Typo="Typo.body2"> On Board </MudText>
+                            <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")"> 10 </MudText>
+                        </div>
+                    </div>
+
+                </MudListItem>
+                }
+            </MudList>
+        </MudPaper>
+    </MudContainer>
+</div>
+
+<MudAppBar Bottom="true" Class="justify-center gap-2" Fixed="true" Color="Color.Primary" Elevation="1">
+    <MudSpacer />
+    <MudTooltip Text="@L["Home"]">
+        <MudIconButton Icon="@Icons.Material.Filled.Home" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" />
+    </MudTooltip>
+    <MudTooltip Text="@L["Create a trip"]"><MudIconButton Icon="@Icons.Material.Filled.Add" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" /></MudTooltip>
+    <MudTooltip Text="@L["Create a accident"]"><MudIconButton Icon="@Icons.Material.Filled.AddAlert" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" /></MudTooltip>
+  
+    <MudSpacer />
+</MudAppBar>
+@code {
+    bool justruning = false;
+}

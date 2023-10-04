@@ -80,6 +80,14 @@ public class MenuService : IMenuService
                 },
                 new()
                 {
+                    Title = "My Trip",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Timeline,
+                    Href = "/pages/mytrip",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
                     Title = "Trip Reports",
                     Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.AirplaneTicket,

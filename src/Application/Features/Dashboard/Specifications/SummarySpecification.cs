@@ -60,3 +60,11 @@ public class SummaryTransportLogSpecification : Specification<TransportLog>
         Query.Where(q => q.TenantId == user.TenantId, !user.IsSuperAdmin);
     }
 }
+public class SummaryTripReportSpecification : Specification<TripReport>
+{
+    public SummaryTripReportSpecification(UserProfile user)
+    {
+        Query.Where(q => q.ItineraryId !=null, user.IsSuperAdmin);
+        Query.Where(q => q.TenantId == user.TenantId && q.ItineraryId != null, !user.IsSuperAdmin);
+    }
+}

@@ -16,6 +16,7 @@ public  class TripAccident : BaseAuditableEntity, IMustHaveTenant
     public double? Latitude { get; set; }
     public string? Comments { get; set; }
     public string? Status { get; set; }
+    public string? Responder { get; set; }
     public string? Result { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;

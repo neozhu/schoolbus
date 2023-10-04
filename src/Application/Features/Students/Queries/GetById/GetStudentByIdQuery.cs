@@ -17,14 +17,16 @@ public class GetStudentByIdQuery : ICacheableRequest<StudentDto>
         Id = id;
     }
 }
-public class GetStudentByUIdQuery : ICacheableRequest<StudentDto?>
+public class GetStudentByUIdQuery : ICacheableRequest<Result<StudentDto>>
 {
     public string UId { get; }
+    public string TenantId { get; }
     public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{UId}");
     public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
-    public GetStudentByUIdQuery(string uid)
+    public GetStudentByUIdQuery(string uid, string tenantId)
     {
         UId = uid;
+        TenantId =tenantId;
     }
 }
 public class GetStudentBySchoolIdQuery : ICacheableRequest<List<StudentDto>>
@@ -37,7 +39,7 @@ public class GetStudentBySchoolIdQuery : ICacheableRequest<List<StudentDto>>
 public class GetStudentByIdQueryHandler :
      IRequestHandler<GetStudentBySchoolIdQuery, List<StudentDto>>,
      IRequestHandler<GetStudentByIdQuery, StudentDto>,
-    IRequestHandler<GetStudentByUIdQuery, StudentDto?>
+    IRequestHandler<GetStudentByUIdQuery, Result<StudentDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -53,12 +55,27 @@ public class GetStudentByIdQueryHandler :
         _mapper = mapper;
         _localizer = localizer;
     }
-    public async Task<StudentDto?> Handle(GetStudentByUIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<StudentDto>> Handle(GetStudentByUIdQuery request, CancellationToken cancellationToken)
     {
         var data = await _context.Students.ApplySpecification(new StudentByUIDSpecification(request.UId))
                      .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
                      .FirstOrDefaultAsync(cancellationToken);
-        return data;
+        if(data is null)
+        {
+            return await Result<StudentDto>.FailureAsync(new[] { $"Invalid QR code：{request.UId}" });
+        }
+        else
+        {
+            if(data.TenantId!= request.TenantId)
+            {
+                return await Result<StudentDto>.FailureAsync(new[] { $"Invalid organization id：{request.TenantId}" });
+            }
+            else
+            {
+                return await Result<StudentDto>.SuccessAsync(data);
+            }
+        }
+       
     }
     public async Task<StudentDto> Handle(GetStudentByIdQuery request, CancellationToken cancellationToken)
     {

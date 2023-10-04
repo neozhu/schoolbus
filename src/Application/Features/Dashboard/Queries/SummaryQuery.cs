@@ -43,7 +43,9 @@ public class SummaryQueryHandler :
                      .CountAsync();
         var totalitineraries = await _context.Itineraries.ApplySpecification(new SummaryItinerarySpecification(request.UserProfile))
                      .CountAsync();
-        var summary= new SummaryDto() { TotalBuses = totalbuses,TotalSchools= totalschools,TotalParents= totalparents,TotalStudents = totalstudents,TotalPilots= totalpilots, TotalItineraries=totalitineraries, TotalTransportLogs=totaltransportlogs };
+        var totalreports = await _context.TripReports.ApplySpecification(new SummaryTripReportSpecification(request.UserProfile))
+                   .CountAsync();
+        var summary= new SummaryDto() { TotalBuses = totalbuses,TotalSchools= totalschools,TotalParents= totalparents,TotalStudents = totalstudents,TotalPilots= totalpilots, TotalItineraries=totalitineraries, TotalTransportLogs=totaltransportlogs, TotalReports=totalreports };
 
         var totalofMonth = await _context.TransportLogs.GroupBy(x => new { x.SwipeDateTime.Year, x.SwipeDateTime.Month }).Select(g => new TotalOfMonthDto { Count = g.Count(), YearMonth = $"{g.Key.Year}-{g.Key.Month}" }).ToListAsync();
 
