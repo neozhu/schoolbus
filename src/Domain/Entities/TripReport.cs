@@ -16,7 +16,7 @@ public class TripReport: BaseAuditableEntity, IMustHaveTenant
     public int NotOnBoard { get; set; }
     public DateTime? DepartureDate { get; set; }
     public DateTime? ReportDate { get; set; }
-    public string? Stage { get; set; }
+    public string? Status { get; set; }
     public string? Comments { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;

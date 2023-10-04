@@ -35,6 +35,8 @@ public class TripReportDto
     public DateTime? DepartureDate { get; set; }
     [Description("Report Date")]
     public DateTime? ReportDate { get; set; }
+    [Description("Status")]
+    public string? Status { get; set; }
     [Description("Comments")]
     public string? Comments { get; set; }
     [Description("Organization Id")]
