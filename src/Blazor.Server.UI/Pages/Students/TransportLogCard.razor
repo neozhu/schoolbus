@@ -214,7 +214,7 @@
                         {
                             <div class="card">
                                 <h4>@item.SwipeDateTime</h4>
-                                <p style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@item.Location</p>
+                                <p class="mud-text-secondary">@item.Location</p>
                             </div>
                         }
                     }
@@ -224,7 +224,7 @@
                         <div class="card">
                             <div class="d-flex flex-column gap-2 pa-5">
                                 <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="60px" />
-                                <div style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">No records found</div>
+                                <div class="mud-text-secondary">No records found</div>
                             </div>
                         </div>
                     }

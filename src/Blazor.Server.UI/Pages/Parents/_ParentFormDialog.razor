@@ -81,7 +81,7 @@
                                     </MudAvatar>
                                     <MudStack Justify="Justify.Center" Spacing="0">
                                         <MudText Typo="Typo.body1">@item.DisplayName</MudText>
-                                        <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@item.UID</MudText>
+                                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.UID</MudText>
                                     </MudStack>
                                 </MudStack>
                             </MudPaper>
@@ -151,7 +151,7 @@
                             </MudAvatar>
                             <div class="ml-2">
                                 <MudText Typo="Typo.body2">@context.Item.DisplayName</MudText>
-                                <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.UID</MudText>
+                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.UID</MudText>
                             </div>
                         </CellTemplate>
                     </PropertyColumn>

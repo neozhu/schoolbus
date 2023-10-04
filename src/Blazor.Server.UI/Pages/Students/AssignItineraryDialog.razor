@@ -10,7 +10,7 @@
         <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
             <MudGrid>
                 <MudItem xs="12" sm="12">
-                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">Assign @(model.Students.Count) students to the corresponding itinerary.</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Assign @(model.Students.Count) students to the corresponding itinerary.</MudText>
                 </MudItem>
                 @if (UserProfile.IsSuperAdmin)
                 {

@@ -129,12 +129,12 @@
                 <div class="d-flex flex-row justify-space-between">
                     <div class="d-flex flex-column">
                         <div class="bandname -bold">@Itinerary.StartingStation</div>
-                        <div class="tourname align-self-center" style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.FirstTime</div>
+                        <div class="tourname align-self-center mud-text-secondary"  >@Itinerary.FirstTime</div>
                     </div>
                     <MudIcon Icon="@Icons.Material.Filled.MultipleStop" Class="align-self-center"></MudIcon>
                     <div class="d-flex flex-column">
                         <div class="bandname -bold">@Itinerary.TerminalStation</div>
-                        <div class="tourname align-self-center" style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.LastTime</div>
+                        <div class="tourname align-self-center mud-text-secondary"  >@Itinerary.LastTime</div>
                     </div>
                 </div>
                 @if (cameraBarcodeReader is not null)
@@ -182,7 +182,7 @@
                                 </MudAvatar>
                                 <div class="d-flex flex-column ml-3">
                                     <p>@item.Student.DisplayName</p>
-                                    <p style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@item.Student.UID</p>
+                                    <p class="mud-text-secondary">@item.Student.UID</p>
                                 </div>
 
                             </div>

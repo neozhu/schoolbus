@@ -18,7 +18,7 @@ public partial class ThemesMenu
         "#0576b9",
         Colors.BlueGrey.Default,
         "#6f42c1",
-        "#FF8F00",
+        "#FF7F00",
         Colors.Red.Default
     };
     private readonly List<string> _primaryDarkColors = new()
@@ -28,7 +28,7 @@ public partial class ThemesMenu
         "#0A81AB",
         "#546E7A",
         "#8E24AA",
-        "#F57F17",
+        "#D46800",
         "#9C2727",
     };
     private List<string> GetColorDefinition()

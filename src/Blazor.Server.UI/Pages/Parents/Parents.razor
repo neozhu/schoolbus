@@ -195,7 +195,7 @@
                 </MudAvatar>
                 <div class="ml-2">
                     <MudText Typo="Typo.body2">@context.Item.DisplayName</MudText>
-                    <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.Phone</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.Phone</MudText>
                 </div>
             </CellTemplate>
         </PropertyColumn>
@@ -218,7 +218,7 @@
                 <CellTemplate>
                     <div class="d-flex flex-column">
                         <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
-                        <MudText Typo="Typo.body2" Style="@($"color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@context.Item.TenantId</MudText>
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.TenantId</MudText>
                     </div>
                 </CellTemplate>
             </PropertyColumn>
