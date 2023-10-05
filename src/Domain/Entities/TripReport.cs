@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CleanArchitecture.Blazor.Domain.Enums;
 
 namespace CleanArchitecture.Blazor.Domain.Entities;
 public class TripReport: BaseAuditableEntity, IMustHaveTenant
@@ -16,7 +17,7 @@ public class TripReport: BaseAuditableEntity, IMustHaveTenant
     public int NotOnBoard { get; set; }
     public DateTime? DepartureDate { get; set; }
     public DateTime? ReportDate { get; set; }
-    public string? Status { get; set; }
+    public TripStatus Status { get; set; } = TripStatus.Runing;
     public string? Comments { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;

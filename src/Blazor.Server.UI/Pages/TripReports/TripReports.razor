@@ -136,7 +136,12 @@
                 }
             </CellTemplate>
         </TemplateColumn>
-        <PropertyColumn Property="x => x.ReportDate" Title="@L[_currentDto.GetMemberDescription(x=>x.ReportDate)]" />
+        <PropertyColumn Property="x => x.ReportDate" Title="@L[_currentDto.GetMemberDescription(x=>x.ReportDate)]">
+            <CellTemplate>
+                <MudText Typo="Typo.body2">@context.Item.DepartureDate?.ToLongDateString()</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.DepartureDate?.ToString("HH:mm") - @context.Item.ReportDate?.ToString("HH:mm")</MudText>
+            </CellTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Itinerary" Title="@L[_currentDto.GetMemberDescription(x=>x.Itinerary)]">
             <CellTemplate>
                 <MudText Typo="Typo.body2">@context.Item.Itinerary?.Name</MudText>
@@ -163,7 +168,6 @@
         </PropertyColumn>
         <PropertyColumn Property="x => x.OnBoard" Title="@L[_currentDto.GetMemberDescription(x=>x.OnBoard)]" />
         <PropertyColumn Property="x => x.NotOnBoard" Title="@L[_currentDto.GetMemberDescription(x=>x.NotOnBoard)]" />
-        <PropertyColumn Property="x => x.DepartureDate" Title="@L[_currentDto.GetMemberDescription(x=>x.DepartureDate)]" />
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]">
              <CellTemplate>
             <MudText Typo="Typo.body2">@context.Item.Status</MudText>
@@ -276,9 +280,10 @@
 
     private async Task OnCreate()
     {
-        var command = new AddEditTripReportCommand();
+        var command = new AddEditTripReportCommand() { TenantId=UserProfile.TenantId, Status= TripStatus.Runing};
         var parameters = new DialogParameters
             {
+                { nameof(_TripReportFormDialog.UserProfile),UserProfile },
                 { nameof(_TripReportFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
@@ -296,6 +301,7 @@
         var command = Mapper.Map<AddEditTripReportCommand>(dto);
         var parameters = new DialogParameters
             {
+                 { nameof(_TripReportFormDialog.UserProfile),UserProfile },
                 { nameof(_TripReportFormDialog.model),command },
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };

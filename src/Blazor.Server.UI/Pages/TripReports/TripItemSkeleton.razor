@@ -1,0 +1,27 @@
+﻿<MudListItem Class="d-flex flex-row  align-center">
+    <div class="d-flex flex-column">
+        @if (Loading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="ma-0 pa-0" />
+        }
+    <div class="d-flex my-2">
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="400px" Height="10px" Class="my-2" />
+    </div>
+   
+    <div class="d-flex flex-row align-center">
+        
+        <MudSkeleton SkeletonType="SkeletonType.Circle" Width="30px" Height="30px" />
+        <div class="d-flex flex-column ml-2 flex-grow-1">
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Class="my-1" />
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" />
+        </div>
+        <div class="d-flex flex-column ml-2 align-center justify-center">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="40px" Class="my-1" />
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="40px" />
+        </div>
+    </div>
+    </div>
+</MudListItem>
+@code {
+    [Parameter] public bool Loading { get; set; }
+}

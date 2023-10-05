@@ -12,6 +12,7 @@ public class TripReportConfiguration : IEntityTypeConfiguration<TripReport>
 {
     public void Configure(EntityTypeBuilder<TripReport> builder)
     {
+        builder.Property(t => t.Status).HasConversion<string>();
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.HasOne(t => t.Itinerary).WithMany().HasForeignKey(x => x.ItineraryId);
         builder.HasOne(t => t.Pilot).WithMany().HasForeignKey(x => x.PilotId);

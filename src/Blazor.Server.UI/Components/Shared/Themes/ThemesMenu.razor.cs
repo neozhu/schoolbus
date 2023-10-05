@@ -17,7 +17,7 @@ public partial class ThemesMenu
         Colors.Green.Default,
         "#0576b9",
         Colors.BlueGrey.Default,
-        "#6f42c1",
+        "#8421d1",
         "#FF7F00",
         Colors.Red.Default
     };
@@ -27,7 +27,7 @@ public partial class ThemesMenu
         "#689F38",
         "#0A81AB",
         "#546E7A",
-        "#8E24AA",
+        "#491c6b",
         "#D46800",
         "#9C2727",
     };

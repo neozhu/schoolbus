@@ -4,6 +4,7 @@ public class TripReportByIdSpecification : Specification<TripReport>
 {
     public TripReportByIdSpecification(int id)
     {
-       Query.Where(q => q.Id == id);
+        Query.Where(q => q.Id == id);
+        Query.Include(x => x.TripLogs).Include(x => x.TripAccidents);
     }
 }

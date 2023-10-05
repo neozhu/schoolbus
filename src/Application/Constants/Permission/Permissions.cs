@@ -101,6 +101,7 @@ public static class Permissions
         public const string Search = "Permissions.TripReports.Search";
         public const string Export = "Permissions.TripReports.Export";
         public const string Import = "Permissions.TripReports.Import";
+        public const string MyTripView = "Permissions.TripReports.MyTripView";
     }
     [DisplayName("Messages")]
     [Description("Messages Permissions")]

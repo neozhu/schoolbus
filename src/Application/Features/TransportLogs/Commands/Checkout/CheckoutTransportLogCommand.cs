@@ -4,7 +4,7 @@
 using CleanArchitecture.Blazor.Application.Features.TransportLogs.Caching;
 
 
-namespace CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Delete;
+namespace CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Checkout;
 
 public class CheckoutTransportLogCommand : ICacheInvalidatorRequest<Result<int>>
 {

@@ -9,7 +9,8 @@ public class AddEditTripReportCommandValidator : AbstractValidator<AddEditTripRe
     {
         RuleFor(v => v.ItineraryId).NotNull();
         RuleFor(v => v.PilotId).NotNull();
-
+        RuleFor(v => v.PlatNumber).NotEmpty();
+        RuleFor(v => v.DepartureDate).NotNull();
     }
      public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
      {

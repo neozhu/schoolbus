@@ -13,8 +13,16 @@ public static class TripReportCacheKey
     public static string GetByNameCacheKey(string parameters) {
         return $"TripReportCacheKey:GetByNameCacheKey,{parameters}";
     }
+    public static string GetByUserCacheKey(string parameters)
+    {
+        return $"TripReportCacheKey:GetByUserCacheKey,{parameters}";
+    }
     public static string GetByIdCacheKey(string parameters) {
         return $"TripReportCacheKey:GetByIdCacheKey,{parameters}";
+    }
+    public static string GetOnBoardTripLogsCacheKey(string parameters)
+    {
+        return $"TripReportCacheKey:GetOnBoardTripLogsCacheKey,{parameters}";
     }
     static TripReportCacheKey()
     {

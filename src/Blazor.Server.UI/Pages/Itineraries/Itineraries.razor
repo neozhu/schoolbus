@@ -8,6 +8,7 @@
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.Export
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.Pagination
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
 
 @inherits FluxorComponent
 @inject IJSRuntime JS
@@ -246,7 +247,8 @@
     [Inject]
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
-
+    [Inject]
+    private IItineraryService ItineraryService { get; set; } = default!;
     [Inject]
     private IMediator Mediator { get; set; } = default!;
     [Inject]
@@ -327,6 +329,7 @@
         ItineraryCacheKey.Refresh();
         _selectedItems = new();
         Query.Keyword = string.Empty;
+        await ItineraryService.Refresh();
         await _table.ReloadServerData();
     }
 
@@ -345,6 +348,7 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            await ItineraryService.Refresh();
         }
     }
     private async Task OnClone()
@@ -374,6 +378,7 @@
         if (!state.Canceled)
         {
             await _table.ReloadServerData();
+            await ItineraryService.Refresh();
             _selectedItems.Remove(copyitem);
         }
     }
@@ -391,6 +396,7 @@
         var state = await dialog.Result;
         if (!state.Canceled)
         {
+            await ItineraryService.Refresh();
             await _table.ReloadServerData();
         }
     }
@@ -410,6 +416,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems.Remove(dto);
+            await ItineraryService.Refresh();
         }
     }
 
@@ -428,6 +435,7 @@
         {
             await _table.ReloadServerData();
             _selectedItems = new();
+            await ItineraryService.Refresh();
         }
     }
 

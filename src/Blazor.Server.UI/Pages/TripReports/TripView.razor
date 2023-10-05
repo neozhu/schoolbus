@@ -1,0 +1,124 @@
+﻿@inject IStringLocalizer<TripReports> L
+@page "/pages/tripview/{id:int}"
+@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.AddEdit;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
+@inherits FluxorComponent
+@attribute [Authorize(Policy = Permissions.TripReports.MyTripView)]
+<div class="main">
+    <MudContainer MaxWidth="MaxWidth.Small">
+
+        @if (trip is null)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-0 my-0" />
+        }
+        else
+        {
+            @if (trip.Status == TripStatus.Runing)
+            {
+                <DeviceScanner Trip="@trip" UserProfile="@UserProfile"></DeviceScanner>
+            }
+            else
+            {
+                <MudPaper Width="100%" Square="true" Elevation="2" Class="pa-3">
+                    <MudForm Model="@trip" Disabled="true">
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <h3>@L["Trip Report"]</h3>
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField T="string" Label="@L[trip.GetMemberDescription(x=>x.Itinerary)]" Value="@trip.Itinerary?.Name"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField T="string" Label="@L[trip.GetMemberDescription(x=>x.PlatNumber)]" Value="@trip.PlatNumber"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField T="string" Label="@L[trip.GetMemberDescription(x=>x.Pilot)]" Value="@trip.Pilot?.DisplayName"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField T="string" Label="@L["Phone Number"]" Value="@trip.Pilot?.Phone"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Format="s" InputType="InputType.DateTimeLocal" Label="@L[trip.GetMemberDescription(x=>x.DepartureDate)]" Value="trip.DepartureDate"></MudTextField>
+                            </MudItem>
+                            <MudItem xs="12" md="6">
+                                <MudTextField Format="s" InputType="InputType.DateTimeLocal" Label="@L[trip.GetMemberDescription(x=>x.ReportDate)]" Value="trip.ReportDate"></MudTextField>
+                            </MudItem>
+                            @if (UserProfile.IsSuperAdmin)
+                            {
+                                <MudItem xs="12" md="6">
+                                    <MudTextField T="string" Label="@L[trip.GetMemberDescription(x=>x.Comments)]" Value="trip.Comments"></MudTextField>
+                                </MudItem>
+                                <MudItem xs="12" md="6">
+                                    <MudTextField T="string" Label="@L[trip.GetMemberDescription(x=>x.Tenant)]" Value="trip.Tenant.Name"></MudTextField>
+                                </MudItem>
+                            }
+                            else
+                            {
+                                <MudItem xs="12" md="12">
+                                    <MudTextField T="string" Label="@L[trip.GetMemberDescription(x=>x.Comments)]" Value="trip.Comments"></MudTextField>
+                                </MudItem>
+                            }
+                            <MudItem xs="12" md="12">
+                                <MudTabs Elevation="2" Rounded="true" Centered="true" Class="my-6" PanelClass="my-3">
+                                    <MudTabPanel Icon="@Icons.Material.Filled.Groups" Text="Get On Students" BadgeData="10" BadgeColor="Color.Success">x</MudTabPanel>
+                                    <MudTabPanel Icon="@Icons.Material.Filled.BusAlert" Text="Alert" BadgeData="0" BadgeColor="Color.Secondary">y</MudTabPanel>
+                                </MudTabs>
+                            </MudItem>
+                        </MudGrid>
+                    </MudForm>
+                </MudPaper>
+            }
+
+        }
+
+
+
+    </MudContainer>
+</div>
+
+<MudAppBar Bottom="true" Class="justify-center gap-2" Fixed="true" Color="Color.Primary" Elevation="1">
+    <MudSpacer />
+    <MudTooltip Text="@L["Home"]">
+        <MudIconButton Icon="@Icons.Material.Filled.Home" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Href="/pages/mytrip" />
+    </MudTooltip>
+    <MudTooltip Text="@L["Create a trip"]"><MudIconButton Icon="@Icons.Material.Filled.Add" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Disabled="true" /></MudTooltip>
+    <MudTooltip Text="@L["Create a accident"]"><MudIconButton Icon="@Icons.Material.Filled.AddAlert" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" /></MudTooltip>
+
+    <MudSpacer />
+</MudAppBar>
+@code {
+    [Parameter]
+    public int id { get; set; }
+    MudForm? _form;
+    bool _saving;
+    bool _loading = false;
+    [Inject]
+    private IState<UserProfileState> UserProfileState { get; set; } = null!;
+    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
+    TripReportDto? trip;
+
+    [Inject] private IMediator _mediator { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        trip = await _mediator.Send(new GetTripReportByIdQuery() { Id = id });
+    }
+
+
+
+    async Task Save()
+    {
+        try
+        {
+            _saving = true;
+
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

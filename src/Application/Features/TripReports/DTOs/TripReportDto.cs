@@ -36,7 +36,7 @@ public class TripReportDto
     [Description("Report Date")]
     public DateTime? ReportDate { get; set; }
     [Description("Status")]
-    public string? Status { get; set; }
+    public TripStatus Status { get; set; } = TripStatus.Runing;
     [Description("Comments")]
     public string? Comments { get; set; }
     [Description("Organization Id")]

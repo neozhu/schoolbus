@@ -1,0 +1,13 @@
+﻿@inject IStringLocalizer<TripReports> L
+<MudListItem Class="d-flex flex-row align-center">
+    <div class="d-flex flex-row align-center">
+        <MudSkeleton SkeletonType="SkeletonType.Circle" Width="30px" Height="30px" />
+        <div class="d-flex flex-column ml-2 flex-grow-1">
+            <MudText Typo="Typo.body2" Class="mud-text-secondary"> @L["no trip records"]</MudText>
+        </div>
+    </div>
+</MudListItem>
+
+@code {
+
+}

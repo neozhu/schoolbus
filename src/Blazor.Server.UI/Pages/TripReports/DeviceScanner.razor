@@ -5,6 +5,10 @@
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Checkout;
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.Queries.GetAll;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Done;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.GetOnOff;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
 @using CleanArchitecture.Blazor.Application.Services;
 @using Html5QrcodeBlazor.Wrapper;
 @using System.Text.Json;
@@ -13,6 +17,7 @@
 @inject Html5QrcodeReader cameraBarcodeReader
 @inject IGeolocationService geolocation
 @inject IGeoAddressService addressService
+@inject IStringLocalizer<TripReports> L
 <style>
 
     #reader {
@@ -128,13 +133,13 @@
             <div class="top d-flex flex-column">
                 <div class="d-flex flex-row justify-space-between">
                     <div class="d-flex flex-column">
-                        <div class="bandname -bold">@Itinerary.StartingStation</div>
-                        <div class="tourname align-self-center mud-text-secondary"  >@Itinerary.FirstTime</div>
+                        <div class="bandname -bold">@Trip.Itinerary?.StartingStation</div>
+                        <div class="tourname align-self-center mud-text-secondary">@Trip.Itinerary?.FirstTime</div>
                     </div>
                     <MudIcon Icon="@Icons.Material.Filled.MultipleStop" Class="align-self-center"></MudIcon>
                     <div class="d-flex flex-column">
-                        <div class="bandname -bold">@Itinerary.TerminalStation</div>
-                        <div class="tourname align-self-center mud-text-secondary"  >@Itinerary.LastTime</div>
+                        <div class="bandname -bold">@Trip.Itinerary?.TerminalStation</div>
+                        <div class="tourname align-self-center mud-text-secondary">@Trip.Itinerary?.LastTime</div>
                     </div>
                 </div>
                 @if (cameraBarcodeReader is not null)
@@ -164,15 +169,18 @@
                     </div>
                     <div class="price d-flex flex-column">
                         <div class="label">On Board</div>
-                        <div class="cost -bold align-self-center">@_transportLogs?.Count()</div>
+                        <div class="cost -bold align-self-center">@_tripLogs?.Count()</div>
                     </div>
                 </div>
+                 <div class="deetz d-flex flex-row justify-space-between">
+                    <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit" Disabled="@(_tripLogs?.Any()??false)" FullWidth="true">@L["Submit Trip Report"]</MudButton>
+                 </div>
             </div>
-            @if (_transportLogs is not null)
+            @if (_tripLogs is not null)
             {
-                @if (_transportLogs.Count() > 0)
+                @if (_tripLogs.Count() > 0)
                 {
-                    @foreach (var item in _transportLogs)
+                    @foreach (var item in _tripLogs)
                     {
                         <div class="rip"></div>
                         <div class="bottom d-flex flex-row justify-space-between">
@@ -221,22 +229,18 @@
 @code {
     [Parameter]
     [EditorRequired]
-    public ItineraryDto Itinerary { get; set; } = null!;
+    public TripReportDto Trip { get; set; } = null!;
     [Parameter]
     public UserProfile UserProfile { get; set; } = null!;
     private DateTime Now = DateTime.Now;
     private string? Location;
     [Inject]
     private IMediator Mediator { get; set; } = default!;
-    private IEnumerable<TransportLogDto>? _transportLogs { get; set; } = null;
-
+    private IEnumerable<TripLogDto>? _tripLogs { get; set; } = null;
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; } = null!;
     private Queue<string> studentQ = new Queue<string>();
-    readonly JsonSerializerOptions _opts = new()
-        {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
+
     readonly PositionOptions _options = new()
         {
             EnableHighAccuracy = true,
@@ -245,7 +249,7 @@
         };
     protected override async Task OnInitializedAsync()
     {
-        await LoadOnBoardStudents(Itinerary.Id);
+        await LoadOnBoardStudents(Trip.Id);
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -261,25 +265,44 @@
             options: _options);
         }
     }
-    public async Task LoadOnBoardStudents(int id)
+    public async Task LoadOnBoardStudents(int tripId)
     {
-        _transportLogs = await Mediator.Send(new GetOnBoardTransportLogsQuery() { ItineraryId = id });
+        _tripLogs = await Mediator.Send(new GetOnBoardTripLogsQuery() { TripId = tripId });
 
     }
     private async Task Checkout(int id)
     {
-        var result = await Mediator.Send(new CheckoutTransportLogCommand(id) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location });
+        var result = await Mediator.Send(new GetOffMenualCommand(id));
         if (result.Succeeded)
         {
-            var item = _transportLogs?.First(x => x.Id == id);
+            var item = _tripLogs?.First(x => x.Id == id);
             if (item is not null)
             {
                 studentQ = new Queue<string>(studentQ.Where(x => x != item.Student.UID));
-                Snackbar.Add($"{item.Student.DisplayName} checkout successfully.", MudBlazor.Severity.Info);
-                await this.LoadOnBoardStudents(item.ItineraryId);
+                Snackbar.Add($"{item.Student.DisplayName} get off successfully.", MudBlazor.Severity.Info);
+                await this.LoadOnBoardStudents(item.TripId);
             }
 
         }
+    }
+    private async Task Submit()
+    {
+        string comments=string.Empty;
+        var parameters = new DialogParameters<CommentsDialog> { { x => x.Comments, comments } };
+
+        var dialog = await DialogService.ShowAsync<CommentsDialog>("Write Comments for the trip report", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            comments = result.Data.ToString();
+            var doneresult = await Mediator.Send(new DoneTripReportCommand(Trip.Id) { Comments = comments });
+            if (doneresult.Succeeded)
+            {
+                NavigationManager.NavigateTo("/pages/mytrip");
+            }
+        }
+        
     }
     bool processingScan;
     string foundBarcode;
@@ -301,7 +324,7 @@
         foundBarcode = barcode.Trim();
         if (!studentQ.Contains(foundBarcode) )
         {
-            var checkresult = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode, Itinerary.TenantId));
+            var checkresult = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode, Trip.TenantId));
             if (checkresult.Succeeded)
             {
                 var student = checkresult.Data!;
@@ -310,22 +333,19 @@
                 {
                     studentQ.Dequeue();
                 }
-                var result = await Mediator.Send(new CreateTransportLogCommand()
+                var result = await Mediator.Send(new GetOnOffCommand(Trip.Id, student.Id, Trip.TenantId)
                     {
-                        DeviceId = Itinerary.Bus.DeviceId,
-                        Latitude = _position?.Coords.Latitude,
+                        Manual = false,
+                        Comments = "",
+                        UID = student.UID,
                         Longitude = _position?.Coords.Longitude,
+                        Latitude = _position?.Coords.Latitude,
                         Location = Location,
-                        ItineraryId = Itinerary.Id,
-                        StudentId = student.Id,
-                        TenantId = Itinerary.TenantId,
-                        UpOrDown = "Get On",
-                        SwipeDateTime = DateTime.Now,
                     });
                 if (result.Succeeded)
                 {
-                    await LoadOnBoardStudents(Itinerary.Id);
-                    Snackbar.Add($"{student.DisplayName} checkin successfully.", MudBlazor.Severity.Success);
+                    await LoadOnBoardStudents(Trip.Id);
+                    Snackbar.Add($"{student.DisplayName} get on successfully.", MudBlazor.Severity.Success);
                 }
                 else
                 {
