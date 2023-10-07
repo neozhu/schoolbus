@@ -5,6 +5,7 @@
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Checkout;
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.Queries.GetAll;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident;
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Done;
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.GetOnOff;
 @using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
@@ -174,7 +175,8 @@
                 </div>
                  <div class="deetz d-flex flex-row justify-space-between">
                     <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit" Disabled="@(_tripLogs?.Any()??false)" FullWidth="true">@L["Submit Trip Report"]</MudButton>
-                 </div>
+                    <MudIconButton Icon="@Icons.Material.Filled.BusAlert" Color="Color.Error" Variant="Variant.Outlined" OnClick="AddAccident" Class="ml-1"></MudIconButton>
+                </div>
             </div>
             @if (_tripLogs is not null)
             {
@@ -302,7 +304,20 @@
                 NavigationManager.NavigateTo("/pages/mytrip");
             }
         }
-        
+
+    }
+    async Task AddAccident()
+    {
+        string comments = string.Empty;
+        var parameters = new DialogParameters<AccidentDialog> { { x => x.model, new AddAccidentCommand(Trip.Id, Trip.TenantId) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location, Level= AccidentLevel.Trouble } } };
+
+        var dialog = await DialogService.ShowAsync<AccidentDialog>("Add accident for the trip report", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+           
+        }
     }
     bool processingScan;
     string foundBarcode;

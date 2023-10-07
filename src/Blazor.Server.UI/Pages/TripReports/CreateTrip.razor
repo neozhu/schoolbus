@@ -13,7 +13,11 @@
             <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
                 <MudGrid>
                     <MudItem xs="12">
-                        <h3>@L["Create a trip"]</h3>
+                        <div class="d-flex flex-column">
+                            <h3>@L["Create a trip"]</h3>
+                            <MudText Typo="Typo.body2" Class="mud-text-secondary">@DateTime.Now.ToLongDateString()</MudText>
+                        </div>
+                        
                     </MudItem>
                     <MudItem xs="12" md="6">
                         <MudSelect For="@(() => model.ItineraryId)" T="int?"
@@ -78,9 +82,6 @@
     <MudTooltip Text="@L["Home"]">
         <MudIconButton Icon="@Icons.Material.Filled.Home" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Href="/pages/mytrip" />
     </MudTooltip>
-    <MudTooltip Text="@L["Create a trip"]"><MudIconButton Icon="@Icons.Material.Filled.Add" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Disabled="true" /></MudTooltip>
-    <MudTooltip Text="@L["Create a accident"]"><MudIconButton Icon="@Icons.Material.Filled.AddAlert" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" /></MudTooltip>
-
     <MudSpacer />
 </MudAppBar>
 @code {

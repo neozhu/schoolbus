@@ -1,0 +1,42 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+@inject IStringLocalizer<TripReports> L
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@_form">
+            <MudEnumSelect For="@(() => model.Level)"
+                           Label="@L[model.GetMemberDescription(x=>x.Level)]"
+            @bind-Value="@model.Level"
+                           Required="true"
+                           RequiredError="@L["Accident level is required."]"></MudEnumSelect>
+            <MudTextField Lines="4" For="@(() => model.Comments)"
+                          Label="@L[model.GetMemberDescription(x=>x.Comments)]" @bind-Text="model.Comments" Required="true"
+                          RequiredError="@L["comments is required."]"></MudTextField>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    MudForm _form;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public AddAccidentCommand model { get; set; } =null!;
+    [Inject] private IMediator _mediator { get; set; } = default!;
+    async Task Submit() {
+        await _form!.Validate().ConfigureAwait(false);
+        if (!_form!.IsValid)
+            return;
+        var result = await _mediator.Send(model);
+        if (result.Succeeded)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+            Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+        }
+        else
+        {
+            Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+        }
+    }
+}

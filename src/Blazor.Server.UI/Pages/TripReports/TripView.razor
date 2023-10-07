@@ -26,7 +26,10 @@
                     <MudForm Model="@trip" Disabled="true">
                         <MudGrid>
                             <MudItem xs="12">
-                                <h3>@L["Trip Report"]</h3>
+                                <div class="d-flex flex-column">
+                                    <h3>@L["Trip Report"]</h3>
+                                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@trip.ReportDate?.ToLongDateString()</MudText>
+                                </div>
                             </MudItem>
                             <MudItem xs="12" md="6">
                                 <MudTextField T="string" Label="@L[trip.GetMemberDescription(x=>x.Itinerary)]" Value="@trip.Itinerary?.Name"></MudTextField>
@@ -63,8 +66,81 @@
                             }
                             <MudItem xs="12" md="12">
                                 <MudTabs Elevation="2" Rounded="true" Centered="true" Class="my-6" PanelClass="my-3">
-                                    <MudTabPanel Icon="@Icons.Material.Filled.Groups" Text="Get On Students" BadgeData="10" BadgeColor="Color.Success">x</MudTabPanel>
-                                    <MudTabPanel Icon="@Icons.Material.Filled.BusAlert" Text="Alert" BadgeData="0" BadgeColor="Color.Secondary">y</MudTabPanel>
+                                    <MudTabPanel BadgeColor="Color.Success">
+                                        <TabContent>
+                                            <MudIcon Icon="@Icons.Material.Filled.Groups"></MudIcon> <MudBadge Content="@trip.TripLogs?.Count" Color="Color.Primary" Class="mx-6 mt-4">Students</MudBadge>
+                                        </TabContent>
+                                        <ChildContent>
+                                            <MudSimpleTable Style="overflow-y: auto;">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Student</td>
+                                                        <td>Get On Position</td>
+                                                        <td>Get Off Position</td>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    @foreach (var item in trip.TripLogs)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <div class="d-flex flex-row align-items-center">
+                                                                    <MudAvatar>
+                                                                        @if (string.IsNullOrEmpty(item.Student?.ProfilePicture))
+                                                                        {
+                                                                            @item.Student?.LastName.First()
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <MudImage Src="@item.Student?.ProfilePicture"></MudImage>
+                                                                        }
+                                                                    </MudAvatar>
+                                                                    <div class="ml-2">
+                                                                        <MudText Typo="Typo.body2">@item.Student?.DisplayName</MudText>
+                                                                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.Student?.UID</MudText>
+
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <p>@item.Location</p>
+                                                                <p class="mud-text-secondary">@item.GetOnDateTime?.ToString("HH:mm")</p>
+                                                            </td>
+                                                            <td>
+                                                                <p>@item.Location2</p>
+                                                                <p class="mud-text-secondary">@item.GetOffDateTime2?.ToString("HH:mm")</p>
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+                                                </tbody>
+                                            </MudSimpleTable>
+                                        </ChildContent>
+                                    </MudTabPanel>
+                                    <MudTabPanel>
+                                        <TabContent>
+                                            <MudIcon Icon="@Icons.Material.Filled.BusAlert"></MudIcon> <MudBadge Content="@trip.TripAccidents.Count" Color="Color.Secondary" Class="mx-6 mt-4">Alert</MudBadge>
+                                        </TabContent>
+                                        <ChildContent>
+                                            @if (trip.TripAccidents.Any())
+                                            {
+                                                <MudPaper Class="pa-4">
+                                                    <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
+                                                        @foreach (var item in trip.TripAccidents)
+                                                        {
+                                                            <MudTimelineItem Color="Color.Default" TimelineAlign="TimelineAlign.End">
+                                                                <MudText Typo="Typo.body2">@item.Comments</MudText>
+                                                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.Location</MudText>
+                                                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.ReportDateTime?.ToString("HH:mm")</MudText>
+                                                            </MudTimelineItem>
+                                                        }
+
+                                                    </MudTimeline>
+                                                </MudPaper>
+                                            }
+                                        </ChildContent>
+                                    </MudTabPanel>
                                 </MudTabs>
                             </MudItem>
                         </MudGrid>
@@ -84,9 +160,6 @@
     <MudTooltip Text="@L["Home"]">
         <MudIconButton Icon="@Icons.Material.Filled.Home" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Href="/pages/mytrip" />
     </MudTooltip>
-    <MudTooltip Text="@L["Create a trip"]"><MudIconButton Icon="@Icons.Material.Filled.Add" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Disabled="true" /></MudTooltip>
-    <MudTooltip Text="@L["Create a accident"]"><MudIconButton Icon="@Icons.Material.Filled.AddAlert" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" /></MudTooltip>
-
     <MudSpacer />
 </MudAppBar>
 @code {

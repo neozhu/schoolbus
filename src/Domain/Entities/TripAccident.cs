@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using CleanArchitecture.Blazor.Domain.Enums;
 
 namespace CleanArchitecture.Blazor.Domain.Entities;
 public  class TripAccident : BaseAuditableEntity, IMustHaveTenant
@@ -14,6 +15,7 @@ public  class TripAccident : BaseAuditableEntity, IMustHaveTenant
     public string? Location { get; set; }
     public double? Longitude { get; set; }
     public double? Latitude { get; set; }
+    public AccidentLevel Level { get; set; } = AccidentLevel.Trouble;
     public string? Comments { get; set; }
     public string? Status { get; set; }
     public string? Responder { get; set; }

@@ -61,15 +61,23 @@ public class TripLogDto
 {
     public int Id { get; set; }
     public int? StudentId { get; set; }
+    public string? UID { get; set; }
     public StudentDto? Student { get; set; }
     public int TripId { get; set; }
-    public DateTime? SwipeDateTime { get; set; }
+    public TripReportDto TripReport { get; set; } = null!;
+    public DateTime? GetOnDateTime { get; set; }
     public string? Location { get; set; }
     public double? Longitude { get; set; }
     public double? Latitude { get; set; }
-    public string? OnOrOff { get; set; }
-    public bool Missing { get; set; }
+    public bool Manual { get; set; }
     public string? Comments { get; set; }
+    public DateTime? GetOffDateTime2 { get; set; }
+    public string? Location2 { get; set; }
+    public double? Longitude2 { get; set; }
+    public double? Latitude2 { get; set; }
+    public string? Comments2 { get; set; }
+    public bool Manual2 { get; set; }
+
     public string TenantId { get; set; } = string.Empty;
     private class Mapping : Profile
     {
@@ -86,12 +94,15 @@ public class TripAccidentDto
 {
     public int Id { get; set; }
     public int TripId { get; set; }
+    public virtual TripReportDto TripReport { get; set; } = null!;
     public DateTime? ReportDateTime { get; set; }
     public string? Location { get; set; }
     public double? Longitude { get; set; }
     public double? Latitude { get; set; }
+    public AccidentLevel Level { get; set; } = AccidentLevel.Trouble;
     public string? Comments { get; set; }
     public string? Status { get; set; }
+    public string? Responder { get; set; }
     public string? Result { get; set; }
     public string TenantId { get; set; } = string.Empty;
     private class Mapping : Profile
