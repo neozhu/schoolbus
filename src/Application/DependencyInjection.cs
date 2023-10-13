@@ -74,6 +74,10 @@ public static class DependencyInjection
             return service;
         });
         services.AddScoped<RegisterFormModelFluentValidator>();
+
+
+ 
+
        
         return services;
     }

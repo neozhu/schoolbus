@@ -5,9 +5,12 @@ using Blazor.Server.UI.Services.Notifications;
 using Blazor.Server.UI.Services.UserPreferences;
 using BlazorDownloadFile;
 using CleanArchitecture.Blazor.Application.Common.Configurations;
+using CleanArchitecture.Blazor.Application.Services;
 using Html5QrcodeBlazor.Wrapper;
 using MudBlazor.Services;
 using MudExtensions.Services;
+using Stl.Fusion;
+using Stl.Fusion.Extensions;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace Blazor.Server.UI;
@@ -16,6 +19,9 @@ public static class ConfigureServices
 {
     public static WebApplicationBuilder AddBlazorUiServices(this WebApplicationBuilder builder)
     {
+        var fusion = builder.Services.AddFusion();
+        fusion.AddFusionTime();
+        fusion.AddService<CounterService>();
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor(
                 options =>
@@ -66,6 +72,9 @@ public static class ConfigureServices
             throw new ArgumentNullException(nameof(privacySettings.GoogleAnalyticsKey));
 
         builder.Services.AddGoogleAnalytics(privacySettings.GoogleAnalyticsKey);
+
+
+       
 
         return builder;
     }

@@ -23,6 +23,9 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Stl.Fusion.Blazor" Version="6.5.1" />
+        <PackageReference Include="Stl.Fusion.Server" Version="6.5.1" />
+       
         <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="3.1.0" />
 
     </ItemGroup>
@@ -36,15 +39,5 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\EmailTemplates\*" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Pages\Buses\Components\" />
-      <Folder Include="Pages\Messages\Components\" />
-      <Folder Include="Pages\Parents\Components\" />
-      <Folder Include="Pages\Pilots\Components\" />
-      <Folder Include="Pages\Schools\Components\" />
-      <Folder Include="Pages\Students\Components\" />
-      <Folder Include="Pages\TransportLogs\Components\" />
-      <Folder Include="Pages\TripReports\Components\" />
-      <Folder Include="wwwroot\img\" />
-    </ItemGroup>
+
 </Project>
