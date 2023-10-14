@@ -7,7 +7,7 @@ using CleanArchitecture.Blazor.Application.Features.TripReports.Specifications;
 
 namespace CleanArchitecture.Blazor.Application.Features.TripReports.Queries.Pagination;
 
-public class TripReportsWithPaginationQuery : TripReportAdvancedFilter, ICacheableRequest<PaginatedData<TripReportDto>>
+public class TripReportsWithPaginationQuery : TripReportAdvancedFilter, ICacheableRequest<PaginatedData<TripReportToPlainDto>>
 {
     public override string ToString()
     {
@@ -19,7 +19,7 @@ public class TripReportsWithPaginationQuery : TripReportAdvancedFilter, ICacheab
 }
     
 public class TripReportsWithPaginationQueryHandler :
-         IRequestHandler<TripReportsWithPaginationQuery, PaginatedData<TripReportDto>>
+         IRequestHandler<TripReportsWithPaginationQuery, PaginatedData<TripReportToPlainDto>>
 {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -36,11 +36,11 @@ public class TripReportsWithPaginationQueryHandler :
             _localizer = localizer;
         }
 
-        public async Task<PaginatedData<TripReportDto>> Handle(TripReportsWithPaginationQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedData<TripReportToPlainDto>> Handle(TripReportsWithPaginationQuery request, CancellationToken cancellationToken)
         {
         
            var data = await _context.TripReports.OrderBy($"{request.OrderBy} {request.SortDirection}")
-                                    .ProjectToPaginatedDataAsync<TripReport, TripReportDto>(request.Specification, request.PageNumber, request.PageSize, _mapper.ConfigurationProvider, cancellationToken);
+                                    .ProjectToPaginatedDataAsync<TripReport, TripReportToPlainDto>(request.Specification, request.PageNumber, request.PageSize, _mapper.ConfigurationProvider, cancellationToken);
             return data;
         }
 }

@@ -7,7 +7,7 @@ using CleanArchitecture.Blazor.Application.Features.TripReports.Specifications;
 
 namespace CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
 
-public class GetTripReportByUserQueryQuery : ICacheableRequest<List<TripReportDto>>
+public class GetTripReportByUserQueryQuery : ICacheableRequest<List<TripReportToPlainDto>>
 {
     public TripStatus? Status { get; set; }
     public UserProfile UserProfile { get; set; }
@@ -16,7 +16,7 @@ public class GetTripReportByUserQueryQuery : ICacheableRequest<List<TripReportDt
 }
 
 public class GetTripReportByUserQueryQueryHandler :
-     IRequestHandler<GetTripReportByUserQueryQuery, List<TripReportDto>>
+     IRequestHandler<GetTripReportByUserQueryQuery, List<TripReportToPlainDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -33,10 +33,10 @@ public class GetTripReportByUserQueryQueryHandler :
         _localizer = localizer;
     }
 
-    public async Task<List<TripReportDto>> Handle(GetTripReportByUserQueryQuery request, CancellationToken cancellationToken)
+    public async Task<List<TripReportToPlainDto>> Handle(GetTripReportByUserQueryQuery request, CancellationToken cancellationToken)
     {
         var data = await _context.TripReports.ApplySpecification(new TripReportByUserSpecification(request.UserProfile, request.Status))
-                     .ProjectTo<TripReportDto>(_mapper.ConfigurationProvider)
+                     .ProjectTo<TripReportToPlainDto>(_mapper.ConfigurationProvider)
                      .ToListAsync(cancellationToken);
         return data;
     }

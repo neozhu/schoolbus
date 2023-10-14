@@ -203,9 +203,9 @@
 @code {
     public string? Title { get; private set; }
     private int _defaultPageSize = 15;
-    private HashSet<TripReportDto> _selectedItems = new HashSet<TripReportDto>();
-    private MudDataGrid<TripReportDto> _table = default!;
-    private TripReportDto _currentDto = new();
+    private HashSet<TripReportToPlainDto> _selectedItems = new HashSet<TripReportToPlainDto>();
+    private MudDataGrid<TripReportToPlainDto> _table = default!;
+    private TripReportToPlainDto _currentDto = new();
     private bool _loading;
     private bool _uploading;
     private bool _downloading;
@@ -240,7 +240,7 @@
         _canEdit = (await AuthService.AuthorizeAsync(state.User, Permissions.TripReports.Edit)).Succeeded;
         _canDelete = (await AuthService.AuthorizeAsync(state.User, Permissions.TripReports.Delete)).Succeeded;
     }
-    private async Task<GridData<TripReportDto>> ServerReload(GridState<TripReportDto> state)
+    private async Task<GridData<TripReportToPlainDto>> ServerReload(GridState<TripReportToPlainDto> state)
     {
         try
         {
@@ -251,7 +251,7 @@
             Query.PageNumber = state.Page + 1;
             Query.PageSize = state.PageSize;
             var result = await Mediator.Send(Query).ConfigureAwait(false);
-            return new GridData<TripReportDto>() { TotalItems = result.TotalItems, Items = result.Items };
+            return new GridData<TripReportToPlainDto>() { TotalItems = result.TotalItems, Items = result.Items };
         }
         finally
         {
@@ -296,7 +296,7 @@
         }
     }
 
-    private async Task OnEdit(TripReportDto dto)
+    private async Task OnEdit(TripReportToPlainDto dto)
     {
         var command = Mapper.Map<AddEditTripReportCommand>(dto);
         var parameters = new DialogParameters
@@ -314,7 +314,7 @@
         }
     }
 
-    private async Task OnDelete(TripReportDto dto)
+    private async Task OnDelete(TripReportToPlainDto dto)
     {
         var command = new DeleteTripReportCommand(new int[] { dto.Id });
         var parameters = new DialogParameters

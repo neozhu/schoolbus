@@ -53,7 +53,7 @@
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
     GetTripReportByUserQueryQuery query = new();
-    List<TripReportDto>? tripList = null;
+    List<TripReportToPlainDto>? tripList = null;
     [Inject]
     private IMediator Mediator { get; set; } = default!;
     protected override async Task OnInitializedAsync()
