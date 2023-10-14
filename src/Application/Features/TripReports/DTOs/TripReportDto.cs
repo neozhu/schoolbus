@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
+using AutoMapper.Configuration.Conventions;
 using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Pilots.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Students.DTOs;
@@ -56,15 +57,17 @@ public class TripReportDto
         }
     }
 }
+
+
 [Description("TripAccidents")]
 public class TripLogDto  
 {
     public int Id { get; set; }
     public int? StudentId { get; set; }
     public string? UID { get; set; }
-    public StudentDto? Student { get; set; }
+    public StudentDto Student { get; set; } = null!;
     public int TripId { get; set; }
-    public TripReportDto TripReport { get; set; } = null!;
+   // public TripReportDto TripReport { get; set; } = null!;
     public DateTime? GetOnDateTime { get; set; }
     public string? Location { get; set; }
     public double? Longitude { get; set; }

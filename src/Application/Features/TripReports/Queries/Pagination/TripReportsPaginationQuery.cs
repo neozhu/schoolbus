@@ -38,6 +38,7 @@ public class TripReportsWithPaginationQueryHandler :
 
         public async Task<PaginatedData<TripReportDto>> Handle(TripReportsWithPaginationQuery request, CancellationToken cancellationToken)
         {
+        
            var data = await _context.TripReports.OrderBy($"{request.OrderBy} {request.SortDirection}")
                                     .ProjectToPaginatedDataAsync<TripReport, TripReportDto>(request.Specification, request.PageNumber, request.PageSize, _mapper.ConfigurationProvider, cancellationToken);
             return data;

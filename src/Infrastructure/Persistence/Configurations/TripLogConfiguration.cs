@@ -16,6 +16,8 @@ public class TripLogConfiguration : IEntityTypeConfiguration<TripLog>
         builder.Property(x => x.Longitude).HasPrecision(16, 10);
         builder.HasOne(t => t.Tenant).WithMany().HasForeignKey(x => x.TenantId);
         builder.HasOne(t => t.Student).WithMany().HasForeignKey(x => x.StudentId);
+        builder.Navigation(e => e.Student).AutoInclude();
+        builder.Navigation(e => e.TripReport).AutoInclude();
         builder.Ignore(e => e.DomainEvents);
     }
 }

@@ -180,18 +180,4 @@
         trip = await _mediator.Send(new GetTripReportByIdQuery() { Id = id });
     }
 
-
-
-    async Task Save()
-    {
-        try
-        {
-            _saving = true;
-
-        }
-        finally
-        {
-            _saving = false;
-        }
-    }
 }

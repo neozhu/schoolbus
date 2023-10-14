@@ -25,7 +25,7 @@
                                    Required="true"
                                    RequiredError="@L["Itinerary is required."]"
                                    Value="@model.ItineraryId" ValueChanged="ItineraryChanged">
-                            @foreach (var item in ItineraryService.DataSource.Where(x => x.TenantId == model.TenantId))
+                            @foreach (var item in ItineraryService.DataSource.Where(x => x.TenantId == model.TenantId ))
                             {
                                 <MudSelectItem T="int?" Value="@item.Id">@item.Name</MudSelectItem>
                             }

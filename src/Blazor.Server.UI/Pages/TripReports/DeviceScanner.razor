@@ -173,9 +173,27 @@
                         <div class="cost -bold align-self-center">@_tripLogs?.Count()</div>
                     </div>
                 </div>
-                 <div class="deetz d-flex flex-row justify-space-between">
-                    <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit" Disabled="@(_tripLogs?.Any()??false)" FullWidth="true">@L["Submit Trip Report"]</MudButton>
-                    <MudIconButton Icon="@Icons.Material.Filled.BusAlert" Color="Color.Error" Variant="Variant.Outlined" OnClick="AddAccident" Class="ml-1"></MudIconButton>
+                <div class="deetz d-flex flex-row justify-space-between">
+                    <MudProgressLinear Color="Color.Info" Size="Size.Large" Value="@getOnBoardPercentage()" Class="my-3">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                            <b>@($"{Trip.OnBoard} / {Trip.OnBoard + Trip.NotOnBoard}")</b>
+                        </MudText>
+                    </MudProgressLinear>
+                    <MudText Typo="Typo.body2">@L[""]</MudText>
+                </div>
+                <div class="deetz d-flex flex-row justify-space-between">
+                    <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit" Disabled="@(!(_tripLogs?.Any()??false))" FullWidth="true">@L["Submit Trip Report"]</MudButton>
+                    @if (_tripAccidents?.Any() ?? false)
+                    {
+                        <MudBadge Content="_tripAccidents.Count()" Color="Color.Error" Overlap="true" Bordered="true">
+                            <MudIconButton Icon="@Icons.Material.Filled.BusAlert" Color="Color.Error" Variant="Variant.Outlined" OnClick="AddAccident" Class="ml-1"></MudIconButton>
+                        </MudBadge>
+                    }
+                    else
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.BusAlert" Color="Color.Error" Variant="Variant.Outlined" OnClick="AddAccident" Class="ml-1"></MudIconButton>
+                    }
+
                 </div>
             </div>
             @if (_tripLogs is not null)
@@ -192,7 +210,7 @@
                                 </MudAvatar>
                                 <div class="d-flex flex-column ml-3">
                                     <p>@item.Student.DisplayName</p>
-                                    <p class="mud-text-secondary">@item.Student.UID</p>
+                                    <p>@item.Student.UID</p>
                                 </div>
 
                             </div>
@@ -239,6 +257,7 @@
     [Inject]
     private IMediator Mediator { get; set; } = default!;
     private IEnumerable<TripLogDto>? _tripLogs { get; set; } = null;
+    private IEnumerable<TripAccidentDto>? _tripAccidents { get; set; } = null;
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
     private Queue<string> studentQ = new Queue<string>();
@@ -249,8 +268,18 @@
             MaximumAge = null,
             Timeout = 15_000
         };
+
+    private int getOnBoardPercentage()
+    {
+        var total = Trip.OnBoard + Trip.NotOnBoard;
+        return ((Trip.OnBoard / total) * 100);
+    }
     protected override async Task OnInitializedAsync()
     {
+        if (Trip.TripAccidents.Any())
+        {
+            _tripAccidents = Trip.TripAccidents;
+        }
         await LoadOnBoardStudents(Trip.Id);
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -267,9 +296,15 @@
             options: _options);
         }
     }
+
     public async Task LoadOnBoardStudents(int tripId)
     {
         _tripLogs = await Mediator.Send(new GetOnBoardTripLogsQuery() { TripId = tripId });
+
+    }
+    public async Task LoadAccents(int tripId)
+    {
+        _tripAccidents = await Mediator.Send(new GetTripAccidentsQuery() { TripId = tripId });
 
     }
     private async Task Checkout(int id)
@@ -289,7 +324,7 @@
     }
     private async Task Submit()
     {
-        string comments=string.Empty;
+        string comments = string.Empty;
         var parameters = new DialogParameters<CommentsDialog> { { x => x.Comments, comments } };
 
         var dialog = await DialogService.ShowAsync<CommentsDialog>("Write Comments for the trip report", parameters);
@@ -309,14 +344,21 @@
     async Task AddAccident()
     {
         string comments = string.Empty;
-        var parameters = new DialogParameters<AccidentDialog> { { x => x.model, new AddAccidentCommand(Trip.Id, Trip.TenantId) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location, Level= AccidentLevel.Trouble } } };
+        var parameters = new DialogParameters<AccidentDialog> {
+            {
+                x => x.model, new AddAccidentCommand(Trip.Id, Trip.TenantId) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location, Level= AccidentLevel.Trouble }
+            },
+            {
+                x=>x.tripAccidents,_tripAccidents
+            }
+            };
 
-        var dialog = await DialogService.ShowAsync<AccidentDialog>("Add accident for the trip report", parameters);
+        var dialog = await DialogService.ShowAsync<AccidentDialog>("Add accident", parameters, new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
         var result = await dialog.Result;
 
         if (!result.Canceled)
         {
-           
+            await LoadAccents(Trip.Id);
         }
     }
     bool processingScan;
@@ -337,7 +379,7 @@
     public async Task HandleBarcodeScan(string barcode)
     {
         foundBarcode = barcode.Trim();
-        if (!studentQ.Contains(foundBarcode) )
+        if (!studentQ.Contains(foundBarcode))
         {
             var checkresult = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode, Trip.TenantId));
             if (checkresult.Succeeded)

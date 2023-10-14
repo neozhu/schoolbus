@@ -68,10 +68,14 @@ public class AddEditTripReportCommandHandler : IRequestHandler<AddEditTripReport
     }
     public async Task<Result<int>> Handle(AddEditTripReportCommand request, CancellationToken cancellationToken)
     {
+        var totalstudents = await _context.Students.CountAsync(x => x.TenantId == request.TenantId && x.ItineraryId == request.ItineraryId);
         if (request.Id > 0)
         {
+            var onboardstudents = await _context.TripLogs.Where(x => x.TripId == request.Id).Select(x => x.StudentId).Distinct().CountAsync();
             var item = await _context.TripReports.FindAsync(new object[] { request.Id }, cancellationToken) ?? throw new NotFoundException($"TripReport with id: [{request.Id}] not found.");
             item = _mapper.Map(request, item);
+            item.OnBoard = onboardstudents;
+            item.NotOnBoard = totalstudents - onboardstudents;
             // raise a update domain event
             item.AddDomainEvent(new TripReportUpdatedEvent(item));
             await _context.SaveChangesAsync(cancellationToken);
@@ -79,7 +83,10 @@ public class AddEditTripReportCommandHandler : IRequestHandler<AddEditTripReport
         }
         else
         {
+            
             var item = _mapper.Map<TripReport>(request);
+            item.NotOnBoard = totalstudents;
+            item.OnBoard = 0;
             // raise a create domain event
             item.AddDomainEvent(new TripReportCreatedEvent(item));
             _context.TripReports.Add(item);

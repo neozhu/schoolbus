@@ -13,14 +13,20 @@ public class GetOnBoardTripLogsQuery : ICacheableRequest<List<TripLogDto>>
     public string CacheKey => TripReportCacheKey.GetOnBoardTripLogsCacheKey($"{TripId}");
     public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
 }
+public class GetTripAccidentsQuery : ICacheableRequest<List<TripAccidentDto>>
+{
+    public required int TripId { get; set; }
+    public string CacheKey => TripReportCacheKey.GetTripAccidentsCacheKey($"{TripId}");
+    public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
+}
 public class GetTripReportByIdQuery : ICacheableRequest<TripReportDto>
 {
     public required int Id { get; set; }
     public string CacheKey => TripReportCacheKey.GetByIdCacheKey($"{Id}");
     public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
 }
-
 public class GetTripReportByIdQueryHandler :
+      IRequestHandler<GetTripAccidentsQuery, List<TripAccidentDto>>,
       IRequestHandler<GetOnBoardTripLogsQuery, List<TripLogDto>>,
       IRequestHandler<GetTripReportByIdQuery, TripReportDto>
 {
@@ -48,8 +54,16 @@ public class GetTripReportByIdQueryHandler :
     }
     public async Task<List<TripLogDto>> Handle(GetOnBoardTripLogsQuery request, CancellationToken cancellationToken)
     {
+        var data1 = await _context.TripLogs.ApplySpecification(new TripLogByIdSpecification(request.TripId)).ToListAsync();
         var data = await _context.TripLogs.ApplySpecification(new TripLogByIdSpecification(request.TripId))
                      .ProjectTo<TripLogDto>(_mapper.ConfigurationProvider)
+                     .ToListAsync(cancellationToken);
+        return data;
+    }
+    public async Task<List<TripAccidentDto>> Handle(GetTripAccidentsQuery request, CancellationToken cancellationToken)
+    {
+        var data = await _context.TripAccidents.ApplySpecification(new TripAccidentByIdSpecification(request.TripId))
+                     .ProjectTo<TripAccidentDto>(_mapper.ConfigurationProvider)
                      .ToListAsync(cancellationToken);
         return data;
     }

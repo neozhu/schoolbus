@@ -13,6 +13,20 @@
                           Label="@L[model.GetMemberDescription(x=>x.Comments)]" @bind-Text="model.Comments" Required="true"
                           RequiredError="@L["comments is required."]"></MudTextField>
         </MudForm>
+        @if (tripAccidents?.Any() ?? false)
+        {
+            <MudList Dense="true" >
+                @foreach(var item in tripAccidents)
+                {
+                    <MudListItem>
+                        <div class="d-flex flex-column">
+                            <p>@item.Comments</p>
+                            <p class="mud-text-secondary">@item.ReportDateTime</p>
+                        </div>
+                    </MudListItem>
+                }
+            </MudList>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
@@ -23,6 +37,7 @@
     MudForm _form;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public AddAccidentCommand model { get; set; } =null!;
+    [Parameter] public IEnumerable<TripAccidentDto> tripAccidents { get; set; } = null!;
     [Inject] private IMediator _mediator { get; set; } = default!;
     async Task Submit() {
         await _form!.Validate().ConfigureAwait(false);

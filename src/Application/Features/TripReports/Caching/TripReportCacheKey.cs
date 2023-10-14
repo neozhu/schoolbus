@@ -24,6 +24,11 @@ public static class TripReportCacheKey
     {
         return $"TripReportCacheKey:GetOnBoardTripLogsCacheKey,{parameters}";
     }
+    public static string GetTripAccidentsCacheKey(string parameters)
+    {
+        return $"TripReportCacheKey:GetTripAccidentsCacheKey,{parameters}";
+    }
+    
     static TripReportCacheKey()
     {
         _tokensource = new CancellationTokenSource(refreshInterval);
