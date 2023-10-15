@@ -1,0 +1,33 @@
+﻿@using Stl.CommandR.Commands;
+@using Stl.Fusion.Blazor;
+@using CleanArchitecture.Blazor.Application.Services;
+@using Stl.Fusion.Extensions;
+@using Stl.Fusion.UI;
+@using Stl.Fusion;
+@inherits ComputedStateComponent<string>
+@inject ITripMonitor _tripMonitor
+@inject UICommander UICommander
+@inject IFusionTime _time
+@{
+    var state = State.ValueOrDefault;
+    var error = State.Error;
+}
+@state
+<br>
+@error
+<br>
+<button class="btn btn-primary" @onclick="add">Add</button>
+@code {
+    protected override Task OnInitializedAsync() => State.Update().AsTask();
+    protected override async Task<string> ComputeState(CancellationToken cancellationToken)
+    {
+        var result = await _tripMonitor.List(cancellationToken);
+        var count = await _tripMonitor.Count(cancellationToken);
+        return $"{count} / {string.Join(',',result.ToArray())} ";
+    }
+    async Task add()
+    {
+        var v = Random.Shared.Next(100);
+        await UICommander.Run(LocalCommand.New(() => _tripMonitor.AddOrUpdate(v)));
+    }
+}

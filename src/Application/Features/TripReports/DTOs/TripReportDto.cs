@@ -20,7 +20,7 @@ public class TripReportDto
     [Description("Itinerary Id")]
     public int? ItineraryId { get; set; }
     [Description("Itinerary")]
-    public  ItineraryDto? Itinerary { get; set; }
+    public ItineraryDto? Itinerary { get; set; }
     [Description("Pilot Id")]
     public int? PilotId { get; set; }
     [Description("Pilot")]
@@ -32,6 +32,11 @@ public class TripReportDto
     public int OnBoard { get; set; }
     [Description("Not On Board")]
     public int NotOnBoard { get; set; }
+
+    public int ShouldBeTotal => OnBoard + NotOnBoard;
+
+    public int OnBoardPercentage => ShouldBeTotal > 0 ? OnBoard * 100 / ShouldBeTotal : 0;
+
     [Description("Departure Date")]
     public DateTime? DepartureDate { get; set; }
     [Description("Report Date")]
@@ -57,6 +62,7 @@ public class TripReportDto
         }
     }
 }
+[Description("Trip Reports")]
 public class TripReportToPlainDto
 {
     [Description("Id")]
@@ -99,14 +105,14 @@ public class TripReportToPlainDto
 
 
 [Description("TripAccidents")]
-public class TripLogDto  
+public class TripLogDto
 {
     public int Id { get; set; }
     public int? StudentId { get; set; }
     public string? UID { get; set; }
     public StudentDto Student { get; set; } = null!;
     public int TripId { get; set; }
-   // public TripReportDto TripReport { get; set; } = null!;
+    // public TripReportDto TripReport { get; set; } = null!;
     public DateTime? GetOnDateTime { get; set; }
     public string? Location { get; set; }
     public double? Longitude { get; set; }

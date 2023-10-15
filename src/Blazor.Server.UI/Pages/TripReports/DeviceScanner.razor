@@ -14,10 +14,14 @@
 @using Html5QrcodeBlazor.Wrapper;
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
+@using Stl.CommandR.Commands;
+@using Stl.Fusion.UI;
 @implements IAsyncDisposable
 @inject Html5QrcodeReader cameraBarcodeReader
 @inject IGeolocationService geolocation
 @inject IGeoAddressService addressService
+@inject UICommander UICommander
+@inject ITripMonitor _tripMonitor
 @inject IStringLocalizer<TripReports> L
 <style>
 
@@ -170,19 +174,19 @@
                     </div>
                     <div class="price d-flex flex-column">
                         <div class="label">On Board</div>
-                        <div class="cost -bold align-self-center">@_tripLogs?.Count()</div>
+                        <div class="cost -bold align-self-center">@Trip.TripLogs.Count()</div>
                     </div>
                 </div>
                 <div class="deetz d-flex flex-row justify-space-between">
-                    <MudProgressLinear Color="Color.Info" Size="Size.Large" Value="@getOnBoardPercentage()" Class="my-3">
+                    <MudProgressLinear Color="Color.Info" Size="Size.Large" Value="@Trip.OnBoardPercentage" Class="my-3">
                         <MudText Typo="Typo.subtitle1" Color="Color.Dark">
-                            <b>@($"{Trip.OnBoard} / {Trip.OnBoard + Trip.NotOnBoard}")</b>
+                            <b>@($"{Trip.OnBoard} / {Trip.ShouldBeTotal}")</b>
                         </MudText>
                     </MudProgressLinear>
                     <MudText Typo="Typo.body2">@L[""]</MudText>
                 </div>
                 <div class="deetz d-flex flex-row justify-space-between">
-                    <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit" Disabled="@(!(_tripLogs?.Any()??false))" FullWidth="true">@L["Submit Trip Report"]</MudButton>
+                    <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit"  FullWidth="true">@L["Submit Trip Report"]</MudButton>
                     @if (_tripAccidents?.Any() ?? false)
                     {
                         <MudBadge Content="_tripAccidents.Count()" Color="Color.Error" Overlap="true" Bordered="true">
@@ -196,11 +200,11 @@
 
                 </div>
             </div>
-            @if (_tripLogs is not null)
+            @if (_onBoardStudents is not null)
             {
-                @if (_tripLogs.Count() > 0)
+                @if (_onBoardStudents.Count() > 0)
                 {
-                    @foreach (var item in _tripLogs)
+                    @foreach (var item in _onBoardStudents)
                     {
                         <div class="rip"></div>
                         <div class="bottom d-flex flex-row justify-space-between">
@@ -255,8 +259,8 @@
     private DateTime Now = DateTime.Now;
     private string? Location;
     [Inject]
-    private IMediator Mediator { get; set; } = default!;
-    private IEnumerable<TripLogDto>? _tripLogs { get; set; } = null;
+    private IMediator _mediator { get; set; } = default!;
+    private IEnumerable<TripLogDto>? _onBoardStudents { get; set; } = null;
     private IEnumerable<TripAccidentDto>? _tripAccidents { get; set; } = null;
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
@@ -269,18 +273,28 @@
             Timeout = 15_000
         };
 
-    private int getOnBoardPercentage()
-    {
-        var total = Trip.OnBoard + Trip.NotOnBoard;
-        return ((Trip.OnBoard * 100 / total));
-    }
-    protected override async Task OnInitializedAsync()
+
+    protected override Task OnInitializedAsync()
     {
         if (Trip.TripAccidents.Any())
         {
             _tripAccidents = Trip.TripAccidents;
         }
-        await LoadOnBoardStudents(Trip.Id);
+        if (Trip.TripLogs.Any())
+        {
+            _onBoardStudents = Trip.TripLogs.Where(x => x.GetOffDateTime2 is null).ToList();
+        }
+        //await LoadOnBoardStudents(Trip.Id);
+        return base.OnInitializedAsync();
+    }
+    private async Task Refresh()
+    {
+        Trip = await _mediator.Send(new GetTripReportByIdQuery() { Id = Trip.Id });
+        if (Trip.TripLogs.Any())
+        {
+            _onBoardStudents = Trip.TripLogs.Where(x => x.GetOffDateTime2 is null).ToList();
+        }
+        await UICommander.Run(LocalCommand.New(() => _tripMonitor.Remove(Trip.Id)));
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -297,27 +311,17 @@
         }
     }
 
-    public async Task LoadOnBoardStudents(int tripId)
-    {
-        _tripLogs = await Mediator.Send(new GetOnBoardTripLogsQuery() { TripId = tripId });
-
-    }
-    public async Task LoadAccents(int tripId)
-    {
-        _tripAccidents = await Mediator.Send(new GetTripAccidentsQuery() { TripId = tripId });
-
-    }
     private async Task Checkout(int id)
     {
-        var result = await Mediator.Send(new GetOffMenualCommand(id));
+        var result = await _mediator.Send(new GetOffMenualCommand(id) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location });
         if (result.Succeeded)
         {
-            var item = _tripLogs?.First(x => x.Id == id);
+            var item = _onBoardStudents?.First(x => x.Id == id);
             if (item is not null)
             {
                 studentQ = new Queue<string>(studentQ.Where(x => x != item.Student.UID));
                 Snackbar.Add($"{item.Student.DisplayName} get off successfully.", MudBlazor.Severity.Info);
-                await this.LoadOnBoardStudents(item.TripId);
+                await Refresh();
             }
 
         }
@@ -327,15 +331,16 @@
         string comments = string.Empty;
         var parameters = new DialogParameters<CommentsDialog> { { x => x.Comments, comments } };
 
-        var dialog = await DialogService.ShowAsync<CommentsDialog>("Write Comments for the trip report", parameters);
+        var dialog = await DialogService.ShowAsync<CommentsDialog>("Write Comments", parameters, new DialogOptions() { FullWidth = true, MaxWidth = MaxWidth.ExtraSmall,CloseButton=true });
         var result = await dialog.Result;
 
         if (!result.Canceled)
         {
             comments = result.Data.ToString();
-            var doneresult = await Mediator.Send(new DoneTripReportCommand(Trip.Id) { Comments = comments });
+            var doneresult = await _mediator.Send(new DoneTripReportCommand(Trip.Id) { Comments = comments });
             if (doneresult.Succeeded)
             {
+                await UICommander.Run(LocalCommand.New(() => _tripMonitor.Remove(Trip.Id)));
                 NavigationManager.NavigateTo("/pages/mytrip");
             }
         }
@@ -358,7 +363,7 @@
 
         if (!result.Canceled)
         {
-            await LoadAccents(Trip.Id);
+            await Refresh();
         }
     }
     bool processingScan;
@@ -381,7 +386,7 @@
         foundBarcode = barcode.Trim();
         if (!studentQ.Contains(foundBarcode))
         {
-            var checkresult = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode, Trip.TenantId));
+            var checkresult = await _mediator.Send(new GetStudentByUIdQuery(foundBarcode, Trip.TenantId));
             if (checkresult.Succeeded)
             {
                 var student = checkresult.Data!;
@@ -390,7 +395,7 @@
                 {
                     studentQ.Dequeue();
                 }
-                var result = await Mediator.Send(new GetOnOffCommand(Trip.Id, student.Id, Trip.TenantId)
+                var result = await _mediator.Send(new GetOnOffCommand(Trip.Id, student.Id, Trip.TenantId)
                     {
                         Manual = false,
                         Comments = "",
@@ -401,7 +406,7 @@
                     });
                 if (result.Succeeded)
                 {
-                    await LoadOnBoardStudents(Trip.Id);
+                    await Refresh();
                     Snackbar.Add($"{student.DisplayName} get on successfully.", MudBlazor.Severity.Success);
                 }
                 else

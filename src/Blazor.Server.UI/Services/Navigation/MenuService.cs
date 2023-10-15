@@ -96,6 +96,14 @@ public class MenuService : IMenuService
                 },
                 new()
                 {
+                    Title = "Trip Dashboard",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Dashboard,
+                    Href = "/pages/TripMonitorDashboard",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
                     Title = "Messages",
                     Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.Message,

@@ -41,7 +41,7 @@ public class AddEditTripReportCommand : ICacheInvalidatorRequest<Result<int>>
     {
         public Mapping()
         {
-            CreateMap<TripReportDto, AddEditTripReportCommand>(MemberList.None);
+            CreateMap<TripReportToPlainDto, AddEditTripReportCommand>(MemberList.None);
             CreateMap<AddEditTripReportCommand, TripReport>(MemberList.None);
                 //.ForMember(x => x.Tenant, y => y.MapFrom(x => default(Tenant)))
                 //.ForMember(x => x.Itinerary, y => y.MapFrom(x => default(Itinerary)))
@@ -69,6 +69,10 @@ public class AddEditTripReportCommandHandler : IRequestHandler<AddEditTripReport
     public async Task<Result<int>> Handle(AddEditTripReportCommand request, CancellationToken cancellationToken)
     {
         var totalstudents = await _context.Students.CountAsync(x => x.TenantId == request.TenantId && x.ItineraryId == request.ItineraryId);
+        if (totalstudents == 0)
+        {
+            return await Result<int>.FailureAsync(new string[] {$"No students have been assigned to Itinerary:{request.ItineraryId} yet." });
+        }
         if (request.Id > 0)
         {
             var onboardstudents = await _context.TripLogs.Where(x => x.TripId == request.Id).Select(x => x.StudentId).Distinct().CountAsync();

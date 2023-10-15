@@ -5,6 +5,8 @@ namespace Blazor.Server.UI.Theme;
 
 public class Theme
 {
+    const string PrimaryLight = "#2d4275";
+    const string PrimaryDark = "#8b9ac6";
     public static MudTheme ApplicationTheme()
     {
         var theme = new MudTheme()
@@ -15,7 +17,9 @@ public class Theme
             },
             Palette = new PaletteLight
             {
-                Primary = "#2d4275",
+                Primary = PrimaryLight,
+                PrimaryLighten = "rgb(62,44,221)",
+                PrimaryDarken = "rgb(118,106,231)",
                 Black = "#0A0E19",
                 Success = "#64A70B",
                 Secondary = "#ff4081ff",
@@ -35,7 +39,9 @@ public class Theme
             },
             PaletteDark = new PaletteDark
             {
-                Primary = "#7e6fff",
+                Primary = PrimaryDark,
+                PrimaryLighten = "rgb(90,75,226)",
+                PrimaryDarken = "rgb(151,141,236)",
                 Tertiary = "#598540",
                 Dark = "#343a40",
                 PrimaryContrastText = "#c3cbe4",

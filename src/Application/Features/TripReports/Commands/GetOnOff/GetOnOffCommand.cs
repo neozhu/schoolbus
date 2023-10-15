@@ -146,13 +146,15 @@ public class GetOnOffCommandHandler :
             }
             getonitem.AddDomainEvent(new TransportLogCreatedEvent(getonitem));
             _context.TransportLogs.Add(getonitem);
-            var onboard = await _context.TripLogs.Where(x => x.TripId == trip.Id).Select(x=>x.StudentId).Distinct().CountAsync();
-            var total = await _context.Students.Where(x => x.ItineraryId == trip.ItineraryId && x.TenantId == trip.TenantId).CountAsync();
-            trip.OnBoard = onboard;
-            trip.NotOnBoard = total - onboard;
+           
         }
 
         await _context.SaveChangesAsync(cancellationToken);
+       
+        var onboard = await _context.TripLogs.Where(x => x.TripId == trip.Id).Select(x => x.StudentId).Distinct().CountAsync();
+        var total = await _context.Students.Where(x => x.ItineraryId == trip.ItineraryId && x.TenantId == trip.TenantId).CountAsync();
+        await _context.TripReports.Where(x=>x.Id== request.TripId).ExecuteUpdateAsync(x => x.SetProperty(x => x.OnBoard, onboard).SetProperty(x=>x.NotOnBoard,total- onboard));
+
         return await Result<int>.SuccessAsync(geton.Id);
     }
 

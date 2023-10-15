@@ -10,6 +10,7 @@ using Html5QrcodeBlazor.Wrapper;
 using MudBlazor.Services;
 using MudExtensions.Services;
 using Stl.Fusion;
+using Stl.Fusion.Blazor;
 using Stl.Fusion.Extensions;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
@@ -21,7 +22,10 @@ public static class ConfigureServices
     {
         var fusion = builder.Services.AddFusion();
         fusion.AddFusionTime();
+        fusion.AddBlazor();
+        fusion.AddComputedGraphPruner(_ => new() { CheckPeriod = TimeSpan.FromSeconds(30) });
         fusion.AddService<CounterService>();
+        fusion.AddService<ITripMonitor, TripMonitor>();
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor(
                 options =>

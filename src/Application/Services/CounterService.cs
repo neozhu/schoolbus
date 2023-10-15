@@ -12,7 +12,7 @@ public class CounterService : IComputeService
     private readonly IMutableState<int> _count;
     public CounterService(IStateFactory stateFactory)
         => _count = stateFactory.NewMutable<int>(100);
-    //[ComputeMethod]
+    [ComputeMethod]
     public virtual async Task<int> Get(CancellationToken cancellationToken) => await _count.Use(cancellationToken);
     
 

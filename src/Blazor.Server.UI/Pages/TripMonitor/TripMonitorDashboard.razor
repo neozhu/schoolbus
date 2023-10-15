@@ -1,0 +1,9 @@
+﻿@page "/pages/tripmonitordashboard"
+@inherits FluxorComponent
+<h3>TripMonitorDashboard @UserProfile.UserName</h3>
+<DasboardComponent></DasboardComponent>
+@code {
+    [Inject]
+    private IState<UserProfileState> UserProfileState { get; set; } = null!;
+    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
+}

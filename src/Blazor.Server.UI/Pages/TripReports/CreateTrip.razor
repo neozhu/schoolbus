@@ -5,7 +5,12 @@
 @using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
 @using CleanArchitecture.Blazor.Application.Services.DataServices;
+@using CleanArchitecture.Blazor.Application.Services;
+@using Stl.CommandR.Commands;
+@using Stl.Fusion.UI;
 @inherits FluxorComponent
+@inject UICommander UICommander
+@inject ITripMonitor _tripMonitor
 @attribute [Authorize(Policy = Permissions.TripReports.Create)]
 <div class="main">
     <MudContainer MaxWidth="MaxWidth.Small">
@@ -104,13 +109,14 @@
     private IItineraryService ItineraryService { get; set; } = default!;
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
-    protected override async Task OnInitializedAsync()
+    protected override  Task OnInitializedAsync()
     {
         UserProfileState.StateChanged += StateOnStateChanged;
         if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
         {
             model = new AddEditTripReportCommand() { TenantId = UserProfile.TenantId, DepartureDate = DateTime.Now };
         }
+        return base.OnInitializedAsync();
     }
 
     void ItineraryChanged(int? id)
@@ -155,6 +161,7 @@
             var result = await _mediator.Send(model);
             if (result.Succeeded)
             {
+                await UICommander.Run(LocalCommand.New(() => _tripMonitor.AddOrUpdate(result.Data)));
                 Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
                 NavigationManager.NavigateTo($"/pages/tripview/{result.Data}");
             }
