@@ -35,17 +35,21 @@ public class TripMonitor : ITripMonitor
     private readonly IMutableState<int> _count;
     public TripMonitor(IStateFactory stateFactory)
         => _count = stateFactory.NewMutable<int>(0);
-    public virtual Task<int> AddOrUpdate(int tripId, CancellationToken cancellationToken = default)
+    public virtual async Task<int> AddOrUpdate(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId).Add(tripId);
         _count.Value +=1;
-        return Task.FromResult(tripId);
+        using var invalidating = Computed.Invalidate();
+        await List();
+        
+        return tripId;
     }
-    public virtual Task Remove(int tripId, CancellationToken cancellationToken = default)
+    public virtual async Task Remove(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId);
         _count.Value -= 1;
-        return Task.CompletedTask;
+        using var invalidating = Computed.Invalidate();
+        await List();
     }
     public virtual Task<List<int>> List(CancellationToken cancellationToken = default)
     {
