@@ -37,22 +37,16 @@ public class TripMonitor : ITripMonitor
         => _count = stateFactory.NewMutable<int>(0);
     public virtual Task<int> AddOrUpdate(int tripId, CancellationToken cancellationToken = default)
     {
-        if (Computed.IsInvalidating())
-            return null!;
-        using var invalidating = Computed.Invalidate();
         _tripruning = _tripruning.RemoveAll(i => i == tripId).Add(tripId);
         _count.Value +=1;
         return Task.FromResult(tripId);
     }
-    public virtual async Task Remove(int tripId, CancellationToken cancellationToken = default)
+    public virtual Task Remove(int tripId, CancellationToken cancellationToken = default)
     {
-        if (Computed.IsInvalidating())
-            return;
-        using var invalidating = Computed.Invalidate();
         _tripruning = _tripruning.RemoveAll(i => i == tripId);
         _count.Value -= 1;
+        return Task.CompletedTask;
     }
-    [ComputeMethod]
     public virtual Task<List<int>> List(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(_tripruning.ToList());
