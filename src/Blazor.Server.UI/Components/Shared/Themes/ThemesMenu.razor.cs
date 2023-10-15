@@ -16,20 +16,18 @@ public partial class ThemesMenu
         "#2d4275",
         Colors.Green.Default,
         "#0576b9",
-        Colors.BlueGrey.Default,
         "#8421d1",
         "#FF7F00",
         Colors.Red.Default
     };
     private readonly List<string> _primaryDarkColors = new()
     {
-        "#8292b4",
-        "#689F38",
-        "#0A81AB",
-        "#546E7A",
-        "#491c6b",
-        "#D46800",
-        "#9C2727",
+        "#8b9ac6",
+        "#98d89b",
+        "#79a5d1",
+        "#b194d7",
+        "#ffc27f",
+        "#f88989",
     };
     private List<string> GetColorDefinition()
     {
@@ -65,14 +63,23 @@ public partial class ThemesMenu
         UserPreferences.BorderRadius = double.Parse(args?.Value?.ToString() ?? "0");
         await UserPreferencesChanged.InvokeAsync(UserPreferences);
     }
-    private async Task ToggleDarkLightMode(bool isDarkMode)
-    {
-        UserPreferences.IsDarkMode = isDarkMode;
-        await UserPreferencesChanged.InvokeAsync(UserPreferences);
-    }
     public async Task ToggleDarkLightMode(DarkLightMode mode )
     {
         UserPreferences.DarkLightTheme = mode;
+        if(mode== DarkLightMode.Dark)
+        {
+            if (_primaryColors.IndexOf(UserPreferences.PrimaryColor) >= 0)
+            {
+                UserPreferences.PrimaryColor = _primaryDarkColors[_primaryColors.IndexOf(UserPreferences.PrimaryColor)];
+            }
+        }
+        else if(mode == DarkLightMode.Light)
+        {
+            if (_primaryDarkColors.IndexOf(UserPreferences.PrimaryColor) >= 0)
+            {
+                UserPreferences.PrimaryColor = _primaryColors[_primaryDarkColors.IndexOf(UserPreferences.PrimaryColor)];
+            }
+        }
         await UserPreferencesChanged.InvokeAsync(UserPreferences);
     }
     private async Task ChangedFontSize(ChangeEventArgs args)

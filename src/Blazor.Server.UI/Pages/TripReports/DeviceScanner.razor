@@ -272,7 +272,7 @@
     private int getOnBoardPercentage()
     {
         var total = Trip.OnBoard + Trip.NotOnBoard;
-        return ((Trip.OnBoard / total) * 100);
+        return ((Trip.OnBoard * 100 / total));
     }
     protected override async Task OnInitializedAsync()
     {
