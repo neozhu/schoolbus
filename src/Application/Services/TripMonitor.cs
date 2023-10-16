@@ -22,7 +22,7 @@ namespace CleanArchitecture.Blazor.Application.Services;
 
 public interface ITripMonitor : IComputeService
 {
-    Task<int> AddOrUpdate(int tripId, CancellationToken cancellationToken = default);
+    Task AddOrUpdate(int tripId, CancellationToken cancellationToken = default);
     Task Remove(int tripId, CancellationToken cancellationToken = default);
     [ComputeMethod]
     Task<List<int>> List(CancellationToken cancellationToken = default);
@@ -35,21 +35,22 @@ public class TripMonitor : ITripMonitor
     private readonly IMutableState<int> _count;
     public TripMonitor(IStateFactory stateFactory)
         => _count = stateFactory.NewMutable<int>(0);
-    public virtual async Task<int> AddOrUpdate(int tripId, CancellationToken cancellationToken = default)
+    public virtual Task AddOrUpdate(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId).Add(tripId);
         _count.Value +=1;
         using var invalidating = Computed.Invalidate();
-        await List();
-        
-        return tripId;
+        using (Computed.Invalidate())
+            _ = List(cancellationToken);
+        return Task.CompletedTask;
     }
-    public virtual async Task Remove(int tripId, CancellationToken cancellationToken = default)
+    public virtual  Task Remove(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId);
         _count.Value -= 1;
-        using var invalidating = Computed.Invalidate();
-        await List();
+        using (Computed.Invalidate())
+            _ = List(cancellationToken);
+        return Task.CompletedTask;
     }
     public virtual Task<List<int>> List(CancellationToken cancellationToken = default)
     {
