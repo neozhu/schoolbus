@@ -32,32 +32,31 @@ public interface ITripMonitor : IComputeService
 public class TripMonitor : ITripMonitor
 {
     private ImmutableList<int> _tripruning = ImmutableList<int>.Empty;
-    private readonly IMutableState<int> _count;
-    public TripMonitor(IStateFactory stateFactory)
-        => _count = stateFactory.NewMutable<int>(0);
+ 
     public virtual Task AddOrUpdate(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId).Add(tripId);
-        _count.Value +=1;
         using var invalidating = Computed.Invalidate();
-        using (Computed.Invalidate())
-            _ = List(cancellationToken);
+        _ = Count(cancellationToken);
+        _ = List(cancellationToken);
+        
         return Task.CompletedTask;
     }
     public virtual  Task Remove(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId);
-        _count.Value -= 1;
-        using (Computed.Invalidate())
-            _ = List(cancellationToken);
+        using var invalidating = Computed.Invalidate();
+        _ = Count(cancellationToken);
+        _ = List(cancellationToken);
+
         return Task.CompletedTask;
     }
     public virtual Task<List<int>> List(CancellationToken cancellationToken = default)
     {
         return Task.FromResult(_tripruning.ToList());
     }
-    public virtual async Task<int> Count(CancellationToken cancellationToken = default)
+    public virtual Task<int> Count(CancellationToken cancellationToken = default)
     {
-        return await _count.Use(cancellationToken);
+        return Task.FromResult(_tripruning.Count());
     }
 }

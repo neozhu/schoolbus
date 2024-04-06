@@ -137,22 +137,9 @@
             <MudDataGrid T="StudentDto" Items="@studentList" MultiSelection="true" SelectedItems="@selecteditems" SelectedItemsChanged="@SelectedItemsChanged">
                 <Columns>
                     <SelectColumn T="StudentDto" />
-                    <PropertyColumn Property="x => x.DisplayName" Title="@L["Kids Name"]" CellClass="d-flex align-items-center">
+                    <PropertyColumn Property="x => x.DisplayName" Title="@L["Kids Name"]">
                         <CellTemplate>
-                            <MudAvatar>
-                                @if (string.IsNullOrEmpty(context.Item.ProfilePicture))
-                                {
-                                    @context.Item.LastName.First()
-                                }
-                                else
-                                {
-                                    <MudImage Src="@context.Item.ProfilePicture"></MudImage>
-                                }
-                            </MudAvatar>
-                            <div class="ml-2">
-                                <MudText Typo="Typo.body2">@context.Item.DisplayName</MudText>
-                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.UID</MudText>
-                            </div>
+                            <AvatarCard ImageUrl="@context.Item.ProfilePicture" Title="@context.Item.DisplayName" Subtitle="@context.Item.UID"></AvatarCard>
                         </CellTemplate>
                     </PropertyColumn>
                 </Columns>

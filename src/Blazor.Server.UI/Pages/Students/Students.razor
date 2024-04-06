@@ -194,23 +194,9 @@
                 }
             </CellTemplate>
         </TemplateColumn>
-        <PropertyColumn Property="x => x.DisplayName" Title="@L[_currentDto.GetMemberDescription(x=>x.DisplayName)]" CellClass="d-flex align-items-center">
+        <PropertyColumn Property="x => x.DisplayName" Title="@L[_currentDto.GetMemberDescription(x=>x.DisplayName)]">
             <CellTemplate>
-                <MudAvatar>
-                    @if (string.IsNullOrEmpty(context.Item.ProfilePicture))
-                    {
-                        @context.Item.LastName.First()
-                    }
-                    else
-                    {
-                        <MudImage Src="@context.Item.ProfilePicture"></MudImage>
-                    }
-                </MudAvatar>
-                <div class="ml-2">
-                    <MudText Typo="Typo.body2">@context.Item.DisplayName</MudText>
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.UID</MudText>
-                   
-                </div>
+                <AvatarCard ImageUrl="@context.Item.ProfilePicture" Title="@context.Item.DisplayName" Subtitle="@context.Item.UID"></AvatarCard>
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Itinerary" Title="@L[_currentDto.GetMemberDescription(x=>x.Itinerary)]">

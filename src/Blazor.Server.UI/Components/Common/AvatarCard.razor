@@ -1,0 +1,23 @@
+﻿<div class="d-flex align-center">
+    <MudAvatar>
+        @if (string.IsNullOrEmpty(ImageUrl))
+        {
+            @Title?.First()
+        }
+        else
+        {
+            <MudImage Src="@ImageUrl"></MudImage>
+        }
+    </MudAvatar>
+    <div class="ml-2">
+        <MudText Typo="Typo.body2">@Title</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">@Subtitle</MudText>
+
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public string? ImageUrl { get; set; }
+}

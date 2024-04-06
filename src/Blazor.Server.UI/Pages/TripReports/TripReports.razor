@@ -148,22 +148,9 @@
                 <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.PlatNumber</MudText>
             </CellTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Pilot" Title="@L[_currentDto.GetMemberDescription(x=>x.Pilot)]" CellClass="d-flex align-items-center">
+        <PropertyColumn Property="x => x.Pilot" Title="@L[_currentDto.GetMemberDescription(x=>x.Pilot)]">
             <CellTemplate>
-                <MudAvatar>
-                    @if (string.IsNullOrEmpty(context.Item.Pilot?.ProfilePicture))
-                    {
-                        @context.Item.Pilot?.LastName?.First()
-                    }
-                    else
-                    {
-                        <MudImage Src="@context.Item.Pilot.ProfilePicture"></MudImage>
-                    }
-                </MudAvatar>
-                <div class="ml-2">
-                    <MudText Typo="Typo.body2">@context.Item.Pilot?.DisplayName</MudText>
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.Pilot?.Phone</MudText>
-                </div>
+                <AvatarCard ImageUrl="@context.Item.Pilot.ProfilePicture" Title="@context.Item.Pilot?.DisplayName" Subtitle="@context.Item.Pilot?.Phone"></AvatarCard>
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.OnBoard" Title="@L[_currentDto.GetMemberDescription(x=>x.OnBoard)]" />

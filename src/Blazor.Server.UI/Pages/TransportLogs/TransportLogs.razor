@@ -138,23 +138,9 @@
             </CellTemplate>
         </TemplateColumn>
 
-        <PropertyColumn Property="x => x.Student" Title="@L[_currentDto.GetMemberDescription(x=>x.Student)]" CellClass="d-flex align-items-center">
+        <PropertyColumn Property="x => x.Student" Title="@L[_currentDto.GetMemberDescription(x=>x.Student)]">
             <CellTemplate>
-                <MudAvatar>
-                    @if (string.IsNullOrEmpty(context.Item.Student.ProfilePicture))
-                    {
-                        @context.Item.Student.LastName.First()
-                    }
-                    else
-                    {
-                        <MudImage Src="@context.Item.Student.ProfilePicture"></MudImage>
-                    }
-                </MudAvatar>
-                <div class="ml-2">
-                    <MudText Typo="Typo.body2">@context.Item.Student.DisplayName</MudText>
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.Student.UID</MudText>
-                   
-                </div>
+                <AvatarCard ImageUrl="@context.Item.Student.ProfilePicture" Title="@context.Item.Student.DisplayName" Subtitle="@context.Item.Student.UID"></AvatarCard>
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Itinerary" Title="@L[_currentDto.GetMemberDescription(x=>x.Itinerary)]">
