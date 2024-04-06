@@ -1,0 +1,21 @@
+﻿@page "/mobile/login"
+
+
+@inject NavigationManager NavigationManager
+<PageTitle>Login</PageTitle>
+<MudPaper Elevation="0" Class="d-flex flex-column justify-center flex-grow-1 pa-4 mt-10" >
+    <MudImage Src="/img/logo.png"></MudImage>
+    <MudForm>
+        <div class="d-flex flex-column justify-center gap-4">
+            <MudText Align="Align.Center" Typo="Typo.h3">Welcome back</MudText>
+            <MudTextField @bind-Value="UserName" Label="User Name" Variant="Variant.Outlined" Placeholder="User Name"></MudTextField>
+            <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Outlined" Placeholder="Password"></MudTextField>
+            <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(()=>NavigationManager.NavigateTo("/mobile/starttrip"))">Log in</MudButton>
+        </div>
+    </MudForm>
+</MudPaper>
+
+@code {
+    private string UserName { get; set; }
+    private string Password { get; set; }
+}
