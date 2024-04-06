@@ -1,21 +1,16 @@
-using Toolbelt.Blazor.HotKeys2;
-
 namespace Blazor.Server.UI.Components.Shared;
 
-public partial class CommandPalette : IDisposable
+public partial class CommandPalette 
 {
     private readonly Dictionary<string, string> _pages = new();
-    private HotKeysContext? _hotKeysContext;
+
     private Dictionary<string, string> _pagesFiltered = new();
     private string _search=String.Empty;
-    [Inject] private HotKeys HotKeys { get; set; } = default!;
+
     [Inject] private NavigationManager Navigation { get; set; } = default!;
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = default!;
 
-    public void Dispose()
-    {
-        _hotKeysContext?.Dispose();
-    }
+
 
     protected override void OnInitialized()
     {
@@ -23,8 +18,7 @@ public partial class CommandPalette : IDisposable
 
         _pagesFiltered = _pages;
 
-        _hotKeysContext = HotKeys.CreateContext()
-            .Add(Key.Escape, () => MudDialog.Close(), "Close command palette.");
+      
     }
 
     private void SearchPages(string value)

@@ -3,7 +3,6 @@ using System.Runtime.Versioning;
 using CleanArchitecture.Blazor.Application.Common.Configurations;
 using CleanArchitecture.Blazor.Application.Services.PaddleOCR;
 using CleanArchitecture.Blazor.Infrastructure.Services.JWT;
-using CleanArchitecture.Blazor.Infrastructure.Services.PaddleOCR;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

@@ -12,7 +12,6 @@ using MudExtensions.Services;
 using Stl.Fusion;
 using Stl.Fusion.Blazor;
 using Stl.Fusion.Extensions;
-using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace Blazor.Server.UI;
 
@@ -48,7 +47,6 @@ public static class ConfigureServices
             })
             .AddCircuitOptions(option => { option.DetailedErrors = true; });
         builder.Services.AddMudBlazorDialog();
-        builder.Services.AddHotKeys2();
         builder.Services.AddMudServices(config =>
         {
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
