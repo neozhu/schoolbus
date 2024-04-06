@@ -33,4 +33,6 @@ public class PrivacySettings
     ///     key.
     /// </remarks>
     public string? GoogleAnalyticsKey { get; set; }
+
+    public string? BingMampKey { get; set; }
 }

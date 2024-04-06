@@ -63,6 +63,51 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.ToTable("AuditTrails");
                 });
 
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Bus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeviceId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlatNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Buses");
+                });
+
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Customer", b =>
                 {
                     b.Property<int>("Id")
@@ -152,6 +197,79 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.ToTable("Documents");
                 });
 
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Itinerary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BusId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Disabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("FirstTime")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastTime")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("PilotId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SchoolId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StartingStation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TerminalStation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusId");
+
+                    b.HasIndex("PilotId");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Itineraries");
+                });
+
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.KeyValue", b =>
                 {
                     b.Property<int>("Id")
@@ -234,6 +352,177 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.ToTable("Loggers");
                 });
 
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("From")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ReadTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("SentTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("To")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Parent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Parents");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.ParentStudent", b =>
+                {
+                    b.Property<int>("ParentsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ChildrenId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ParentsId", "ChildrenId");
+
+                    b.HasIndex("ChildrenId");
+
+                    b.ToTable("ParentStudent", (string)null);
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Pilot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Pilots");
+                });
+
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -277,6 +566,116 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.School", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Contact")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Schools");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Student", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ItineraryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("text");
+
+                    b.Property<int>("SchoolId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItineraryId");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Students");
+                });
+
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Tenant", b =>
                 {
                     b.Property<string>("Id")
@@ -291,6 +690,291 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tenants");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TransportLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CheckType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeviceId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Done")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ItineraryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Latitude")
+                        .HasPrecision(16, 10)
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Longitude")
+                        .HasPrecision(16, 10)
+                        .HasColumnType("double precision");
+
+                    b.Property<int?>("RefId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SwipeDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UpOrDown")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItineraryId");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("TransportLogs");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripAccident", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Latitude")
+                        .HasPrecision(16, 10)
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Longitude")
+                        .HasPrecision(16, 10)
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime?>("ReportDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Responder")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Result")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("TripAccidents");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Comments2")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("GetOffDateTime2")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("GetOnDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Latitude")
+                        .HasPrecision(16, 10)
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Latitude2")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location2")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Longitude")
+                        .HasPrecision(16, 10)
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Longitude2")
+                        .HasColumnType("double precision");
+
+                    b.Property<bool>("Manual")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Manual2")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UID")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("TripLogs");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DepartureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("ItineraryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("NotOnBoard")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OnBoard")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PilotId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PlatNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ReportDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItineraryId");
+
+                    b.HasIndex("PilotId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("TripReports");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Identity.ApplicationRole", b =>
@@ -543,6 +1227,17 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Bus", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Document", b =>
                 {
                     b.HasOne("CleanArchitecture.Blazor.Domain.Identity.ApplicationUser", "Owner")
@@ -562,6 +1257,223 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.Navigation("Editor");
 
                     b.Navigation("Owner");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Itinerary", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Bus", "Bus")
+                        .WithMany("Itineraries")
+                        .HasForeignKey("BusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Pilot", "Pilot")
+                        .WithMany("Itineraries")
+                        .HasForeignKey("PilotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.School", "School")
+                        .WithMany("Itineraries")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bus");
+
+                    b.Navigation("Pilot");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Parent", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.ParentStudent", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("ChildrenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Parent", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Pilot", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.School", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Student", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Itinerary", "Itinerary")
+                        .WithMany("Students")
+                        .HasForeignKey("ItineraryId");
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.School", "School")
+                        .WithMany("Students")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Itinerary");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TransportLog", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Itinerary", "Itinerary")
+                        .WithMany("TransportLogs")
+                        .HasForeignKey("ItineraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Student", "Student")
+                        .WithMany("TransportLogs")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Itinerary");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripAccident", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.TripReport", "TripReport")
+                        .WithMany("TripAccidents")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("TripReport");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripLog", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId");
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.TripReport", "TripReport")
+                        .WithMany("TripLogs")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("TripReport");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripReport", b =>
+                {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Itinerary", "Itinerary")
+                        .WithMany()
+                        .HasForeignKey("ItineraryId");
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Pilot", "Pilot")
+                        .WithMany()
+                        .HasForeignKey("PilotId");
+
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Itinerary");
+
+                    b.Navigation("Pilot");
 
                     b.Navigation("Tenant");
                 });
@@ -636,6 +1548,42 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Bus", b =>
+                {
+                    b.Navigation("Itineraries");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Itinerary", b =>
+                {
+                    b.Navigation("Students");
+
+                    b.Navigation("TransportLogs");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Pilot", b =>
+                {
+                    b.Navigation("Itineraries");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.School", b =>
+                {
+                    b.Navigation("Itineraries");
+
+                    b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.Student", b =>
+                {
+                    b.Navigation("TransportLogs");
+                });
+
+            modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripReport", b =>
+                {
+                    b.Navigation("TripAccidents");
+
+                    b.Navigation("TripLogs");
                 });
 
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Identity.ApplicationRole", b =>

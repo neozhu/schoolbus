@@ -1,34 +1,52 @@
+using static MudBlazor.CategoryTypes;
+using Button = MudBlazor.Button;
+
 namespace Blazor.Server.UI.Theme;
 
 public class Theme
 {
+    const string PrimaryLight = "#2d4275";
+    const string PrimaryDark = "#8b9ac6";
     public static MudTheme ApplicationTheme()
     {
         var theme = new MudTheme()
         {
-            
+            ZIndex = new ZIndex
+            {
+                Dialog=1301
+            },
             Palette = new PaletteLight
             {
-                Primary = "#2d4275",
+                Primary = PrimaryLight,
+                PrimaryLighten = "rgb(62,44,221)",
+                PrimaryDarken = "rgb(118,106,231)",
                 Black = "#0A0E19",
                 Success = "#64A70B",
                 Secondary = "#ff4081ff",
+                Tertiary = "#8EDD65",
                 AppbarBackground = "rgba(255,255,255,0.8)",
                 AppbarText = "#424242",
                 BackgroundGrey = "#F9FAFC",
-                TextSecondary = "#425466",
+                TextPrimary = "rgba(66,66,66,1)",
+                PrimaryContrastText= "rgba(255,255,255,1)",
+                TextSecondary = "#99a0b0",
+                SecondaryContrastText = "#99a0b0",
                 Dark = "#110E2D",
                 DarkLighten = "#1A1643",
-                GrayDefault = "#4B5563",
-                GrayLight = "#9CA3AF",
-                GrayLighter = "#adbdccff",
+                GrayDefault = "#BABDBF",
+                GrayLight = "#D1D3D4",
+                GrayLighter = "#E8E9E9",
             },
             PaletteDark = new PaletteDark
             {
-                Primary = "#7e6fff",
-                Dark= "#343a40",
+                Primary = PrimaryDark,
+                PrimaryLighten = "rgb(90,75,226)",
+                PrimaryDarken = "rgb(151,141,236)",
+                Tertiary = "#598540",
+                Dark = "#343a40",
                 PrimaryContrastText = "#c3cbe4",
-                Info= "#47bce8",
+                SecondaryContrastText = "#99a0b0",
+                Info = "#47bce8",
                 Error= "#f56e50",
                 Success= "#2cb57e",
                 Warning= "#f5bd58",
@@ -43,7 +61,7 @@ public class Theme
                 AppbarBackground = "rgba(14,24,36, 0.80)",
                 AppbarText = "rgba(255,255,255, 0.70)",
                 TextPrimary = "#a6b0cf",
-                TextSecondary = "#9599ad",
+                TextSecondary = "rgba(255,255,255,0.4980392156862745)",
                 ActionDefault = "rgba(195,203,228,.80)",
                 ActionDisabled = "rgba(255,255,255, 0.26)",
                 ActionDisabledBackground = "rgba(255,255,255, 0.12)",
@@ -152,6 +170,7 @@ public class Theme
                     FontWeight = 400,
                     LineHeight = 1.43,
                     LetterSpacing = ".01071em"
+                    
                 },
                 Caption = new Caption
                 {

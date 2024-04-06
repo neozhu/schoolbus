@@ -1,0 +1,294 @@
+﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.Parents.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Features.Parents.Commands.Delete;
+@using CleanArchitecture.Blazor.Application.Features.Students.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById;
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Processing
+@using Color= MudBlazor.Color
+@using Size=MudBlazor.Size
+@inherits MudComponentBase
+@inject IStringLocalizer<Parents> L
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
+            <MudGrid>
+                <MudItem sm="12" xs="12">
+                    <div class="d-flex justify-center">
+                        <MudElement Class="d-flex flex-column  align-center">
+                            <MudAvatar Style="height:128px; width:128px; font-size:2rem;">
+                                <MudImage Src="@model.ProfilePicture"></MudImage>
+                            </MudAvatar>
+                        </MudElement>
+
+                        <MudTooltip Text="@L["Click upload a image."]">
+                            <MudFileUpload T="IBrowserFile" Accept=".jpg, .jpeg, .png, .webp" FilesChanged="UploadProfileImage" Style="margin-top:-10px;margin-left:-15px">
+                                <ButtonTemplate>
+                                    <MudIconButton HtmlTag="label"
+                                                   Icon="@Icons.Material.Filled.PhotoCamera"
+                                                   for="@context">
+                                    </MudIconButton>
+                                </ButtonTemplate>
+                            </MudFileUpload>
+                        </MudTooltip>
+                    </div>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.LastName)]" @bind-Value="model.LastName" For="@(() => model.LastName)" Required="false" RequiredError="@L["last name is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.FirstName)]" @bind-Value="model.FirstName" For="@(() => model.FirstName)" Required="false" RequiredError="@L["first name is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Phone)]" @bind-Value="model.Phone" For="@(() => model.Phone)" Required="false" RequiredError="@L["phone is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField ReadOnly Label="@L[model.GetMemberDescription(x=>x.Status)]" @bind-Value="model.Status" For="@(() => model.Status)" Required="false" RequiredError="@L["status is required!"]"></MudTextField>
+                 </MudItem>
+
+                 @if (UserProfile.IsSuperAdmin)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect For="@(() => model.TenantId)"
+                                   Label="@L["Select Organization"]"
+                                   Required="true"
+                                   RequiredError="@L["Organization is required."]"
+                        @bind-Value="@model.TenantId">
+                            @foreach (var item in TenantsService.DataSource)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+            </MudGrid>
+            <MudGrid>
+                <MudItem xs="12" md="12">
+                    <MudButton OnClick="@(()=>_open=true)">@L["Select Kids"]</MudButton>
+                    <MudButton OnClick="RemoveKids" Disabled="@(!(selecteditems.Any() || model.Children.Any()))">@L["Remove ALL"]</MudButton>
+                </MudItem>
+                @if (model.Children.Any())
+                {
+                    @foreach (var item in model.Children)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudPaper Class="pa-4" Elevation="3">
+                                <MudStack Row="true">
+                                    <MudAvatar Size="Size.Large">
+                                        <MudImage Src="@item.ProfilePicture"></MudImage>
+                                    </MudAvatar>
+                                    <MudStack Justify="Justify.Center" Spacing="0">
+                                        <MudText Typo="Typo.body1">@item.DisplayName</MudText>
+                                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.UID</MudText>
+                                    </MudStack>
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                }
+                else
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudPaper Class="pa-4" Elevation="3">
+                            <MudStack Row="true">
+                                <MudSkeleton SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" Animation="Animation.False" />
+                                <MudStack Justify="Justify.Center" Spacing="0">
+                                    <MudSkeleton Width="120px" Height="20px" Animation="Animation.False" />
+                                    <MudSkeleton Width="120px" Height="20px" Animation="Animation.False" />
+                                </MudStack>
+                            </MudStack>
+                        </MudPaper>
+                    </MudItem>
+                }
+                
+
+
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
+        <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
+        <MudButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
+    </DialogActions>
+</MudDialog>
+<MudDrawer @bind-Open="@_open" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">Kids</MudText>
+    </MudDrawerHeader>
+    <div class="d-flex flex-column gap-2 px-2">
+        <div class="d-flex flex-row gap-2">
+            <MudSelect T="int?" @bind-Value="schoolid" Label="@L["School"]" Variant="Variant.Outlined">
+                @foreach (var item in SchoolService.DataSource.Where(x=>x.TenantId==model.TenantId))
+                {
+                    <MudSelectItem T="int?" Value="@item.Id">@item.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField T="string" @bind-Value="searchname" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" OnAdornmentClick="SearchStudents" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        </div>
+        @if (_searching)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-2" />
+        }
+        else
+        {
+            <MudDataGrid T="StudentDto" Items="@studentList" MultiSelection="true" SelectedItems="@selecteditems" SelectedItemsChanged="@SelectedItemsChanged">
+                <Columns>
+                    <SelectColumn T="StudentDto" />
+                    <PropertyColumn Property="x => x.DisplayName" Title="@L["Kids Name"]">
+                        <CellTemplate>
+                            <AvatarCard ImageUrl="@context.Item.ProfilePicture" Title="@context.Item.DisplayName" Subtitle="@context.Item.UID"></AvatarCard>
+                        </CellTemplate>
+                    </PropertyColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="StudentDto" RowsPerPageString="" DisableRowsPerPage />
+                 </PagerContent>
+             </MudDataGrid>
+        }
+    </div>
+
+</MudDrawer>
+@code {
+    MudForm? _form;
+    private bool _open = false;
+    private bool _saving = false;
+    private bool _savingnew = false;
+    private int? schoolid;
+    private string searchname;
+    private bool _searching = false;
+    private List<StudentDto>? studentList = null;
+    private HashSet<StudentDto> selecteditems = new HashSet<StudentDto>();
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+    AddEditParentCommandValidator _modelValidator = new();
+    [EditorRequired][Parameter] public AddEditParentCommand model { get; set; } = null!;
+    [Inject] private IMediator _mediator { get; set; } = default!;
+    [Parameter] public UserProfile UserProfile { get; set; } = null!;
+    [Inject] private IUploadService _uploadService { get; set; } = default!;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
+    [Inject]
+    private ISchoolService SchoolService { get; set; } = default!;
+
+    void SelectedItemsChanged(HashSet<StudentDto> items)
+    {
+        foreach (var item in items)
+        {
+            if (!model.Children.Any(x => x.Id == item.Id))
+            {
+                model.Children.Add(new StudentDto() { Description = item.Description, FirstName = item.FirstName, LastName = item.LastName, Phone = item.Phone, SchoolId = item.SchoolId, Status = item.Status, UID = item.UID, Id = item.Id, ProfilePicture = item.ProfilePicture, TenantId = item.TenantId });
+            }
+        }
+    }
+    async void SearchStudents()
+    {
+        _searching = true;
+        try
+        {
+            var result = await _mediator.Send(new GetStudentBySchoolIdQuery() { Name = searchname, SchoolId = schoolid ?? 0 });
+            studentList = result;
+        }
+        finally
+        {
+            _searching = false;
+            StateHasChanged();
+        }
+    }
+    private async Task RemoveKids()
+    {
+        if (selecteditems.Any())
+        {
+            selecteditems = new HashSet<StudentDto>();
+        }
+        if (model.Children.Any())
+        {
+            var result = await _mediator.Send(new RemoveAllKidsCommand(model.Id));
+            if (result.Succeeded)
+            {
+                model.Children = new List<StudentDto>();
+            }
+        }
+
+    }
+    private async Task UploadProfileImage(IBrowserFile file)
+    {
+        var filestream = file.OpenReadStream(GlobalVariable.MaxAllowedSize);
+        var imgstream = new MemoryStream();
+        await filestream.CopyToAsync(imgstream);
+        imgstream.Position = 0;
+        using (var outStream = new MemoryStream())
+        {
+            using (var image = Image.Load(imgstream))
+            {
+                image.Mutate(i => i.Resize(new ResizeOptions() { Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop, Size = new SixLabors.ImageSharp.Size(128, 128) }));
+                image.Save(outStream, SixLabors.ImageSharp.Formats.Png.PngFormat.Instance);
+                var result = await _uploadService.UploadAsync(new UploadRequest(Guid.NewGuid().ToString() + ".png", UploadType.ProfilePicture, outStream.ToArray()));
+                model.ProfilePicture = result;
+                Snackbar.Add(L["The avatar has been updated."], MudBlazor.Severity.Info);
+
+            }
+        }
+    }
+    async Task Submit()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+
+            if (!model.Children.Any())
+            {
+                Snackbar.Add(L["Please choose kids"], MudBlazor.Severity.Error);
+                return;
+            }
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+    async Task SaveAndNew()
+    {
+        try
+        {
+            _savingnew = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+                await Task.Delay(300);
+                model = new AddEditParentCommand() { TenantId = model.TenantId, Status = model.Status };
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _savingnew = false;
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

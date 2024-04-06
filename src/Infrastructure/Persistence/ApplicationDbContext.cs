@@ -29,6 +29,19 @@ public class ApplicationDbContext : IdentityDbContext<
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<School> Schools { get; set; }
+    public DbSet<Bus> Buses { get; set; }
+    public DbSet<Student> Students { get; set; }
+    public DbSet<Parent> Parents { get; set; }
+    public DbSet<Pilot> Pilots { get; set; }
+    public DbSet<Itinerary> Itineraries { get; set; }
+    public DbSet<TransportLog> TransportLogs { get; set; }
+    public DbSet<Message> Messages { get; set; }
+    public DbSet<ParentStudent> ParentStudents { get; set; }
+
+    public DbSet<TripReport> TripReports { get; set; }
+    public DbSet<TripLog> TripLogs { get; set; }
+    public DbSet<TripAccident> TripAccidents { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

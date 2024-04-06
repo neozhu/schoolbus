@@ -1,0 +1,165 @@
+﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
+
+@inherits MudComponentBase
+@inject IStringLocalizer<Itineraries> L
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
+            <MudGrid>
+
+                <MudItem xs="12" md="4">
+                    <MudSelect For="@(() => model.SchoolId)"
+                               Label="@L[model.GetMemberDescription(x=>x.SchoolId)]"
+                               Required="true"
+                               RequiredError="@L["School is required."]"
+                    @bind-Value="@model.SchoolId">
+                        @foreach (var item in SchoolService.DataSource.Where(x => x.TenantId == model.TenantId))
+                        {
+                            <MudSelectItem T="int?" Value="@item.Id">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                </MudItem>
+
+                <MudItem xs="12" md="4">
+                    <MudSelect For="@(() => model.BusId)"
+                               Label="@L[model.GetMemberDescription(x=>x.BusId)]"
+                               Required="true"
+                               RequiredError="@L["Bus is required."]"
+                    @bind-Value="@model.BusId">
+                        @foreach (var item in BusService.DataSource.Where(x => x.TenantId == model.TenantId))
+                        {
+                            <MudSelectItem T="int?" Value="@item.Id">@item.PlatNumber</MudSelectItem>
+                        }
+                    </MudSelect>
+                    
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudSelect For="@(() => model.PilotId)"
+                               Label="@L[model.GetMemberDescription(x=>x.PilotId)]"
+                               Required="true"
+                               RequiredError="@L["Pilot is required."]"
+                    @bind-Value="@model.PilotId">
+                        @foreach (var item in PilotService.DataSource.Where(x => x.TenantId == model.TenantId))
+                        {
+                            <MudSelectItem Class="d-flex align-items-center" T="int?" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePicture" Height="14" /></MudAvatar>  @item.DisplayName</MudSelectItem>
+                        }
+                    </MudSelect>
+                 
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.StartingStation)]" @bind-Value="model.StartingStation" For="@(() => model.StartingStation)" Required="false" RequiredError="@L["starting station is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.TerminalStation)]" @bind-Value="model.TerminalStation" For="@(() => model.TerminalStation)" Required="false" RequiredError="@L["terminal station is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.FirstTime)]" @bind-Value="model.FirstTime" For="@(() => model.FirstTime)" Required="true" RequiredError="@L["first time is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.LastTime)]" @bind-Value="model.LastTime" For="@(() => model.LastTime)" Required="true" RequiredError="@L["last time is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudCheckBox Label="@L[model.GetMemberDescription(x=>x.Disabled)]" @bind-Checked="model.Disabled" For="@(() => model.Disabled)"></MudCheckBox>
+                </MudItem>
+
+                @if (UserProfile.IsSuperAdmin)
+                {
+                    <MudItem xs="12" md="6">
+                        <MudSelect For="@(() => model.TenantId)"
+                                   Label="@L["Select Organization"]"
+                                   Required="true"
+                                   RequiredError="@L["Organization is required."]"
+                        @bind-Value="@model.TenantId">
+                            @foreach (var item in TenantsService.DataSource)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
+        <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
+        <MudLoadingButton Loading="@_saving"  OnClick="Submit">@ConstantString.Save</MudLoadingButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    MudForm? _form;
+    private bool _saving = false;
+    private bool _savingnew = false;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+    AddEditItineraryCommandValidator _modelValidator = new();
+    [EditorRequired][Parameter] public AddEditItineraryCommand model { get; set; } = null!;
+    [Inject] private IMediator _mediator { get; set; } = default!;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
+    [Inject]
+    private IBusService BusService { get; set; } = default!;
+    [Inject]
+    private IPilotService PilotService { get; set; } = default!;
+    [Inject]
+    private ISchoolService SchoolService { get; set; } = default!;
+    [Parameter] public UserProfile UserProfile { get; set; } = null!;
+    async Task Submit()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+    async Task SaveAndNew()
+    {
+        try
+        {
+            _savingnew = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+                await Task.Delay(300);
+                model = new AddEditItineraryCommand() { };
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _savingnew = false;
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

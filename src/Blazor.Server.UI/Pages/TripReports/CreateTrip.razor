@@ -1,0 +1,178 @@
+﻿@inject IStringLocalizer<TripReports> L
+@page "/pages/createtrip"
+@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.AddEdit;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
+@using CleanArchitecture.Blazor.Application.Services;
+@using Stl.CommandR.Commands;
+@using Stl.Fusion.UI;
+@inherits FluxorComponent
+@inject UICommander UICommander
+@inject ITripMonitor _tripMonitor
+@attribute [Authorize(Policy = Permissions.TripReports.Create)]
+<div class="main">
+    <MudContainer MaxWidth="MaxWidth.Small">
+        <MudPaper Width="100%" Square="true" Elevation="2" Class="pa-3">
+            <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <div class="d-flex flex-column">
+                            <h3>@L["Create a trip"]</h3>
+                            <MudText Typo="Typo.body2" Class="mud-text-secondary">@DateTime.Now.ToLongDateString()</MudText>
+                        </div>
+                        
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudSelect For="@(() => model.ItineraryId)" T="int?"
+                                   Label="@L[model.GetMemberDescription(x=>x.ItineraryId)]"
+                                   Required="true"
+                                   RequiredError="@L["Itinerary is required."]"
+                                   Value="@model.ItineraryId" ValueChanged="ItineraryChanged">
+                            @foreach (var item in ItineraryService.DataSource.Where(x => x.TenantId == model.TenantId ))
+                            {
+                                <MudSelectItem T="int?" Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="@L[model.GetMemberDescription(x=>x.PlatNumber)]" @bind-Value="model.PlatNumber" For="@(() => model.PlatNumber)" Required="true" RequiredError="@L["plat number is required!"]"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudSelect For="@(() => model.PilotId)"
+                                   Label="@L[model.GetMemberDescription(x=>x.PilotId)]"
+                                   Required="true"
+                                   RequiredError="@L["Pilot is required."]"
+                        @bind-Value="@model.PilotId">
+                            @foreach (var item in PilotService.DataSource.Where(x => x.TenantId == model.TenantId))
+                            {
+                                <MudSelectItem Class="d-flex align-items-center" T="int?" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePicture" Height="14" /></MudAvatar> @item.DisplayName</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Format="s" InputType="InputType.DateTimeLocal" Label="@L[model.GetMemberDescription(x=>x.DepartureDate)]"  @bind-Value="model.DepartureDate" For="@(() => model.DepartureDate)" Required="true" RequiredError="@L["departure date is required!"]"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="@L[model.GetMemberDescription(x=>x.Comments)]" @bind-Value="model.Comments" For="@(() => model.Comments)" Required="false" RequiredError="@L["comments is required!"]"></MudTextField>
+                    </MudItem>
+
+                    @if (UserProfile.IsSuperAdmin)
+                    {
+                        <MudItem xs="12" md="6">
+                            <MudSelect For="@(() => model.TenantId)"
+                                       Label="@L["Select Organization"]"
+                                       Required="true"
+                                       RequiredError="@L["Organization is required."]"
+                            @bind-Value="@model.TenantId">
+                                @foreach (var item in TenantsService.DataSource)
+                                {
+                                    <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+                    <MudItem xs="12">
+                        <MudButton FullWidth="true" Variant="Variant.Filled" OnClick="Save" Disabled="@_saving" Color="Color.Primary">@ConstantString.Save</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </MudPaper>
+    </MudContainer>
+</div>
+
+<MudAppBar Bottom="true" Class="justify-center gap-2" Fixed="true" Color="Color.Primary" Elevation="1">
+    <MudSpacer />
+    <MudTooltip Text="@L["Home"]">
+        <MudIconButton Icon="@Icons.Material.Filled.Home" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Href="/pages/mytrip" />
+    </MudTooltip>
+    <MudSpacer />
+</MudAppBar>
+@code {
+    MudForm? _form;
+    bool _saving;
+    bool justruning = false;
+    bool _loading = false;
+    [Inject]
+    private IState<UserProfileState> UserProfileState { get; set; } = null!;
+    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
+    AddEditTripReportCommandValidator _modelValidator = new();
+    AddEditTripReportCommand model { get; set; } = new();
+
+    [Inject] private IMediator _mediator { get; set; } = default!;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
+    [Inject]
+    private IPilotService PilotService { get; set; } = default!;
+    [Inject]
+    private IItineraryService ItineraryService { get; set; } = default!;
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; } = null!;
+    protected override  Task OnInitializedAsync()
+    {
+        UserProfileState.StateChanged += StateOnStateChanged;
+        if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
+        {
+            model = new AddEditTripReportCommand() { TenantId = UserProfile.TenantId, DepartureDate = DateTime.Now };
+        }
+        return base.OnInitializedAsync();
+    }
+
+    void ItineraryChanged(int? id)
+    {
+        if (id is not null)
+        {
+            var item = ItineraryService.DataSource.Find(x => x.Id == id);
+            model.PlatNumber = item.Bus.PlatNumber;
+        }
+        else
+        {
+            model.PlatNumber = "";
+        }
+        model.ItineraryId = id;
+
+
+    }
+    protected override void Dispose(bool disposing)
+    {
+        UserProfileState.StateChanged -= StateOnStateChanged;
+        base.Dispose(disposing);
+    }
+    private void StateOnStateChanged(object? sender, EventArgs args)
+    {
+        InvokeAsync(async () =>
+        {
+            if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
+            {
+
+                StateHasChanged();
+            }
+        });
+    }
+    async Task Save()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                await UICommander.Run(LocalCommand.New(() => _tripMonitor.AddOrUpdate(result.Data)));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+                NavigationManager.NavigateTo($"/pages/tripview/{result.Data}");
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

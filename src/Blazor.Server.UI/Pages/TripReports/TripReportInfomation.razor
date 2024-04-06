@@ -1,0 +1,134 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+@inject IStringLocalizer<TripReports> L
+<MudPaper Width="100%" Square="true" Elevation="2" Class="pa-3">
+    <MudForm Model="@Trip" Disabled="true">
+        <MudGrid>
+            <MudItem xs="12">
+                <div class="d-flex flex-column">
+                    <h3>@L["Trip Report"]</h3>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@Trip.ReportDate?.ToLongDateString()</MudText>
+                </div>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.Itinerary)]" Value="@Trip.Itinerary?.Name"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.PlatNumber)]" Value="@Trip.PlatNumber"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.Pilot)]" Value="@Trip.Pilot?.DisplayName"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField T="string" Label="@L["Phone Number"]" Value="@Trip.Pilot?.Phone"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField Format="s" InputType="InputType.DateTimeLocal" Label="@L[Trip.GetMemberDescription(x=>x.DepartureDate)]" Value="Trip.DepartureDate"></MudTextField>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField Format="s" InputType="InputType.DateTimeLocal" Label="@L[Trip.GetMemberDescription(x=>x.ReportDate)]" Value="Trip.ReportDate"></MudTextField>
+            </MudItem>
+            @if (UserProfile.IsSuperAdmin)
+            {
+                <MudItem xs="12" md="6">
+                    <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.Comments)]" Value="Trip.Comments"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.Tenant)]" Value="Trip.Tenant.Name"></MudTextField>
+                </MudItem>
+            }
+            else
+            {
+                <MudItem xs="12" md="12">
+                    <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.Comments)]" Value="Trip.Comments"></MudTextField>
+                </MudItem>
+            }
+            <MudItem xs="12" md="12">
+                <MudTabs Elevation="2" Rounded="true" Centered="true" Class="my-6" PanelClass="my-3">
+                    <MudTabPanel BadgeColor="Color.Success">
+                        <TabContent>
+                            <MudIcon Icon="@Icons.Material.Filled.Groups"></MudIcon> <MudBadge Content="@Trip.TripLogs?.Count" Color="Color.Primary" Class="mx-6 mt-4">Students</MudBadge>
+                        </TabContent>
+                        <ChildContent>
+                            <MudSimpleTable Style="overflow-y: auto;">
+                                <thead>
+                                    <tr>
+                                        <td>Student</td>
+                                        <td>Get On Position</td>
+                                        <td>Get Off Position</td>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item in Trip.TripLogs)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <MudAvatar>
+                                                        @if (string.IsNullOrEmpty(item.Student?.ProfilePicture))
+                                                        {
+                                                            @item.Student?.LastName.First()
+                                                        }
+                                                        else
+                                                        {
+                                                            <MudImage Src="@item.Student?.ProfilePicture"></MudImage>
+                                                        }
+                                                    </MudAvatar>
+                                                    <div class="ml-2">
+                                                        <MudText Typo="Typo.body2">@item.Student?.DisplayName</MudText>
+                                                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.Student?.UID</MudText>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p>@item.Location</p>
+                                                <p class="mud-text-secondary">@item.GetOnDateTime?.ToString("HH:mm")</p>
+                                            </td>
+                                            <td>
+                                                <p>@item.Location2</p>
+                                                <p class="mud-text-secondary">@item.GetOffDateTime2?.ToString("HH:mm")</p>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </MudSimpleTable>
+                        </ChildContent>
+                    </MudTabPanel>
+                    <MudTabPanel>
+                        <TabContent>
+                            <MudIcon Icon="@Icons.Material.Filled.BusAlert"></MudIcon> <MudBadge Content="@Trip.TripAccidents.Count" Color="Color.Secondary" Class="mx-6 mt-4">Alert</MudBadge>
+                        </TabContent>
+                        <ChildContent>
+                            @if (Trip.TripAccidents.Any())
+                            {
+                                <MudPaper Class="pa-4">
+                                    <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
+                                        @foreach (var item in Trip.TripAccidents)
+                                        {
+                                            <MudTimelineItem Color="Color.Default" TimelineAlign="TimelineAlign.End">
+                                                <MudText Typo="Typo.body2">@item.Comments</MudText>
+                                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.Location</MudText>
+                                                <MudText Typo="Typo.body2" Class="mud-text-secondary">@item.ReportDateTime?.ToString("HH:mm")</MudText>
+                                            </MudTimelineItem>
+                                        }
+
+                                    </MudTimeline>
+                                </MudPaper>
+                            }
+                        </ChildContent>
+                    </MudTabPanel>
+                </MudTabs>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public TripReportDto Trip { get; set; } = null!;
+    [Parameter]
+    public UserProfile UserProfile { get; set; } = null!;
+}

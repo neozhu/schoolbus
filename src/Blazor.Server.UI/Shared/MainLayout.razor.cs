@@ -2,14 +2,14 @@ using Blazor.Server.UI.Components.Shared;
 using Blazor.Server.UI.Services.Layout;
 using Blazor.Server.UI.Services.UserPreferences;
 using Microsoft.AspNetCore.Components.Web;
-using Toolbelt.Blazor.HotKeys2;
+
 
 namespace Blazor.Server.UI.Shared;
 
 public partial class MainLayout : LayoutComponentBase, IDisposable
 {
     private bool _commandPaletteOpen;
-    private HotKeysContext? _hotKeysContext;
+
     private bool _navigationMenuDrawerOpen = true;
     private UserPreferences _userPreferences = new();
     [Inject]
@@ -17,7 +17,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     private MudThemeProvider _mudThemeProvider=null!;
     private bool _themingDrawerOpen;
     private bool _defaultDarkMode;
-    [Inject] private HotKeys HotKeys { get; set; } = default!;
+
 
     private ErrorBoundary? _errorBoundary { set; get; } = null!;
 
@@ -34,7 +34,6 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     public void Dispose()
     {
         LayoutService.MajorUpdateOccured -= LayoutServiceOnMajorUpdateOccured;
-        _hotKeysContext?.Dispose();
         GC.SuppressFinalize(this);
     }
 
@@ -56,8 +55,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     protected override void OnInitialized()
     {
         LayoutService.MajorUpdateOccured += LayoutServiceOnMajorUpdateOccured;
-        LayoutService.SetBaseTheme(Theme.Theme.ApplicationTheme());
-        _hotKeysContext = HotKeys.CreateContext().Add(ModKey.Ctrl, Key.K, async () => await OpenCommandPalette(), "Open command palette.");
+       
        
 
     }

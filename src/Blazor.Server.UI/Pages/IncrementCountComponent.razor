@@ -1,0 +1,35 @@
+﻿@using CleanArchitecture.Blazor.Application.Services;
+@using Stl.Fusion.Blazor;
+@using Stl.Fusion.Extensions;
+
+@inherits ComputedStateComponent<string>
+@inject CounterService CounterService
+
+@inject IFusionTime Time
+@{
+    var state = State.ValueOrDefault;
+    var error = State.Error;
+}
+@if (error != null)
+{
+    <div class="alert alert-warning" role="alert">Update error: @error.Message</div>
+}
+<p>Count: @state     {@local}</p>
+
+<button class="btn btn-primary" @onclick="Increment">Increment</button>
+@code {
+    private int local = 0;
+    protected override async Task<string> ComputeState(CancellationToken cancellationToken)
+    {
+        var result = await CounterService.Get(cancellationToken);
+        //var momentsAgo = await Time.GetMomentsAgo(changeTime);
+        local += 1;
+        return $"{result}";
+    }
+
+    private async Task Increment()
+    {
+       
+        await CounterService.Increment();
+    }
+}

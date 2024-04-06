@@ -13,58 +13,109 @@ public class MenuService : IMenuService
             SectionItems = new List<MenuSectionItemModel>
             {
                 new() { Title = "Home", Icon = Icons.Material.Filled.Home, Href = "/" },
+
                 new()
                 {
-                    Title = "E-Commerce",
-                    Icon = Icons.Material.Filled.ShoppingCart,
-                    PageStatus = PageStatus.Completed,
-                    IsParent = true,
-                    MenuItems = new List<MenuSectionSubItemModel>
-                    {
-                        new()
-                        {
-                            Title = "Products",
-                            Href = "/pages/products",
-                            PageStatus = PageStatus.Completed
-                        },
-                        new()
-                        {
-                            Title = "Documents",
-                            Href = "/pages/documents",
-                            PageStatus = PageStatus.Completed
-                        }
-                    }
+                    Title = "School",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Castle,
+                    Href = "/pages/schools",
+                    PageStatus = PageStatus.Completed
                 },
                 new()
                 {
-                    Title = "Analytics",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
-                    Icon = Icons.Material.Filled.Analytics,
-                    Href = "/analytics",
-                    PageStatus = PageStatus.ComingSoon
+                    Title = "Bus",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.DirectionsBus,
+                    Href = "/pages/buses",
+                    PageStatus = PageStatus.Completed
                 },
                 new()
                 {
-                    Title = "Banking",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
-                    Icon = Icons.Material.Filled.Money,
-                    Href = "/banking",
-                    PageStatus = PageStatus.ComingSoon
+                    Title = "Pilot",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.FollowTheSigns,
+                    Href = "/pages/pilots",
+                    PageStatus = PageStatus.Completed
                 },
                 new()
                 {
-                    Title = "Booking",
-                    Roles = new[] { RoleName.Admin, RoleName.Users },
-                    Icon = Icons.Material.Filled.CalendarToday,
-                    Href = "/booking",
-                    PageStatus = PageStatus.ComingSoon
+                    Title = "Itineraries",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.LinearScale,
+                    Href = "/pages/itineraries",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Student",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Groups,
+                    Href = "/pages/students",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Parent",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.EscalatorWarning,
+                    Href = "/pages/parents",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Scanner",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.QrCodeScanner,
+                    Href = "/pages/scanner",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Transport Logs",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.History,
+                    Href = "/pages/TransportLogs",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "My Trip",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Timeline,
+                    Href = "/pages/mytrip",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Trip Reports",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.AirplaneTicket,
+                    Href = "/pages/tripreports",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Trip Dashboard",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Dashboard,
+                    Href = "/pages/TripMonitorDashboard",
+                    PageStatus = PageStatus.Completed
+                },
+                new()
+                {
+                    Title = "Messages",
+                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                    Icon = Icons.Material.Filled.Message,
+                    Href = "/pages/messages",
+                    PageStatus = PageStatus.Completed
                 }
             }
         },
         new MenuSectionModel
         {
             Title = "MANAGEMENT",
-            Roles = new[] { RoleName.Admin },
+            Roles = new[] { RoleName.SuperAdmin,RoleName.Admin },
             SectionItems = new List<MenuSectionItemModel>
             {
                 new()

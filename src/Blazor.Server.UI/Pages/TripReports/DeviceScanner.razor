@@ -1,0 +1,449 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById;
+@using CleanArchitecture.Blazor.Application.Features.Students.Specifications;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Create;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Checkout;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Queries.GetAll;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Done;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.GetOnOff;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
+@using CleanArchitecture.Blazor.Application.Services;
+@using Html5QrcodeBlazor.Wrapper;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Stl.CommandR.Commands;
+@using Stl.Fusion.UI;
+@implements IAsyncDisposable
+@inject Html5QrcodeReader cameraBarcodeReader
+@inject IGeolocationService geolocation
+@inject IGeoAddressService addressService
+@inject UICommander UICommander
+@inject ITripMonitor _tripMonitor
+@inject IStringLocalizer<TripReports> L
+<style>
+
+    #reader {
+        border: none !important;
+    }
+
+    widget {
+        filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
+    }
+
+        widget[type=ticket] {
+            width: 285px;
+        }
+
+            widget[type=ticket] .top > div {
+                padding: 0 18px;
+            }
+
+                widget[type=ticket] .top > div:first-child {
+                    padding-top: 18px;
+                }
+
+                widget[type=ticket] .top > div:last-child,
+                widget[type=ticket] .bottom > div:last-child {
+                    padding-bottom: 18px;
+                }
+
+            widget[type=ticket] .top img {
+                padding: 18px 0;
+            }
+
+            widget[type=ticket] .top,
+            widget[type=ticket] .bottom,
+            widget[type=ticket] .rip {
+                background-color: #fff;
+            }
+
+            widget[type=ticket] .top {
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+            }
+
+                widget[type=ticket] .top .deetz {
+                    padding-bottom: 15px !important;
+                }
+
+            widget[type=ticket] .bottom {
+                border-bottom-right-radius: 5px;
+                border-bottom-left-radius: 5px;
+                padding: 12px;
+            }
+
+                widget[type=ticket] .bottom .barcode {
+                    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAAABCAYAAABXChlMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAACPSURBVChTXVAJDsMgDOsrVpELiqb+/4c0DgStQ7JMYogNh2gdvg5VfXFCRIZaC6BOtnoNFpvaumNmwb/71Frrm8XvgYkker1/g9WzMOsohaOGNziRs5inDsAn8yEPengTapJ5bmdZ2Yv7VvfPN6AH2NJx7nOWPTf1/78hoqgxhzw3ZqYG1Dr/9ur3y8vMxgNZhcAUnR4xKgAAAABJRU5ErkJggg==);
+                    background-repeat: repeat-y;
+                    min-width: 58px;
+                }
+
+                widget[type=ticket] .bottom .buy {
+                    display: block;
+                    font-size: 12px;
+                    font-weight: bold;
+                    background-color: #5D9CEC;
+                    padding: 0 18px;
+                    line-height: 30px;
+                    border-radius: 15px;
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+            widget[type=ticket] .rip {
+                height: 20px;
+                margin: 0 10px;
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAACCAYAAAB7Xa1eAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAAaSURBVBhXY5g7f97/2XPn/AcCBmSMQ+I/AwB2eyNBlrqzUQAAAABJRU5ErkJggg==);
+                background-size: 4px 2px;
+                background-repeat: repeat-x;
+                background-position: center;
+                position: relative;
+                box-shadow: 0 1px 0 0 #fff, 0 -1px 0 0 #fff;
+            }
+
+                widget[type=ticket] .rip:before, widget[type=ticket] .rip:after {
+                    content: "";
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    top: 50%;
+                    transform: translate(-50%, -50%) rotate(45deg);
+                    border: 5px solid transparent;
+                    border-top-color: #fff;
+                    border-right-color: #fff;
+                    border-radius: 100%;
+                    pointer-events: none;
+                }
+
+                widget[type=ticket] .rip:before {
+                    left: -10px;
+                }
+
+                widget[type=ticket] .rip:after {
+                    transform: translate(-50%, -50%) rotate(225deg);
+                    right: -40px;
+                }
+
+        widget .-bold {
+            font-weight: bold;
+        }
+
+</style>
+<div class="d-flex">
+    <div class="main" style="margin:auto">
+        <widget type="ticket" class="d-flex flex-column">
+            <div class="top d-flex flex-column">
+                <div class="d-flex flex-row justify-space-between">
+                    <div class="d-flex flex-column">
+                        <div class="bandname -bold">@Trip.Itinerary?.StartingStation</div>
+                        <div class="tourname align-self-center mud-text-secondary">@Trip.Itinerary?.FirstTime</div>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.MultipleStop" Class="align-self-center"></MudIcon>
+                    <div class="d-flex flex-column">
+                        <div class="bandname -bold">@Trip.Itinerary?.TerminalStation</div>
+                        <div class="tourname align-self-center mud-text-secondary">@Trip.Itinerary?.LastTime</div>
+                    </div>
+                </div>
+                @if (cameraBarcodeReader is not null)
+                {
+                    <div class="my-3 pa-0 text-center">
+                        <div id="reader" class="mx-auto ma-0 pa-0" style="width:285px;border:0px!important"></div>
+                    </div>
+                }
+                else
+                {
+                    <p>Loading camera...</p>
+                }
+                @* <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/199011/concert.png" alt="" /> *@
+                <div class="deetz d-flex flex-row justify-space-between">
+                    <div class="event flex-column">
+                        <div class="date">@Now.ToLongDateString()</div>
+                        @if (_isLoading)
+                        {
+                            <MudSkeleton Animation="Animation.Wave" Width="95px" />
+                        }
+                        else
+                        {
+                            <div class="location -bold">@Location</div>
+
+                        }
+
+                    </div>
+                    <div class="price d-flex flex-column">
+                        <div class="label">On Board</div>
+                        <div class="cost -bold align-self-center">@Trip.TripLogs.Count()</div>
+                    </div>
+                </div>
+                <div class="deetz d-flex flex-row justify-space-between">
+                    <MudProgressLinear Color="Color.Info" Size="Size.Large" Value="@Trip.OnBoardPercentage" Class="my-3">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark">
+                            <b>@($"{Trip.OnBoard} / {Trip.ShouldBeTotal}")</b>
+                        </MudText>
+                    </MudProgressLinear>
+                    <MudText Typo="Typo.body2">@L[""]</MudText>
+                </div>
+                <div class="deetz d-flex flex-row justify-space-between">
+                    <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit"  FullWidth="true">@L["Submit Trip Report"]</MudButton>
+                    @if (_tripAccidents?.Any() ?? false)
+                    {
+                        <MudBadge Content="_tripAccidents.Count()" Color="Color.Error" Overlap="true" Bordered="true">
+                            <MudIconButton Icon="@Icons.Material.Filled.BusAlert" Color="Color.Error" Variant="Variant.Outlined" OnClick="AddAccident" Class="ml-1"></MudIconButton>
+                        </MudBadge>
+                    }
+                    else
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.BusAlert" Color="Color.Error" Variant="Variant.Outlined" OnClick="AddAccident" Class="ml-1"></MudIconButton>
+                    }
+
+                </div>
+            </div>
+            @if (_onBoardStudents is not null)
+            {
+                @if (_onBoardStudents.Count() > 0)
+                {
+                    @foreach (var item in _onBoardStudents)
+                    {
+                        <div class="rip"></div>
+                        <div class="bottom d-flex flex-row justify-space-between">
+                            <div class="d-flex flex-row flex-grow-1 align-center pl-3">
+                                <MudAvatar>
+                                    <MudImage Src="@item.Student.ProfilePicture"></MudImage>
+                                </MudAvatar>
+                                <div class="d-flex flex-column ml-3">
+                                    <p>@item.Student.DisplayName</p>
+                                    <p>@item.Student.UID</p>
+                                </div>
+
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Filled.Logout" OnClick="@(()=>Checkout(item.Id))"></MudIconButton>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="rip"></div>
+                    <div class="bottom d-flex flex-row justify-space-between align-center">
+                        <div class="d-flex flex-row flex-grow-1 align-center pl-3">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+                            <p style="color:#99a0b0;margin-left:8px">Waiting for card swipe </p>
+                        </div>
+                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="rip"></div>
+                <div class="bottom d-flex flex-row justify-space-between align-center">
+                    <div class="d-fle flex-row flex-grow-1 align-center pl-3">
+                        <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+                    </div>
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
+                </div>
+            }
+
+
+
+        </widget>
+    </div>
+</div>
+@code {
+    [Parameter]
+    [EditorRequired]
+    public TripReportDto Trip { get; set; } = null!;
+    [Parameter]
+    public UserProfile UserProfile { get; set; } = null!;
+    private DateTime Now = DateTime.Now;
+    private string? Location;
+    [Inject]
+    private IMediator _mediator { get; set; } = default!;
+    private IEnumerable<TripLogDto>? _onBoardStudents { get; set; } = null;
+    private IEnumerable<TripAccidentDto>? _tripAccidents { get; set; } = null;
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; } = null!;
+    private Queue<string> studentQ = new Queue<string>();
+
+    readonly PositionOptions _options = new()
+        {
+            EnableHighAccuracy = true,
+            MaximumAge = null,
+            Timeout = 15_000
+        };
+
+
+    protected override Task OnInitializedAsync()
+    {
+        if (Trip.TripAccidents.Any())
+        {
+            _tripAccidents = Trip.TripAccidents;
+        }
+        if (Trip.TripLogs.Any())
+        {
+            _onBoardStudents = Trip.TripLogs.Where(x => x.GetOffDateTime2 is null).ToList();
+        }
+        //await LoadOnBoardStudents(Trip.Id);
+        return base.OnInitializedAsync();
+    }
+    private async Task Refresh()
+    {
+        Trip = await _mediator.Send(new GetTripReportByIdQuery() { Id = Trip.Id });
+        if (Trip.TripLogs.Any())
+        {
+            _onBoardStudents = Trip.TripLogs.Where(x => x.GetOffDateTime2 is null).ToList();
+        }
+        await UICommander.Run(LocalCommand.New(() => _tripMonitor.Remove(Trip.Id)));
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            cameraBarcodeReader.OnBarcodeScan += HandleBarcodeScanDebounced;
+            await cameraBarcodeReader.Render();
+            await InvokeAsync(StateHasChanged);
+            _watchId = await geolocation.WatchPositionAsync(
+            component: this,
+            onSuccessCallbackMethodName: nameof(OnPositionRecieved),
+            onErrorCallbackMethodName: nameof(OnPositionError),
+            options: _options);
+        }
+    }
+
+    private async Task Checkout(int id)
+    {
+        var result = await _mediator.Send(new GetOffMenualCommand(id) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location });
+        if (result.Succeeded)
+        {
+            var item = _onBoardStudents?.First(x => x.Id == id);
+            if (item is not null)
+            {
+                studentQ = new Queue<string>(studentQ.Where(x => x != item.Student.UID));
+                Snackbar.Add($"{item.Student.DisplayName} get off successfully.", MudBlazor.Severity.Info);
+                await Refresh();
+            }
+
+        }
+    }
+    private async Task Submit()
+    {
+        string comments = string.Empty;
+        var parameters = new DialogParameters<CommentsDialog> { { x => x.Comments, comments } };
+
+        var dialog = await DialogService.ShowAsync<CommentsDialog>("Write Comments", parameters, new DialogOptions() { FullWidth = true, MaxWidth = MaxWidth.ExtraSmall,CloseButton=true });
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            comments = result.Data.ToString();
+            var doneresult = await _mediator.Send(new DoneTripReportCommand(Trip.Id) { Comments = comments });
+            if (doneresult.Succeeded)
+            {
+                await UICommander.Run(LocalCommand.New(() => _tripMonitor.Remove(Trip.Id)));
+                NavigationManager.NavigateTo("/pages/mytrip");
+            }
+        }
+
+    }
+    async Task AddAccident()
+    {
+        string comments = string.Empty;
+        var parameters = new DialogParameters<AccidentDialog> {
+            {
+                x => x.model, new AddAccidentCommand(Trip.Id, Trip.TenantId) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location, Level= AccidentLevel.Trouble }
+            },
+            {
+                x=>x.tripAccidents,_tripAccidents
+            }
+            };
+
+        var dialog = await DialogService.ShowAsync<AccidentDialog>("Add accident", parameters, new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await Refresh();
+        }
+    }
+    bool processingScan;
+    string foundBarcode;
+    double _watchId;
+    bool _isLoading = true;
+    GeolocationPositionError? _positionError;
+    GeolocationPosition? _position;
+    public async void HandleBarcodeScanDebounced(string barcode)
+    {
+        if (processingScan)
+            return;
+        processingScan = true;
+        await HandleBarcodeScan(barcode);
+        await Task.Delay(1500);
+        processingScan = false;
+    }
+    public async Task HandleBarcodeScan(string barcode)
+    {
+        foundBarcode = barcode.Trim();
+        if (!studentQ.Contains(foundBarcode))
+        {
+            var checkresult = await _mediator.Send(new GetStudentByUIdQuery(foundBarcode, Trip.TenantId));
+            if (checkresult.Succeeded)
+            {
+                var student = checkresult.Data!;
+                studentQ.Enqueue(foundBarcode);
+                if (studentQ.Count > 1)
+                {
+                    studentQ.Dequeue();
+                }
+                var result = await _mediator.Send(new GetOnOffCommand(Trip.Id, student.Id, Trip.TenantId)
+                    {
+                        Manual = false,
+                        Comments = "",
+                        UID = student.UID,
+                        Longitude = _position?.Coords.Longitude,
+                        Latitude = _position?.Coords.Latitude,
+                        Location = Location,
+                    });
+                if (result.Succeeded)
+                {
+                    await Refresh();
+                    Snackbar.Add($"{student.DisplayName} get on successfully.", MudBlazor.Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add($"{result.ErrorMessage}", MudBlazor.Severity.Error);
+
+                }
+            }
+            else
+            {
+                Snackbar.Add($"{checkresult.ErrorMessage}", MudBlazor.Severity.Error);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+    }
+    public async ValueTask DisposeAsync()
+    {
+        cameraBarcodeReader.OnBarcodeScan -= HandleBarcodeScanDebounced;
+        await cameraBarcodeReader.Stop();
+        await geolocation.ClearWatchAsync(_watchId);
+    }
+    [JSInvokable]
+    public async void OnPositionRecieved(GeolocationPosition position)
+    {
+        _isLoading = false;
+        _position = position;
+        Location = await addressService.GetAddress(position.Coords.Latitude, position.Coords.Longitude);
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnPositionError(GeolocationPositionError positionError)
+    {
+        _isLoading = false;
+        _positionError = positionError;
+        StateHasChanged();
+    }
+}

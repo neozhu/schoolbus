@@ -5,9 +5,13 @@ using Blazor.Server.UI.Services.Notifications;
 using Blazor.Server.UI.Services.UserPreferences;
 using BlazorDownloadFile;
 using CleanArchitecture.Blazor.Application.Common.Configurations;
+using CleanArchitecture.Blazor.Application.Services;
+using Html5QrcodeBlazor.Wrapper;
 using MudBlazor.Services;
 using MudExtensions.Services;
-using Toolbelt.Blazor.Extensions.DependencyInjection;
+using Stl.Fusion;
+using Stl.Fusion.Blazor;
+using Stl.Fusion.Extensions;
 
 namespace Blazor.Server.UI;
 
@@ -15,6 +19,12 @@ public static class ConfigureServices
 {
     public static WebApplicationBuilder AddBlazorUiServices(this WebApplicationBuilder builder)
     {
+        var fusion = builder.Services.AddFusion();
+        fusion.AddFusionTime();
+        fusion.AddBlazor();
+        fusion.AddComputedGraphPruner(_ => new() { CheckPeriod = TimeSpan.FromSeconds(30) });
+        fusion.AddService<CounterService>();
+        fusion.AddService<ITripMonitor, TripMonitor>();
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor(
                 options =>
@@ -37,7 +47,6 @@ public static class ConfigureServices
             })
             .AddCircuitOptions(option => { option.DetailedErrors = true; });
         builder.Services.AddMudBlazorDialog();
-        builder.Services.AddHotKeys2();
         builder.Services.AddMudServices(config =>
         {
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
@@ -49,7 +58,7 @@ public static class ConfigureServices
             config.SnackbarConfiguration.ShowTransitionDuration = 500;
             config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
         });
-
+        builder.Services.AddGeolocationServices();
         builder.Services.AddMudExtensions();
         builder.Services.AddScoped<LayoutService>();
         builder.Services.AddBlazorDownloadFile();
@@ -57,7 +66,7 @@ public static class ConfigureServices
         builder.Services.AddScoped<IMenuService, MenuService>();
         builder.Services.AddScoped<INotificationService, InMemoryNotificationService>();
         builder.Services.AddHealthChecks();
-
+        builder.Services.AddScoped<Html5QrcodeReader>();
         var privacySettings = builder.Configuration.GetRequiredSection(PrivacySettings.Key).Get<PrivacySettings>();
         if (privacySettings is not { UseGoogleAnalytics: true }) return builder;
 
@@ -65,6 +74,9 @@ public static class ConfigureServices
             throw new ArgumentNullException(nameof(privacySettings.GoogleAnalyticsKey));
 
         builder.Services.AddGoogleAnalytics(privacySettings.GoogleAnalyticsKey);
+
+
+       
 
         return builder;
     }

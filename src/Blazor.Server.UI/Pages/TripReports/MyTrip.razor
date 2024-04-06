@@ -1,0 +1,112 @@
+﻿@inject IStringLocalizer<TripReports> L
+@page "/pages/mytrip"
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
+@inherits FluxorComponent
+@attribute [Authorize(Policy = Permissions.TripReports.MyTripView)]
+<div class="main">
+    <MudContainer MaxWidth="MaxWidth.Small">
+        <MudPaper Width="100%" Square="true">
+            <MudList Clickable="true">
+                <MudListSubheader>
+                    <MudStack Row="true" Class="align-center justify-space-between">
+                        <MudIcon Icon="@Icons.Material.Filled.Timeline"></MudIcon>
+                        <h3>My Trip</h3>
+                        <MudTooltip Text="@L["Just show runing"]">
+                            <MudSwitch T="bool" Checked="@justruning" Color="Color.Primary" CheckedChanged="CheckedChanged" />
+                        </MudTooltip>
+                    </MudStack>
+
+                </MudListSubheader>
+                @if (_loading)
+                {
+                    <TripItemSkeleton Loading="@_loading"></TripItemSkeleton>
+                }
+                else
+                {
+                    @if (tripList == null || !tripList.Any())
+                    {
+                        <TripItemBlank></TripItemBlank>
+                    }
+                    else
+                    {
+                        @foreach (var trip in tripList)
+                        {
+                            <TripItem Trip="@trip"></TripItem>
+                        }
+                    }
+                }
+            </MudList>
+        </MudPaper>
+    </MudContainer>
+</div>
+
+<MudAppBar Bottom="true" Class="justify-center gap-2" Fixed="true" Color="Color.Primary" Elevation="1">
+    <MudSpacer />
+    <MudTooltip Text="@L["Create a trip"]"><MudIconButton Icon="@Icons.Material.Filled.Add" Class="mx-1" Size="Size.Large" Color="Color.Inherit" Edge="Edge.End" Href="/pages/createtrip" /></MudTooltip>
+    <MudSpacer />
+</MudAppBar>
+@code {
+    bool justruning = false;
+    bool _loading = false;
+    [Inject]
+    private IState<UserProfileState> UserProfileState { get; set; } = null!;
+    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
+    GetTripReportByUserQueryQuery query = new();
+    List<TripReportToPlainDto>? tripList = null;
+    [Inject]
+    private IMediator Mediator { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        UserProfileState.StateChanged += StateOnStateChanged;
+        if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
+        {
+            await LoadTrip();
+        }
+    }
+    async void CheckedChanged(bool x)
+    {
+
+        if (x)
+        {
+            query.Status = TripStatus.Runing;
+        }
+        else
+        {
+            query.Status = null;
+        }
+        await LoadTrip();
+        justruning = x;
+        StateHasChanged();
+    }
+    private async Task LoadTrip()
+    {
+        try
+        {
+            _loading = true;
+            query.UserProfile = UserProfile;
+            tripList = await Mediator.Send(query);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    protected override void Dispose(bool disposing)
+    {
+        UserProfileState.StateChanged -= StateOnStateChanged;
+        base.Dispose(disposing);
+    }
+    private void StateOnStateChanged(object? sender, EventArgs args)
+    {
+        InvokeAsync(async () =>
+        {
+            if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
+            {
+                query.UserProfile = UserProfile;
+                await LoadTrip();
+                StateHasChanged();
+            }
+        });
+    }
+}

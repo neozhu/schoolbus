@@ -1,0 +1,14 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudTextField T="string"   Lines="4" @bind-Text="@Comments"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Close">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public string? Comments { get; set; }
+    void Close() => MudDialog.Close(DialogResult.Ok(Comments));
+}

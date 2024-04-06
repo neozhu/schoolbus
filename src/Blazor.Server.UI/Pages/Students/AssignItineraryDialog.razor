@@ -1,0 +1,94 @@
+﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.Students.Commands.AssignItinerary;
+@using CleanArchitecture.Blazor.Application.Features.Students.DTOs;
+@using CleanArchitecture.Blazor.Application.Services.DataServices;
+@inject IStringLocalizer<Students> L
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
+            <MudGrid>
+                <MudItem xs="12" sm="12">
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Assign @(model.Students.Count) students to the corresponding itinerary.</MudText>
+                </MudItem>
+                @if (UserProfile.IsSuperAdmin)
+                {
+                    <MudItem xs="12" sm="6">
+                        <MudSelect For="@(() => model.TenantId)"
+                                   Label="@L["Select Organization"]"
+                                   Required="true"
+                                   RequiredError="@L["Organization is required."]"
+                        @bind-Value="@model.TenantId">
+                            @foreach (var item in TenantsService.DataSource)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+                <MudItem sm="6" xs="12">
+                    <MudSelectExtended T="ItineraryDto" @bind-Value="@model.Itinerary" Label="@L["Assign Itinerary"]" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Assign Itinerary is required.">
+                        @foreach (var g in ItineraryService.DataSource.Where(x => x.TenantId == model.TenantId).GroupBy(x=>x.School.Name).Select(x=> new {Key=x.Key,SubItems=x }))
+                        {
+                            <MudSelectItemGroupExtended T="ItineraryDto" Text="@g.Key">
+                                @foreach (var item in g.SubItems)
+                                {
+                                    <MudSelectItemExtended Value="@item" Text="@item.Name"/>
+                                }
+                            </MudSelectItemGroupExtended>
+                        }
+                    </MudSelectExtended>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudLoadingButton Loading="@_saving" Color="Color.Primary" OnClick="Submit">@ConstantString.Save</MudLoadingButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _saving = false;
+    MudForm? _form;
+    AssignItineraryCommandValidator _modelValidator = new();
+    [EditorRequired][Parameter] public AssignItineraryCommand model { get; set; } = null!;
+    private ItineraryDto? assignedItinerary;
+
+    [EditorRequired][Parameter] public UserProfile UserProfile { get; set; } = null!;
+    [Inject]
+    private IItineraryService ItineraryService { get; set; } = default!;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+    [Inject] private IMediator _mediator { get; set; } = default!;
+
+    async Task Submit()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    
+    }
+    void Cancel() => MudDialog.Cancel();
+}

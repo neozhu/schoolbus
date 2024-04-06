@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using AutoMapper;
 using CleanArchitecture.Blazor.Application.Common.Interfaces;
-using CleanArchitecture.Blazor.Application.Features.Documents.DTOs;
 using CleanArchitecture.Blazor.Application.Features.KeyValues.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Products.DTOs;
 using CleanArchitecture.Blazor.Domain.Entities;
@@ -29,12 +28,11 @@ public class MappingTests
     }
 
     [Test]
-    [TestCase(typeof(Document), typeof(DocumentDto))]
+
     [TestCase(typeof(KeyValue), typeof(KeyValueDto))]
     [TestCase(typeof(Product), typeof(ProductDto))]
     [TestCase(typeof(ProductDto), typeof(Product))]
     [TestCase(typeof(KeyValueDto), typeof(KeyValue))]
-    [TestCase(typeof(DocumentDto), typeof(Document))]
     public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
     {
         var instance = GetInstanceOf(source);

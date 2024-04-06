@@ -5,6 +5,116 @@ namespace CleanArchitecture.Blazor.Application.Constants.Permission;
 
 public static class Permissions
 {
+    [DisplayName("Schools")]
+    [Description("Schools Permissions")]
+    public static class Schools
+    {
+        public const string View = "Permissions.Schools.View";
+        public const string Create = "Permissions.Schools.Create";
+        public const string Edit = "Permissions.Schools.Edit";
+        public const string Delete = "Permissions.Schools.Delete";
+        public const string Search = "Permissions.Schools.Search";
+        public const string Export = "Permissions.Schools.Export";
+        public const string Import = "Permissions.Schools.Import";
+    }
+    [DisplayName("Buses")]
+    [Description("Buses Permissions")]
+    public static class Buses
+    {
+        public const string View = "Permissions.Buses.View";
+        public const string Create = "Permissions.Buses.Create";
+        public const string Edit = "Permissions.Buses.Edit";
+        public const string Delete = "Permissions.Buses.Delete";
+        public const string Search = "Permissions.Buses.Search";
+        public const string Export = "Permissions.Buses.Export";
+        public const string Import = "Permissions.Buses.Import";
+    }
+    [DisplayName("Pilots")]
+    [Description("Pilots Permissions")]
+    public static class Pilots
+    {
+        public const string View = "Permissions.Pilots.View";
+        public const string Create = "Permissions.Pilots.Create";
+        public const string Edit = "Permissions.Pilots.Edit";
+        public const string Delete = "Permissions.Pilots.Delete";
+        public const string Search = "Permissions.Pilots.Search";
+        public const string Export = "Permissions.Pilots.Export";
+        public const string Import = "Permissions.Pilots.Import";
+    }
+    [DisplayName("Parents")]
+    [Description("Parents Permissions")]
+    public static class Parents
+    {
+        public const string View = "Permissions.Parents.View";
+        public const string Create = "Permissions.Parents.Create";
+        public const string Edit = "Permissions.Parents.Edit";
+        public const string Delete = "Permissions.Parents.Delete";
+        public const string Search = "Permissions.Parents.Search";
+        public const string Export = "Permissions.Parents.Export";
+        public const string Import = "Permissions.Parents.Import";
+    }
+    [DisplayName("Students")]
+    [Description("Students Permissions")]
+    public static class Students
+    {
+        public const string View = "Permissions.Students.View";
+        public const string Create = "Permissions.Students.Create";
+        public const string Edit = "Permissions.Students.Edit";
+        public const string Delete = "Permissions.Students.Delete";
+        public const string Search = "Permissions.Students.Search";
+        public const string Export = "Permissions.Students.Export";
+        public const string Import = "Permissions.Students.Import";
+        public const string Assign = "Permissions.Students.Assign";
+    }
+    [DisplayName("Itineraries")]
+    [Description("Itineraries Permissions")]
+    public static class Itineraries
+    {
+        public const string View = "Permissions.Itineraries.View";
+        public const string Create = "Permissions.Itineraries.Create";
+        public const string Edit = "Permissions.Itineraries.Edit";
+        public const string Delete = "Permissions.Itineraries.Delete";
+        public const string Search = "Permissions.Itineraries.Search";
+        public const string Export = "Permissions.Itineraries.Export";
+        public const string Import = "Permissions.Itineraries.Import";
+    }
+    [DisplayName("TransportLogs")]
+    [Description("TransportLogs Permissions")]
+    public static class TransportLogs
+    {
+        public const string View = "Permissions.TransportLogs.View";
+        public const string Create = "Permissions.TransportLogs.Create";
+        public const string Edit = "Permissions.TransportLogs.Edit";
+        public const string Delete = "Permissions.TransportLogs.Delete";
+        public const string Search = "Permissions.TransportLogs.Search";
+        public const string Export = "Permissions.TransportLogs.Export";
+        public const string Import = "Permissions.TransportLogs.Import";
+    }
+    [DisplayName("TripReports")]
+    [Description("TripReports Permissions")]
+    public static class TripReports
+    {
+        public const string View = "Permissions.TripReports.View";
+        public const string Create = "Permissions.TripReports.Create";
+        public const string Edit = "Permissions.TripReports.Edit";
+        public const string Delete = "Permissions.TripReports.Delete";
+        public const string Search = "Permissions.TripReports.Search";
+        public const string Export = "Permissions.TripReports.Export";
+        public const string Import = "Permissions.TripReports.Import";
+        public const string MyTripView = "Permissions.TripReports.MyTripView";
+    }
+    [DisplayName("Messages")]
+    [Description("Messages Permissions")]
+    public static class Messages
+    {
+        public const string View = "Permissions.Messages.View";
+        public const string Create = "Permissions.Messages.Create";
+        public const string Edit = "Permissions.Messages.Edit";
+        public const string Delete = "Permissions.Messages.Delete";
+        public const string Search = "Permissions.Messages.Search";
+        public const string Export = "Permissions.Messages.Export";
+        public const string Import = "Permissions.Messages.Import";
+    }
     [DisplayName("AuditTrails")]
     [Description("AuditTrails Permissions")]
     public static class AuditTrails

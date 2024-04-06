@@ -1,0 +1,58 @@
+﻿@page "/pages/scanner"
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.GetAll;
+@inherits FluxorComponent
+@if (_itineraries is not null && _itineraries.Count() > 1)
+{
+    <div class="d-flex flex-nowrap gap-4 pa-8 justify-center" style="margin:auto; min-width: 400px; overflow-y: scroll">
+        @if (_itineraries is not null)
+        {
+            @foreach (var item in _itineraries)
+            {
+                <TravelCard Itinerary="@item" Active=@(item == _itinerary) SetItinerary="SetItinerary"></TravelCard>
+            }
+
+        }
+        else
+        {
+            <TravelCardSkeleton></TravelCardSkeleton>
+        }
+
+
+    </div>
+    <div class="my-4"></div>
+}
+
+@if (_itinerary is not null)
+{
+    <DeviceScanComponent @ref="@_deviceScan" Itinerary="@_itinerary" UserProfile="@UserProfile"></DeviceScanComponent>
+}
+else
+{
+    <DeviceScanSkeleton></DeviceScanSkeleton>
+}
+
+
+@code {
+    [Inject]
+    private IState<UserProfileState> UserProfileState { get; set; } = null!;
+    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
+    private IEnumerable<ItineraryDto>? _itineraries { get; set; } = null;
+    private ItineraryDto? _itinerary { get; set; } = null!;
+    [Inject]
+    private IMediator Mediator { get; set; } = default!;
+
+    private DeviceScanComponent _deviceScan;
+    protected override async Task OnInitializedAsync()
+    {
+
+        var result = await Mediator.Send(new GetItinerariesByPilotQuery() { UserProfile = UserProfile });
+        _itineraries = result;
+        _itinerary = _itineraries.FirstOrDefault();
+    }
+    async void SetItinerary(ItineraryDto item)
+    {
+        _itinerary = item;
+        await _deviceScan.LoadOnBoardStudents(item.Id);
+    }
+}

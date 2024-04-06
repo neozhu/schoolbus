@@ -1,0 +1,61 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
+
+<style>
+    .point {
+        height: 15px;
+        margin: 0 10px;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAACCAYAAAB7Xa1eAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAAaSURBVBhXY5g7f97/2XPn/AcCBmSMQ+I/AwB2eyNBlrqzUQAAAABJRU5ErkJggg==);
+        background-size: 4px 2px;
+        background-repeat: repeat-x;
+        background-position: center;
+        position: relative;
+    }
+</style>
+<MudCard Square="false" Outlined="@(!Active)" Elevation="@Elevation" Style="min-width:365px;width:365px;height:150px">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar >
+                <MudImage Src="@Itinerary.Pilot.ProfilePicture"></MudImage>
+            </MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body2">@Itinerary.Pilot.DisplayName</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">@Itinerary.Pilot.Phone</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Coronavirus" OnClick="OnClick" Color="Color.Primary" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <div class="d-flex flex-row gap-2 justify-space-between">
+            <div class="d-flex flex-column gap-1">
+                <p>@Itinerary.StartingStation</p>
+                <p style="@($"text-align:center; color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.FirstTime</p>
+            </div>
+            <div class="d-flex flex-column">
+                <h4 class="mb-0" style="margin-bottom:-5px">@Itinerary.Bus.PlatNumber</h4>
+                <div class="point"></div>
+            </div>
+            <div class="d-flex flex-column gap-1">
+                <p>@Itinerary.TerminalStation</p>
+                <p style="@($"text-align:center; color:{Theme.Theme.ApplicationTheme().Palette.TextSecondary}")">@Itinerary.LastTime</p>
+            </div>
+       </div>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public bool Active { get; set; }
+    public int Elevation => Active ? 2 : 0;
+    [Parameter]
+    [EditorRequired]
+    public ItineraryDto Itinerary { get; set; } = null!;
+    [Parameter]
+    public EventCallback<ItineraryDto> SetItinerary { get; set; }
+
+    private void OnClick()
+    {
+        SetItinerary.InvokeAsync(Itinerary);
+    }
+}

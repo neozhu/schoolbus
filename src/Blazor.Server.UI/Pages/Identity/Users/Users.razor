@@ -206,9 +206,9 @@
                 @L["Selected"]: @_selectedItems.Count
             </FooterTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.UserName" Title="@L[_currentDto.GetMemberDescription(x=>x.UserName)]" CellClass="d-flex align-items-center">
+        <PropertyColumn Property="x => x.UserName" Title="@L[_currentDto.GetMemberDescription(x=>x.UserName)]">
             <CellTemplate>
-
+                <div class="d-flex align-center">
                 <MudBadge Color="@(isOnline(context.Item.UserName)? Color.Success :Color.Error)" Overlap="false" Dot="true" Bordered="true">
                     <MudAvatar>
                         @if (string.IsNullOrEmpty(context.Item.ProfilePictureDataUrl))
@@ -225,7 +225,7 @@
                     <MudText Class="ml-2 align-self-center">@context.Item.UserName</MudText>
                     <MudText Typo="Typo.body2" Class="ml-2 align-self-center">@context.Item.Email</MudText>
                 </div>
-
+                </div>
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Email" Title="@L["Display Name / PhoneNumber"]">
@@ -318,6 +318,8 @@
     private ITenantProvider TenantProvider { get; set; } = default!;
     [Inject]
     private ITenantService TenantsService { get; set; } = null!;
+    [Inject]
+    private IUserDataProvider UserDataProvider { get; set; } = null!;
     [Inject]
     private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;
     [Inject]
@@ -414,6 +416,7 @@
     private async Task OnRefresh()
     {
         await _table.ReloadServerData();
+        await UserDataProvider.Refresh();
     }
     private async Task OnCreate()
     {

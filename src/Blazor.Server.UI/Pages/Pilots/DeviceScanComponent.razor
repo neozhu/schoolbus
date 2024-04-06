@@ -1,0 +1,367 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById;
+@using CleanArchitecture.Blazor.Application.Features.Students.Specifications;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Create;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Checkout;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Queries.GetAll;
+@using CleanArchitecture.Blazor.Application.Services;
+@using Html5QrcodeBlazor.Wrapper;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@implements IAsyncDisposable
+@inject Html5QrcodeReader cameraBarcodeReader
+@inject IGeolocationService geolocation
+@inject IGeoAddressService addressService
+<style>
+
+    #reader {
+        border: none !important;
+    }
+
+    widget {
+        filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.3));
+    }
+
+        widget[type=ticket] {
+            width: 285px;
+        }
+
+            widget[type=ticket] .top > div {
+                padding: 0 18px;
+            }
+
+                widget[type=ticket] .top > div:first-child {
+                    padding-top: 18px;
+                }
+
+                widget[type=ticket] .top > div:last-child,
+                widget[type=ticket] .bottom > div:last-child {
+                    padding-bottom: 18px;
+                }
+
+            widget[type=ticket] .top img {
+                padding: 18px 0;
+            }
+
+            widget[type=ticket] .top,
+            widget[type=ticket] .bottom,
+            widget[type=ticket] .rip {
+                background-color: #fff;
+            }
+
+            widget[type=ticket] .top {
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+            }
+
+                widget[type=ticket] .top .deetz {
+                    padding-bottom: 15px !important;
+                }
+
+            widget[type=ticket] .bottom {
+                border-bottom-right-radius: 5px;
+                border-bottom-left-radius: 5px;
+                padding: 12px;
+            }
+
+                widget[type=ticket] .bottom .barcode {
+                    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAAABCAYAAABXChlMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAACPSURBVChTXVAJDsMgDOsrVpELiqb+/4c0DgStQ7JMYogNh2gdvg5VfXFCRIZaC6BOtnoNFpvaumNmwb/71Frrm8XvgYkker1/g9WzMOsohaOGNziRs5inDsAn8yEPengTapJ5bmdZ2Yv7VvfPN6AH2NJx7nOWPTf1/78hoqgxhzw3ZqYG1Dr/9ur3y8vMxgNZhcAUnR4xKgAAAABJRU5ErkJggg==);
+                    background-repeat: repeat-y;
+                    min-width: 58px;
+                }
+
+                widget[type=ticket] .bottom .buy {
+                    display: block;
+                    font-size: 12px;
+                    font-weight: bold;
+                    background-color: #5D9CEC;
+                    padding: 0 18px;
+                    line-height: 30px;
+                    border-radius: 15px;
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+            widget[type=ticket] .rip {
+                height: 20px;
+                margin: 0 10px;
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAACCAYAAAB7Xa1eAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAAaSURBVBhXY5g7f97/2XPn/AcCBmSMQ+I/AwB2eyNBlrqzUQAAAABJRU5ErkJggg==);
+                background-size: 4px 2px;
+                background-repeat: repeat-x;
+                background-position: center;
+                position: relative;
+                box-shadow: 0 1px 0 0 #fff, 0 -1px 0 0 #fff;
+            }
+
+                widget[type=ticket] .rip:before, widget[type=ticket] .rip:after {
+                    content: "";
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    top: 50%;
+                    transform: translate(-50%, -50%) rotate(45deg);
+                    border: 5px solid transparent;
+                    border-top-color: #fff;
+                    border-right-color: #fff;
+                    border-radius: 100%;
+                    pointer-events: none;
+                }
+
+                widget[type=ticket] .rip:before {
+                    left: -10px;
+                }
+
+                widget[type=ticket] .rip:after {
+                    transform: translate(-50%, -50%) rotate(225deg);
+                    right: -40px;
+                }
+
+        widget .-bold {
+            font-weight: bold;
+        }
+
+</style>
+<div class="d-flex">
+    <div class="main" style="margin:auto">
+        <widget type="ticket" class="d-flex flex-column">
+            <div class="top d-flex flex-column">
+                <div class="d-flex flex-row justify-space-between">
+                    <div class="d-flex flex-column">
+                        <div class="bandname -bold">@Itinerary.StartingStation</div>
+                        <div class="tourname align-self-center mud-text-secondary"  >@Itinerary.FirstTime</div>
+                    </div>
+                    <MudIcon Icon="@Icons.Material.Filled.MultipleStop" Class="align-self-center"></MudIcon>
+                    <div class="d-flex flex-column">
+                        <div class="bandname -bold">@Itinerary.TerminalStation</div>
+                        <div class="tourname align-self-center mud-text-secondary"  >@Itinerary.LastTime</div>
+                    </div>
+                </div>
+                @if (cameraBarcodeReader is not null)
+                {
+                    <div class="my-3 pa-0 text-center">
+                        <div id="reader" class="mx-auto ma-0 pa-0" style="width:285px;border:0px!important"></div>
+                    </div>
+                }
+                else
+                {
+                    <p>Loading camera...</p>
+                }
+                @* <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/199011/concert.png" alt="" /> *@
+                <div class="deetz d-flex flex-row justify-space-between">
+                    <div class="event flex-column">
+                        <div class="date">@Now.ToLongDateString()</div>
+                        @if (_isLoading)
+                        {
+                            <MudSkeleton Animation="Animation.Wave" Width="95px" />
+                        }
+                        else
+                        {
+                            <div class="location -bold">@Location</div>
+
+                        }
+
+                    </div>
+                    <div class="price d-flex flex-column">
+                        <div class="label">On Board</div>
+                        <div class="cost -bold align-self-center">@_transportLogs?.Count()</div>
+                    </div>
+                </div>
+            </div>
+            @if (_transportLogs is not null)
+            {
+                @if (_transportLogs.Count() > 0)
+                {
+                    @foreach (var item in _transportLogs)
+                    {
+                        <div class="rip"></div>
+                        <div class="bottom d-flex flex-row justify-space-between">
+                            <div class="d-flex flex-row flex-grow-1 align-center pl-3">
+                                <MudAvatar>
+                                    <MudImage Src="@item.Student.ProfilePicture"></MudImage>
+                                </MudAvatar>
+                                <div class="d-flex flex-column ml-3">
+                                    <p>@item.Student.DisplayName</p>
+                                    <p class="mud-text-secondary">@item.Student.UID</p>
+                                </div>
+
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Filled.Logout" OnClick="@(()=>Checkout(item.Id))"></MudIconButton>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="rip"></div>
+                    <div class="bottom d-flex flex-row justify-space-between align-center">
+                        <div class="d-flex flex-row flex-grow-1 align-center pl-3">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+                            <p style="color:#99a0b0;margin-left:8px">Waiting for card swipe </p>
+                        </div>
+                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="rip"></div>
+                <div class="bottom d-flex flex-row justify-space-between align-center">
+                    <div class="d-fle flex-row flex-grow-1 align-center pl-3">
+                        <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+                    </div>
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="30px" Height="20px" />
+                </div>
+            }
+
+
+
+        </widget>
+    </div>
+</div>
+@code {
+    [Parameter]
+    [EditorRequired]
+    public ItineraryDto Itinerary { get; set; } = null!;
+    [Parameter]
+    public UserProfile UserProfile { get; set; } = null!;
+    private DateTime Now = DateTime.Now;
+    private string? Location;
+    [Inject]
+    private IMediator Mediator { get; set; } = default!;
+    private IEnumerable<TransportLogDto>? _transportLogs { get; set; } = null;
+
+    private Queue<string> studentQ = new Queue<string>();
+    readonly JsonSerializerOptions _opts = new()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
+    readonly PositionOptions _options = new()
+        {
+            EnableHighAccuracy = true,
+            MaximumAge = null,
+            Timeout = 15_000
+        };
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOnBoardStudents(Itinerary.Id);
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            cameraBarcodeReader.OnBarcodeScan += HandleBarcodeScanDebounced;
+            await cameraBarcodeReader.Render();
+            await InvokeAsync(StateHasChanged);
+            _watchId = await geolocation.WatchPositionAsync(
+            component: this,
+            onSuccessCallbackMethodName: nameof(OnPositionRecieved),
+            onErrorCallbackMethodName: nameof(OnPositionError),
+            options: _options);
+        }
+    }
+    public async Task LoadOnBoardStudents(int id)
+    {
+        _transportLogs = await Mediator.Send(new GetOnBoardTransportLogsQuery() { ItineraryId = id });
+
+    }
+    private async Task Checkout(int id)
+    {
+        var result = await Mediator.Send(new CheckoutTransportLogCommand(id) { Latitude = _position?.Coords.Latitude, Longitude = _position?.Coords.Longitude, Location = Location });
+        if (result.Succeeded)
+        {
+            var item = _transportLogs?.First(x => x.Id == id);
+            if (item is not null)
+            {
+                studentQ = new Queue<string>(studentQ.Where(x => x != item.Student.UID));
+                Snackbar.Add($"{item.Student.DisplayName} checkout successfully.", MudBlazor.Severity.Info);
+                await this.LoadOnBoardStudents(item.ItineraryId);
+            }
+
+        }
+    }
+    bool processingScan;
+    string foundBarcode;
+    double _watchId;
+    bool _isLoading = true;
+    GeolocationPositionError? _positionError;
+    GeolocationPosition? _position;
+    public async void HandleBarcodeScanDebounced(string barcode)
+    {
+        if (processingScan)
+            return;
+        processingScan = true;
+        await HandleBarcodeScan(barcode);
+        await Task.Delay(1500);
+        processingScan = false;
+    }
+    public async Task HandleBarcodeScan(string barcode)
+    {
+        foundBarcode = barcode.Trim();
+        if (!studentQ.Contains(foundBarcode) )
+        {
+            var checkresult = await Mediator.Send(new GetStudentByUIdQuery(foundBarcode, Itinerary.TenantId));
+            if (checkresult.Succeeded)
+            {
+                var student = checkresult.Data!;
+                studentQ.Enqueue(foundBarcode);
+                if (studentQ.Count > 1)
+                {
+                    studentQ.Dequeue();
+                }
+                var result = await Mediator.Send(new CreateTransportLogCommand()
+                    {
+                        DeviceId = Itinerary.Bus.DeviceId,
+                        Latitude = _position?.Coords.Latitude,
+                        Longitude = _position?.Coords.Longitude,
+                        Location = Location,
+                        ItineraryId = Itinerary.Id,
+                        StudentId = student.Id,
+                        TenantId = Itinerary.TenantId,
+                        UpOrDown = "Get On",
+                        SwipeDateTime = DateTime.Now,
+                    });
+                if (result.Succeeded)
+                {
+                    await LoadOnBoardStudents(Itinerary.Id);
+                    Snackbar.Add($"{student.DisplayName} checkin successfully.", MudBlazor.Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add($"{result.ErrorMessage}", MudBlazor.Severity.Error);
+
+                }
+            }
+            else
+            {
+                Snackbar.Add($"{checkresult.ErrorMessage}", MudBlazor.Severity.Error);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+    }
+    public async ValueTask DisposeAsync()
+    {
+        cameraBarcodeReader.OnBarcodeScan -= HandleBarcodeScanDebounced;
+        await cameraBarcodeReader.Stop();
+        await geolocation.ClearWatchAsync(_watchId);
+    }
+    [JSInvokable]
+    public async void OnPositionRecieved(GeolocationPosition position)
+    {
+        _isLoading = false;
+        _position = position;
+        Location = await addressService.GetAddress(position.Coords.Latitude, position.Coords.Longitude);
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnPositionError(GeolocationPositionError positionError)
+    {
+        _isLoading = false;
+        _positionError = positionError;
+        StateHasChanged();
+    }
+}

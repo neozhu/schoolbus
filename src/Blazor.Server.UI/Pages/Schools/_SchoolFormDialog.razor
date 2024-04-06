@@ -1,0 +1,112 @@
+﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Features.Schools.Commands.AddEdit
+
+@inherits MudComponentBase
+@inject IStringLocalizer<Schools> L
+
+<MudDialog>
+    <DialogContent>
+        <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
+            <MudGrid>
+                @*TODO: define mudform that should be edit fields, for example:*@
+                <MudItem xs="12" md="12">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Name)]" @bind-Value="model.Name" For="@(() => model.Name)" Required="true" RequiredError="@L["name is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Address)]" @bind-Value="model.Address" For="@(() => model.Address)" Required="true" RequiredError="@L["address is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Contact)]" @bind-Value="model.Contact" For="@(() => model.Contact)" Required="false" RequiredError="@L["contact is required!"]"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Phone)]" @bind-Value="model.Phone" For="@(() => model.Phone)" Required="false" RequiredError="@L["phone is required!"]"></MudTextField>
+                </MudItem>
+                @if (UserProfile.IsSuperAdmin)
+                {
+                    <MudItem xs="12" md="12">
+                        <MudSelect For="@(() => model.TenantId)"
+                                   Label="@L["Select Organization"]"
+                                   Required="true"
+                                   RequiredError="@L["Organization is required."]"
+                                   @bind-Value="@model.TenantId"    >
+                            @foreach (var item in TenantsService.DataSource)
+                            {
+                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
+        <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
+        <MudLoadingButton Loading="@_saving" OnClick="Submit">@ConstantString.Save</MudLoadingButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    MudForm? _form;
+    private bool _saving = false;
+    private bool _savingnew = false;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+    AddEditSchoolCommandValidator _modelValidator = new();
+    [EditorRequired][Parameter] public AddEditSchoolCommand model { get; set; } = null!;
+    
+    [Inject] private IMediator _mediator { get; set; } = default!;
+    [Parameter] public UserProfile UserProfile { get; set; } = null!;
+    [Inject]
+    private ITenantService TenantsService { get; set; } = default!;
+    async Task Submit()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+    async Task SaveAndNew()
+    {
+        try
+        {
+            _savingnew = true;
+            await _form!.Validate().ConfigureAwait(false);
+            if (!_form!.IsValid)
+                return;
+            var result = await _mediator.Send(model);
+            if (result.Succeeded)
+            {
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+                await Task.Delay(300);
+                model = new AddEditSchoolCommand() { };
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _savingnew = false;
+        }
+    }
+    void Cancel() => MudDialog.Cancel();
+}

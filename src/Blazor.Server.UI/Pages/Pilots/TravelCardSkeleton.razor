@@ -1,0 +1,41 @@
+﻿<style>
+    .rip {
+        height: 15px;
+        margin: 0 10px;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAACCAYAAAB7Xa1eAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAAaSURBVBhXY5g7f97/2XPn/AcCBmSMQ+I/AwB2eyNBlrqzUQAAAABJRU5ErkJggg==);
+        background-size: 4px 2px;
+        background-repeat: repeat-x;
+        background-position: center;
+        position: relative;
+        box-shadow: 0 1px 0 0 #fff, 0 -1px 0 0 #fff;
+    }
+</style>
+<MudCard Square="false" Elevation="1" Style="min-width:365px;width:365px;height:150px">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" />
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudSkeleton Animation="Animation.Wave" />
+            <MudSkeleton Animation="Animation.Wave" />
+        </CardHeaderContent>
+       
+    </MudCardHeader>
+    <MudCardContent>
+        <div class="d-flex flex-row gap-2 justify-space-between">
+            <div class="d-flex flex-column gap-1">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="80px" Height="30px" />
+            </div>
+            <div class="d-flex flex-column">
+                <div class="rip" style="width:90px"></div>
+            </div>
+            <div class="d-flex flex-column gap-1">
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="80px" Height="30px" />
+            </div>
+       </div>
+    </MudCardContent>
+</MudCard>
+
+@code {
+
+}

@@ -18,6 +18,7 @@ public static class AuthenticationServiceCollectionExtensions
         services
             .AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>()
             .AddDefaultTokenProviders();
         services.Configure<IdentityOptions>(options =>
         {
@@ -42,8 +43,7 @@ public static class AuthenticationServiceCollectionExtensions
             options.User.RequireUniqueEmail = true;
 
         });
-        services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationClaimsIdentityFactory>()
-                .AddScoped<IIdentityService, IdentityService>()
+        services.AddScoped<IIdentityService, IdentityService>()
                 .AddAuthorization(options =>
                  {
                      options.AddPolicy("CanPurge", policy => policy.RequireUserName(UserName.Administrator));
@@ -65,7 +65,7 @@ public static class AuthenticationServiceCollectionExtensions
                      options.TokenValidationParameters = new TokenValidationParameters()
                      {
                          ValidateIssuerSigningKey = false,
-                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AppConfigurationSettings:Secret"]!)),
+                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("yn4$#cr=+i@eljzlhhr2xlgf98aud&(3&!po3r60wlm^3*huh#")),
                          ValidateIssuer = false,
                          ValidateAudience = false,
                          RoleClaimType = ClaimTypes.Role,
@@ -89,9 +89,9 @@ public static class AuthenticationServiceCollectionExtensions
                      };
                  }); 
    
-        services.AddScoped<AccessTokenProvider>();
-        services.AddScoped<UserDataProvider>();
-        services.AddScoped<IUserDataProvider>(sp =>
+      
+        services.AddSingleton<UserDataProvider>();
+        services.AddSingleton<IUserDataProvider>(sp =>
         {
             var service = sp.GetRequiredService<UserDataProvider>();
             service.Initialize();
