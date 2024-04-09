@@ -1,0 +1,153 @@
+﻿@page "/mobile/scan"
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using Html5QrcodeBlazor.Wrapper
+@using Size= MudBlazor.Size
+@inject NavigationManager NavigationManager
+@inject Html5QrcodeReader cameraBarcodeReader
+@inject IBrowserViewportService BrowserViewportService
+@implements IAsyncDisposable
+@implements IBrowserViewportObserver
+<PageTitle>General information</PageTitle>
+
+<MudPaper Elevation="0" Class="d-flex flex-column justify-space-between flex-grow-1 pa-4 mt-10 gap-4">
+    <div class="d-flex flex-row justify-space-between align-center gap-1">
+        <div class="d-flex flex-column justify-space-between my-2  gap-1">
+            <MudText Typo="Typo.h6">General information</MudText>
+            <div class="d-flex flex-row align-center   gap-1">
+                <MudIcon Icon="@Icons.Material.Filled.DirectionsBus" Title="bus no." />
+                <MudText Typo="Typo.body2">School bus #1 - 69-929L </MudText>
+            </div>
+            <div class="d-flex flex-row align-center   gap-1">
+                <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Title="driver" />
+                <MudText Typo="Typo.body2">Driver: John Anderson </MudText>
+            </div>
+        </div>
+        <div class="d-flex flex-column">
+            <MudText Typo="Typo.h3">09:41:17 AM</MudText>
+            <div class="d-flex flex-row align-center   gap-1 ">
+                <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Title="date" />
+                <MudText Typo="Typo.body2">Monday. June 6 </MudText>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column">
+        <MudText Typo="Typo.h6">Route information</MudText>
+        <div class="d-flex flex-row justify-space-between align-center   gap-2">
+            <MudTextField @bind-Value="start" Label="start location" Variant="Variant.Outlined"></MudTextField>
+            <MudIcon Size="Size.Large" Icon="@Icons.Material.Filled.Route" Title="route" />
+            <MudTextField @bind-Value="final" Label="final location" Variant="Variant.Outlined"></MudTextField>
+        </div>
+    </div>
+    <div class="d-flex flex-row justify-space-between align-center gap-2">
+        <div class="d-flex flex-column my-2 gap-1">
+            <MudText Typo="Typo.h6">Total passengers on board</MudText>
+            <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        </div>
+        <MudPaper Elevation="0" Class="pa-3" Style="height:80px; width:160px;">
+            <div class="d-lg-block mud-theme-tertiary rounded px-4" style="height:100%; width:100%;"><MudText Typo="Typo.h3">20</MudText></div>
+        </MudPaper>
+    </div>
+    <div class="cameracontainer pa-0 d-flex flex-column align-center">
+
+        <MudPaper Elevation="0" Class="pa-2 d-flex" Style="height:60px; width:800px;">
+            <div class="d-lg-block mud-theme-tertiary rounded px-4" style="height:100%; width:100%;">
+                <MudText Typo="Typo.h4"  Align="Align.Center">@foundBarcode</MudText>
+            </div>
+        </MudPaper>
+        <div id="reader" class="mx-auto my-0" style="width:880px">
+        </div>
+    </div>
+</MudPaper>
+
+@code {
+    private int _width = 0;
+    private int _height = 0;
+    private int scanwith = 650;
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+    bool IsLarge = false;
+    bool IsMedium = false;
+    bool IsSmall = false;
+    string? foundBarcode = "Here you will see scanned barcode...";
+    bool processingScan;
+    private string start { get; set; } = "2285 South Federal Blvd";
+    private string final { get; set; } = "2160 S Cook Street";
+    private string search { get; set; }
+    private GoogleMap? _map1;
+    private MapOptions _mapOptions;
+    private DirectionsRenderer _dirRend;
+    protected override void OnInitialized()
+    {
+        _mapOptions = new MapOptions()
+            {
+                Zoom = 13,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 40.603629,
+                    Lng = -75.472518
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+            cameraBarcodeReader.OnBarcodeScan += HandleBarcodeScanDebounced;
+            await cameraBarcodeReader.Render();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task OnAfterInitAsync()
+    {
+        //Create instance of DirectionRenderer
+        _dirRend = await DirectionsRenderer.CreateAsync(_map1.JsRuntime, new DirectionsRendererOptions()
+            {
+                Map = _map1.InteropObject
+            });
+    }
+    public async void HandleBarcodeScanDebounced(string barcode)
+    {
+        if (processingScan)
+            return;
+        processingScan = true;
+        await HandleBarcodeScan(barcode);
+        await Task.Delay(1500);
+        processingScan = false;
+    }
+    public async Task HandleBarcodeScan(string barcode)
+    {
+        foundBarcode = barcode.Trim();
+        await InvokeAsync(StateHasChanged);
+    }
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        _width = browserViewportEventArgs.BrowserWindowSize.Width;
+        _height = browserViewportEventArgs.BrowserWindowSize.Height;
+
+        if (_width >= 960)
+        {
+            scanwith = 832;
+        }
+        else
+        {
+            scanwith = _width - 10;
+        }
+
+        return InvokeAsync(StateHasChanged);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        await BrowserViewportService.UnsubscribeAsync(this);
+        if (_dirRend is not null)
+        {
+            await _dirRend.SetMap(null);
+            _dirRend.Dispose();
+        }
+
+        cameraBarcodeReader.OnBarcodeScan -= HandleBarcodeScanDebounced;
+        await cameraBarcodeReader.Stop();
+    }
+}
