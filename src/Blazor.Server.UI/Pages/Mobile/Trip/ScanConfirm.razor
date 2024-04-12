@@ -1,10 +1,9 @@
-﻿@page "/mobile/scan"
-@using GoogleMapsComponents
-@using GoogleMapsComponents.Maps
-@using Html5QrcodeBlazor.Wrapper
+﻿@page "/mobile/scanconfirm"
+@using Severity=MudBlazor.Severity
 @using Size= MudBlazor.Size
 @inject NavigationManager NavigationManager
-@inject Html5QrcodeReader cameraBarcodeReader
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @inject IBrowserViewportService BrowserViewportService
 @implements IAsyncDisposable
 @implements IBrowserViewportObserver
@@ -51,35 +50,18 @@
     <div class="cameracontainer pa-0 d-flex flex-column align-center">
 
         <MudPaper Elevation="0" Class="pa-2 d-flex" Style="height:60px; width:800px;">
-            <div class="d-lg-block mud-theme-tertiary rounded px-4" style="height:100%; width:100%;">
-                <MudText Typo="Typo.h4"  Align="Align.Center">@foundBarcode</MudText>
+            <div class="d-lg-block mud-theme-success rounded px-4" style="height:100%; width:100%;">
+                <MudText Typo="Typo.h4"  Align="Align.Center">Successfull</MudText>
             </div>
         </MudPaper>
-        <MudButton Href="/mobile/scanconfirm">Confirm</MudButton>
-        <div id="reader" class="mx-auto my-0" style="width:880px">
-        </div>
-       
+        <div class="d-flex flex-column align-center gap-4">
+            <MudImage ObjectFit="ObjectFit.Cover" Src="/img/girl.jpg" Alt="Student" Elevation="25" Class="rounded-lg" Width="300" Height="300" />
+            <MudButton Size="Size.Large" Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" OnClick="OnConfirm">Confirm</MudButton>
+            <MudButton Size="Size.Large" Variant="Variant.Outlined" FullWidth="true" Color="Color.Error" OnClick="OnReportIncident">Report incident</MudButton>
+       </div>
     </div>
 </MudPaper>
-<style>
-    button.html5-qrcode-element{
-        color: var(--mud-palette-text-primary);
-        border: 1px solid var(--mud-palette-text-primary);
-        padding: 5px 15px;
-        padding: 6px 16px;
-        font-family: var(--mud-typography-button-family);
-        font-size: var(--mud-typography-button-size);
-        font-weight: var(--mud-typography-button-weight);
-        line-height: var(--mud-typography-button-lineheight);
-        letter-spacing: var(--mud-typography-button-letterspacing);
-        text-transform: var(--mud-typography-button-text-transform);
-        min-width: 64px;
-        box-sizing: border-box;
-        transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        border-radius: var(--mud-default-borderradius);
-    
-    }
-</style>
+
 @code {
     private int _width = 0;
     private int _height = 0;
@@ -90,55 +72,23 @@
     private string start { get; set; } = "2285 South Federal Blvd";
     private string final { get; set; } = "2160 S Cook Street";
     private string search { get; set; }
-    private GoogleMap? _map1;
-    private MapOptions _mapOptions;
-    private DirectionsRenderer _dirRend;
+
     protected override void OnInitialized()
     {
-        _mapOptions = new MapOptions()
-            {
-                Zoom = 13,
-                Center = new LatLngLiteral()
-                {
-                    Lat = 40.603629,
-                    Lng = -75.472518
-                },
-                MapTypeId = MapTypeId.Roadmap
-            };
+
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
-            cameraBarcodeReader.OnBarcodeScan += HandleBarcodeScanDebounced;
-            await cameraBarcodeReader.Render();
+
             await InvokeAsync(StateHasChanged);
         }
     }
 
-    private async Task OnAfterInitAsync()
-    {
-        //Create instance of DirectionRenderer
-        _dirRend = await DirectionsRenderer.CreateAsync(_map1.JsRuntime, new DirectionsRendererOptions()
-            {
-                Map = _map1.InteropObject
-            });
-    }
-    public async void HandleBarcodeScanDebounced(string barcode)
-    {
-        if (processingScan)
-            return;
-        processingScan = true;
-        await HandleBarcodeScan(barcode);
-        await Task.Delay(1500);
-        processingScan = false;
-    }
-    public async Task HandleBarcodeScan(string barcode)
-    {
-        foundBarcode = barcode.Trim();
-        await InvokeAsync(StateHasChanged);
-    }
+
+
     Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
     {
         _width = browserViewportEventArgs.BrowserWindowSize.Width;
@@ -158,13 +108,19 @@
     public async ValueTask DisposeAsync()
     {
         await BrowserViewportService.UnsubscribeAsync(this);
-        if (_dirRend is not null)
-        {
-            await _dirRend.SetMap(null);
-            _dirRend.Dispose();
-        }
 
-        cameraBarcodeReader.OnBarcodeScan -= HandleBarcodeScanDebounced;
-        await cameraBarcodeReader.Stop();
+    }
+
+    private async Task OnReportIncident()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog= await  DialogService.ShowAsync<ReportInfor>("Report", options);
+        var result = await dialog.Result;
+
+    }
+    private async Task OnConfirm()
+    {
+        Snackbar.Add("Confirmed", Severity.Success);
+        NavigationManager.NavigateTo("/mobile/scan");
     }
 }
