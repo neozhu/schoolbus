@@ -5,9 +5,12 @@
     <MudSpacer />
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
 </MudAppBar>
-<div class="d-flex mt-2" style="padding-bottom:60px;padding-top:8px">
-    @Body
-</div>
+<CascadingValue Value="@_userProfile">
+    <div class="d-flex mt-2" style="padding-bottom:60px;padding-top:8px">
+        @Body
+    </div>
+</CascadingValue>
+
 <MudAppBar Bottom="true" Style="@($"background:{Colors.Shades.White};color:{Colors.Grey.Darken4}")" Fixed="true" Elevation="3" Class="py-3">
     <div class="d-flex justify-center flex-grow-1 gap-5">
         <div class="d-flex flex-column justify-center">
@@ -31,5 +34,11 @@
 
 
 @code {
-
+    private UserProfile? _userProfile;
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState;
+        _userProfile = state.User.GetUserProfileFromClaim();
+    }
 }

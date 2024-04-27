@@ -202,8 +202,6 @@
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
 
     [Inject]
-    private IMediator Mediator { get; set; } = default!;
-    [Inject]
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;

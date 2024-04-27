@@ -21,6 +21,8 @@ public class TripReportConfiguration : IEntityTypeConfiguration<TripReport>
         builder.Navigation(e => e.Tenant).AutoInclude();
         builder.Navigation(e => e.Itinerary).AutoInclude();
         builder.Navigation(e => e.Pilot).AutoInclude();
+        builder.HasOne(e => e.Driver).WithMany().HasForeignKey(x => x.DriverId);
+        builder.Navigation(e => e.Driver).AutoInclude();
         builder.Ignore(e => e.DomainEvents);
     }
 }

@@ -190,8 +190,7 @@
     private IMapper Mapper { get; set; } = default!;
     [Inject]
     private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
     private KeyValuesWithPaginationQuery Query { get; set; } = new();
     private bool _canCreate;
     private bool _canSearch;

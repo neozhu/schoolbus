@@ -1,0 +1,31 @@
+﻿@using CleanArchitecture.Blazor.Application.Services.DataServices
+ 
+
+<div class="d-flex flex-column justify-center gap-2 align-self-center my-4">
+   
+    <MudAvatar Size="Size.Large" Style="height:160px; width:160px; font-size:2rem;">
+        @if (string.IsNullOrEmpty(UserProfile.ProfilePictureDataUrl))
+        {
+            @UserProfile.UserName.First()
+            ;
+        }
+        else
+        {
+            <MudImage Src="@UserProfile.ProfilePictureDataUrl"></MudImage>
+        }
+
+    </MudAvatar>
+    <MudText Align="Align.Center" Typo="Typo.h6">@DriverName</MudText>
+    <MudText Align="Align.Center">Bus driver / @Total trips</MudText>
+</div>
+
+@code {
+    [CascadingParameter] private UserProfile? UserProfile { get; set; }
+
+    public string DriverName => UserProfile.DisplayName ?? (UserProfile.UserName ?? "");
+    public int Total = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        Total =await PilotService.GetTotalTrip(UserProfile.UserId);
+    }
+}

@@ -39,8 +39,7 @@ else
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
     private IEnumerable<ItineraryDto>? _itineraries { get; set; } = null;
     private ItineraryDto? _itinerary { get; set; } = null!;
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
 
     private DeviceScanComponent _deviceScan;
     protected override async Task OnInitializedAsync()

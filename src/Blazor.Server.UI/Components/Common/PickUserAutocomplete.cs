@@ -1,5 +1,6 @@
 using CleanArchitecture.Blazor.Application.Common.Interfaces.Identity;
 using CleanArchitecture.Blazor.Application.Features.Identity.Dto;
+using CleanArchitecture.Blazor.Application.Services.DataServices;
 
 namespace Blazor.Server.UI.Components.Common;
 
@@ -8,7 +9,7 @@ public class PickUserAutocomplete : MudAutocomplete<string>
     [Parameter]
     public string TenantId { get; set; }=string.Empty;
     [Inject]
-    private IUserDataProvider DataProvider { get; set; } = default!;
+    private IUserService DataProvider { get; set; } = default!;
 
     private List<ApplicationUserDto>? _userList;
   

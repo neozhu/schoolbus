@@ -1,4 +1,4 @@
-﻿@page "/mobile/triponmap"
+﻿@page "/mobile/triponmap/{RouteId:int}"
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
 @using Size= MudBlazor.Size
@@ -49,6 +49,8 @@
     </div>
 </MudPaper>
 @code {
+    [Parameter]
+    public int RouteId { get; set; }
     private string start { get; set; } = "2285 South Federal Blvd";
     private string final { get; set; } = "2160 S Cook Street";
     private string search { get; set; }

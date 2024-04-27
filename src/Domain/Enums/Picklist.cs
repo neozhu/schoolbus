@@ -7,6 +7,8 @@ namespace CleanArchitecture.Blazor.Domain.Enums;
 
 public enum Picklist
 {
+    [Description("Location")]
+    Location,
     [Description("Status")]
     Status,
     [Description("Unit")]
