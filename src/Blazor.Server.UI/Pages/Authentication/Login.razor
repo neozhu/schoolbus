@@ -18,8 +18,9 @@
 <PageTitle>@_title</PageTitle>
 <AuthorizeView>
     <NotAuthorized Context="auth">
+        <MudImage Src="/img/logo.png" Width="300" Class="align-self-center" Style="display: block; margin: 0 auto;" />
         <MudForm Model="@_model" @ref="@_form" @bind-IsValid="@_success" ValidationDelay="0" Validation="@(LoginValidator.ValidateValue)">
-            <MudText Typo="Typo.h4" GutterBottom="true">@L["Sign In"]</MudText>
+            <MudText Align="Align.Center" Typo="Typo.h4" GutterBottom="true">@L["Sign In"]</MudText>
             <MudText>
                 @L["Don't have an account?"] <MudLink Href="/pages/authentication/register">@L["Sign Up"]</MudLink>
             </MudText>
@@ -55,7 +56,7 @@
                        FullWidth="true">
                 @if (_loading)
                 {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
                     <MudText Class="ms-2"> @ConstantString.Loading</MudText>
                 }
                 else
@@ -64,7 +65,7 @@
                 }
 
             </MudButton>
-             
+
         </MudForm>
     </NotAuthorized>
     <Authorized>
@@ -90,11 +91,11 @@
     protected IIdentityService _identityService { get; set; } = null!;
 
     private LoginFormModel _model = new()
-    {
-        UserName = "administrator",
-        Password = "Password123!",
-        RememberMe = true
-    };
+        {
+            UserName = "administrator",
+            Password = "Password123!",
+            RememberMe = true
+        };
 
     MudForm? _form;
     bool _success;
@@ -142,12 +143,20 @@
                         }
                         else
                         {
-                           
-                                await TokenProvider.Login(user);
+                            var roles =await UserManager.GetRolesAsync(user);
+                            await TokenProvider.Login(user);
+                            if (roles.Any(d=>d==RoleName.Pilots))
+                            {
+                                NavigationManager.NavigateTo("/mobile/starttrip", true);
+                            }
+                            else
+                            {
                                 NavigationManager.NavigateTo(NavigationManager.Uri, true);
-                                Logger.LogInformation("{@UserName:l} has successfully logged in", user.UserName);
-                          
-                            
+                            }
+
+                            Logger.LogInformation("{@UserName:l} has successfully logged in", user.UserName);
+
+
                         }
                     }
                 }
@@ -206,18 +215,18 @@
         {
             var admin = await UserManager.FindByNameAsync(UserName.Administrator) ?? throw new NotFoundException("Administrator's account Not Found.");
             user = new ApplicationUser
-            {
-                EmailConfirmed = true,
-                IsActive = true,
-                IsLive = true,
-                UserName = userName,
-                Email = userName.Any(x => x == '@') ? userName : $"{userName}@{provider}.com",
-                Provider = provider,
-                DisplayName = name,
-                SuperiorId = admin.Id,
-                TenantId = admin.TenantId,
-                TenantName = admin.TenantName
-            };
+                {
+                    EmailConfirmed = true,
+                    IsActive = true,
+                    IsLive = true,
+                    UserName = userName,
+                    Email = userName.Any(x => x == '@') ? userName : $"{userName}@{provider}.com",
+                    Provider = provider,
+                    DisplayName = name,
+                    SuperiorId = admin.Id,
+                    TenantId = admin.TenantId,
+                    TenantName = admin.TenantName
+                };
             var createResult = await UserManager.CreateAsync(user);
             if (createResult.Succeeded)
             {

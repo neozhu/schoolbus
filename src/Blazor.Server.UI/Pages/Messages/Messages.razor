@@ -203,9 +203,6 @@
     [Inject]
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
-
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
     [Inject]
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]

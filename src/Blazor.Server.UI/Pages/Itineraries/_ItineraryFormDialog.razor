@@ -1,4 +1,5 @@
 ﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
+@using CleanArchitecture.Blazor.Application.Constants.Role
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Commands.AddEdit
 @using CleanArchitecture.Blazor.Application.Services.DataServices;
 
@@ -38,14 +39,14 @@
                     
                 </MudItem>
                 <MudItem xs="12" md="4">
-                    <MudSelect For="@(() => model.PilotId)"
-                               Label="@L[model.GetMemberDescription(x=>x.PilotId)]"
+                    <MudSelect For="@(() => model.DriverId)"
+                               Label="@L[model.GetMemberDescription(x=>x.DriverId)]"
                                Required="true"
-                               RequiredError="@L["Pilot is required."]"
-                    @bind-Value="@model.PilotId">
-                        @foreach (var item in PilotService.DataSource.Where(x => x.TenantId == model.TenantId))
+                               RequiredError="@L["Driver is required."]"
+                               @bind-Value="@model.DriverId">
+                        @foreach (var item in UserService.DataSource.Where(x => x.TenantId == model.TenantId && x.IsInRole(RoleName.Pilots)))
                         {
-                            <MudSelectItem Class="d-flex align-items-center" T="int?" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePicture" Height="14" /></MudAvatar>  @item.DisplayName</MudSelectItem>
+                            <MudSelectItem Class="d-flex align-items-center" T="string" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePictureDataUrl" Height="14" /></MudAvatar>  @item.DisplayName</MudSelectItem>
                         }
                     </MudSelect>
                  
@@ -77,7 +78,7 @@
                                    Required="true"
                                    RequiredError="@L["Organization is required."]"
                         @bind-Value="@model.TenantId">
-                            @foreach (var item in TenantsService.DataSource)
+                            @foreach (var item in TenantService.DataSource)
                             {
                                 <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                             }
@@ -103,14 +104,7 @@
     AddEditItineraryCommandValidator _modelValidator = new();
     [EditorRequired][Parameter] public AddEditItineraryCommand model { get; set; } = null!;
     [Inject] private IMediator _mediator { get; set; } = default!;
-    [Inject]
-    private ITenantService TenantsService { get; set; } = default!;
-    [Inject]
-    private IBusService BusService { get; set; } = default!;
-    [Inject]
-    private IPilotService PilotService { get; set; } = default!;
-    [Inject]
-    private ISchoolService SchoolService { get; set; } = default!;
+
     [Parameter] public UserProfile UserProfile { get; set; } = null!;
     async Task Submit()
     {

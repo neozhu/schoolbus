@@ -43,26 +43,20 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         if (firstRender)
         {
             await ApplyUserPreferences();
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+
             StateHasChanged();
         }
     }
     private async Task ApplyUserPreferences()
     {
-        _defaultDarkMode =await _mudThemeProvider.GetSystemPreference();
-        _userPreferences = await LayoutService.ApplyUserPreferences(_defaultDarkMode);
+        _userPreferences = await LayoutService.ApplyUserPreferences(false);
     }
     protected override void OnInitialized()
     {
         LayoutService.MajorUpdateOccured += LayoutServiceOnMajorUpdateOccured;
        
-       
+    }
 
-    }
-    private async Task OnSystemPreferenceChanged(bool newValue)
-    {
-        await LayoutService.OnSystemPreferenceChanged(newValue);
-    }
     private void LayoutServiceOnMajorUpdateOccured(object? sender, EventArgs e) => StateHasChanged();
 
 

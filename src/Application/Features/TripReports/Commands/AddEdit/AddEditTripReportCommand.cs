@@ -12,10 +12,14 @@ public class AddEditTripReportCommand : ICacheInvalidatorRequest<Result<int>>
 {
     [Description("Id")]
     public int Id { get; set; }
+    [Description("Bus Id")]
+    public int? BusId { get; set; }
     [Description("Itinerary Id")]
     public int? ItineraryId { get; set; }
     [Description("Pilot Id")]
     public int? PilotId { get; set; }
+    [Description("Driver Id")]
+    public string? DriverId { get; set; }
     [Description("Plat Number")]
     public string? PlatNumber { get; set; }
     [Description("On Board")]
@@ -33,6 +37,8 @@ public class AddEditTripReportCommand : ICacheInvalidatorRequest<Result<int>>
     [Description("Tenant Id")]
     public string? TenantId { get; set; }
 
+    public string? StartingStation { get; set; }
+    public string? TerminalStation { get; set; }
 
     public string CacheKey => TripReportCacheKey.GetAllCacheKey;
     public CancellationTokenSource? SharedExpiryTokenSource => TripReportCacheKey.SharedExpiryTokenSource();
