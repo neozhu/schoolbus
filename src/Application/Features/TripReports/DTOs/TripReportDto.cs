@@ -19,10 +19,10 @@ public class TripReportDto
     public int? ItineraryId { get; set; }
     [Description("Itinerary")]
     public ItineraryDto? Itinerary { get; set; }
-    [Description("Pilot Id")]
-    public int? PilotId { get; set; }
-    [Description("Pilot")]
-    public PilotDto? Pilot { get; set; }
+    //[Description("Pilot Id")]
+    //public int? PilotId { get; set; }
+    //[Description("Pilot")]
+    //public PilotDto? Pilot { get; set; }
     [Description("Driver Id")]
     public string? DriverId { get; set; }
     [Description("Driver")]
@@ -59,7 +59,7 @@ public class TripReportDto
     {
         public Mapping()
         {
-            CreateMap<TripReport, TripReportDto>().ReverseMap();
+            CreateMap<TripReport, TripReportDto>(MemberList.None).ForMember(x=>x.TripLogs, f=>f.Ignore()).ForMember(x=>x.TripAccidents,f=>f.Ignore());
         }
     }
 }
@@ -72,10 +72,10 @@ public class TripReportToPlainDto
     public int? ItineraryId { get; set; }
     [Description("Itinerary")]
     public ItineraryDto? Itinerary { get; set; }
-    [Description("Pilot Id")]
-    public int? PilotId { get; set; }
-    [Description("Pilot")]
-    public PilotDto? Pilot { get; set; }
+    //[Description("Pilot Id")]
+    //public int? PilotId { get; set; }
+    //[Description("Pilot")]
+    //public PilotDto? Pilot { get; set; }
     [Description("Driver Id")]
     public string? DriverId { get; set; }
     [Description("Driver")]
@@ -102,7 +102,7 @@ public class TripReportToPlainDto
     {
         public Mapping()
         {
-            CreateMap<TripReport, TripReportToPlainDto>().ReverseMap();
+            CreateMap<TripReport, TripReportToPlainDto>(MemberList.None);
         }
     }
 }

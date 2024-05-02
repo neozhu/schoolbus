@@ -1,5 +1,6 @@
 ﻿using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Pilots.DTOs;
+using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
 
 namespace CleanArchitecture.Blazor.Application.Services.DataServices;
 public interface IPilotService

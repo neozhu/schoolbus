@@ -4,6 +4,10 @@ using CleanArchitecture.Blazor.Application.Features.Pilots.Caching;
 using CleanArchitecture.Blazor.Application.Features.Itineraries.Caching;
 using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
 using CleanArchitecture.Blazor.Application.Common.Mappings;
+using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
+using CleanArchitecture.Blazor.Application.Features.TripReports.Specifications;
+using System.Threading;
+using CleanArchitecture.Blazor.Application.Features.TripReports.Caching;
 
 namespace CleanArchitecture.Blazor.Application.Services.DataServices;
 
@@ -76,4 +80,6 @@ public class PilotService : IPilotService
             ItineraryCacheKey.MemoryCacheEntryOptions);
         return result;
     }
+
+   
 }

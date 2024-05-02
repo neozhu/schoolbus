@@ -26,14 +26,14 @@
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.PlatNumber)]" @bind-Value="model.PlatNumber" For="@(() => model.PlatNumber)" Required="false" RequiredError="@L["plat number is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudSelect For="@(() => model.PilotId)"
-                               Label="@L[model.GetMemberDescription(x=>x.PilotId)]"
+                    <MudSelect For="@(() => model.DriverId)"
+                               Label="@L[model.GetMemberDescription(x=>x.DriverId)]"
                                Required="true"
                                RequiredError="@L["Pilot is required."]"
-                                @bind-Value="@model.PilotId">
-                        @foreach (var item in PilotService.DataSource.Where(x => x.TenantId == model.TenantId))
+                               @bind-Value="@model.DriverId">
+                        @foreach (var item in UserService.DataSource.Where(x => x.TenantId == model.TenantId))
                         {
-                            <MudSelectItem Class="d-flex align-items-center" T="int?" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePicture" Height="14" /></MudAvatar>  @item.DisplayName</MudSelectItem>
+                            <MudSelectItem Class="d-flex align-items-center" T="string" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePictureDataUrl" Height="14" /></MudAvatar>  @item.DisplayName</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>

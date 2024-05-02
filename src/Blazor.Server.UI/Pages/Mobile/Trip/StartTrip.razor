@@ -1,6 +1,7 @@
 ﻿@page "/mobile/starttrip"
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Commands.AddEdit
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.GetById
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.AddEdit
 @attribute [Authorize(Roles = "Pilots")]
 @inject NavigationManager NavigationManager
@@ -74,7 +75,7 @@
         model.TenantId = UserProfile.TenantId;
         model.Status = TripStatus.Runing;
         model.DriverId = UserProfile.UserId;
-        _itineraries = await PilotService.GetItineraries(UserProfile.UserId);
+        _itineraries = await Mediator.Send(new GetItineraryByDriverIdQuery() { DriverId = UserProfile.UserId });
     }
     private void OnBusChanged(int? busid)
     {

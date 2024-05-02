@@ -16,8 +16,8 @@ public class AddEditTripReportCommand : ICacheInvalidatorRequest<Result<int>>
     public int? BusId { get; set; }
     [Description("Itinerary Id")]
     public int? ItineraryId { get; set; }
-    [Description("Pilot Id")]
-    public int? PilotId { get; set; }
+    //[Description("Pilot Id")]
+    //public int? PilotId { get; set; }
     [Description("Driver Id")]
     public string? DriverId { get; set; }
     [Description("Plat Number")]
