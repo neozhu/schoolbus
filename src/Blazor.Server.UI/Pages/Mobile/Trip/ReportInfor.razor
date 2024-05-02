@@ -1,0 +1,56 @@
+﻿@inject ISnackbar Snackbar
+<MudDialog>
+    <DialogContent>
+        <div class="overflow-hidden mb-4">
+            <MudForm>
+                <MudGrid>
+                    <MudItem xs="12" sm="6">
+                        <MudDatePicker Editable="true" Label="Date" Required="true" Placeholder="Select Date" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" ShrinkLabel="true" Label="Student's Name" Variant="Variant.Text" Placeholder="Name"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" ShrinkLabel="true" Label="School" Variant="Variant.Text" Placeholder="School"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" ShrinkLabel="true" Label="Grade" Variant="Variant.Text" Placeholder="Grade"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" ShrinkLabel="true" @bind-Value="@route" Label="Bus route" Variant="Variant.Text" Placeholder="Bus route" ReadOnly></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" ShrinkLabel="true" @bind-Value="@diver" Label="Bus route" Variant="Variant.Text" Placeholder="Bus route" ReadOnly></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12">
+                        <MudSelect T="string" @bind-Value="@infractions" Label="Infractions" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@("Moving around while bus in motion")" />
+                            <MudSelectItem Value="@("Leaving assigned seat")" />
+                            <MudSelectItem Value="@("Throw object/garbage")" />
+                            <MudSelectItem Value="@("Others")" />
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="12">
+                        <MudTextField T="string" Lines="5" ShrinkLabel="true" Label="Comment" Variant="Variant.Outlined" Placeholder="Comment"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12">
+                        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" OnClick="OnSubmit">Report information</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+@code {
+        [CascadingParameter] 
+        private MudDialogInstance MudDialog { get; set; } = default!;
+    private string route = "2285 South Federal Blvd";
+    private string diver = "John Anderson";
+    private string infractions = "";
+
+    private async Task OnSubmit()
+    {
+        Snackbar.Add("Report successfully", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

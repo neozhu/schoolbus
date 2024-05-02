@@ -9,9 +9,8 @@ using CleanArchitecture.Blazor.Application.Services;
 using Html5QrcodeBlazor.Wrapper;
 using MudBlazor.Services;
 using MudExtensions.Services;
-using Stl.Fusion;
-using Stl.Fusion.Blazor;
-using Stl.Fusion.Extensions;
+using ActualLab.Fusion;
+using ActualLab.Fusion.Extensions;
 
 namespace Blazor.Server.UI;
 
@@ -19,12 +18,13 @@ public static class ConfigureServices
 {
     public static WebApplicationBuilder AddBlazorUiServices(this WebApplicationBuilder builder)
     {
-        var fusion = builder.Services.AddFusion();
-        fusion.AddFusionTime();
-        fusion.AddBlazor();
-        fusion.AddComputedGraphPruner(_ => new() { CheckPeriod = TimeSpan.FromSeconds(30) });
-        fusion.AddService<CounterService>();
-        fusion.AddService<ITripMonitor, TripMonitor>();
+        builder.Services.AddFusion(fusion => {
+            fusion.AddFusionTime();
+            fusion.AddComputedGraphPruner(_ => new() { CheckPeriod = TimeSpan.FromSeconds(30) });
+            fusion.AddService<CounterService>();
+            fusion.AddService<ITripMonitor, TripMonitor>();
+        });
+       
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor(
                 options =>

@@ -238,14 +238,12 @@
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
 
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
     [Inject]
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;
-    [Inject]
-    private IBusService BusService { get; set; } = null!;
+ 
     private BusesWithPaginationQuery Query { get; set; } = new();
     [Inject]
     private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;

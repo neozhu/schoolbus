@@ -54,8 +54,7 @@
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
     GetTripReportByUserQueryQuery query = new();
     List<TripReportToPlainDto>? tripList = null;
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
         UserProfileState.StateChanged += StateOnStateChanged;

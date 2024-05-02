@@ -47,10 +47,12 @@ public class GetTripReportByIdQueryHandler :
 
     public async Task<TripReportDto> Handle(GetTripReportByIdQuery request, CancellationToken cancellationToken)
     {
-        var data = await _context.TripReports.ApplySpecification(new TripReportByIdSpecification(request.Id))
-                     .ProjectTo<TripReportDto>(_mapper.ConfigurationProvider)
-                     .FirstAsync(cancellationToken) ?? throw new NotFoundException($"TripReport with id: [{request.Id}] not found."); ;
-        return data;
+      
+            var data = await _context.TripReports.ApplySpecification(new TripReportByIdSpecification(request.Id))
+                         .ProjectTo<TripReportDto>(_mapper.ConfigurationProvider)
+                         .FirstAsync(cancellationToken) ?? throw new NotFoundException($"TripReport with id: [{request.Id}] not found."); 
+            return data;
+       
     }
     public async Task<List<TripLogDto>> Handle(GetOnBoardTripLogsQuery request, CancellationToken cancellationToken)
     {

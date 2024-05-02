@@ -1,0 +1,19 @@
+﻿@using CleanArchitecture.Blazor.Application.Constants.Role
+
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; } = null!;
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthState;
+        var roles = auth.User.GetRoles();
+        if (roles.Any(x =>x == RoleName.Pilots))
+        {
+            NavigationManager.NavigateTo("/mobile/starttrip");
+        }
+
+    }
+}

@@ -1,35 +1,118 @@
 ﻿@page "/mobile/starttrip"
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs
+@using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.GetById
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.AddEdit
+@attribute [Authorize(Roles = "Pilots")]
 @inject NavigationManager NavigationManager
+@inject IStringLocalizer<StartTrip> L
 <PageTitle>Start Trip</PageTitle>
 <MudPaper Elevation="0" Class="d-flex flex-column justify-center flex-grow-1 pa-4 mt-10">
     <MudText Typo="Typo.h3" Align="Align.Center">Customize today's trip</MudText>
-    <div class="d-flex flex-column justify-center gap-2 align-self-center my-4">
-        <MudAvatar Size="Size.Large" Image="/img/driver.jpg" Style="height:160px; width:160px; font-size:2rem;"></MudAvatar>
-        <MudText Align="Align.Center" Typo="Typo.h6">John Anderson</MudText>
-        <MudText Align="Align.Center" >Bus driver / 132 trips</MudText>
-    </div>
+    <DriverInfo />
     <MudDivider />
-    <MudForm>
+    @if (!_itineraries.Any())
+    {
+        <MudAlert Severity="MudBlazor.Severity.Error" Variant="Variant.Filled">@L["No route assigned, please contact the administrator."]</MudAlert>
+    }
+    <MudForm Model="@model" @ref="@_form" Validation="@(Validator.ValidateValue(model))">
        <div class="d-flex flex-column justify-center gap-2 align-self-center my-4">
-            <MudSelect T="string" Label="Select your bus" Placeholder="Select your bus" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                <MudSelectItem T="string" Value="@("Bus #1 - 69-929L")" />
-                <MudSelectItem T="string" Value="@("Bus #2 - 23-176L")" />
-                <MudSelectItem T="string" Value="@("Bus #3 - 86-364L")" />
+            
+            <MudSelect Label="@L["Select your bus"]"
+                       For="@(() => model.BusId)" 
+                       Value="model.BusId"
+                       T="int?"
+                       Placeholder="@L["Select your bus"]" 
+                       Variant="Variant.Outlined" 
+                       AnchorOrigin="Origin.BottomCenter"
+                       ValueChanged="OnBusChanged"
+                       Required="true" RequiredError="@L["Please select your school."]">
+                @foreach (var item in _itineraries)
+                {
+                    <MudSelectItem T="int?" Value="@item.BusId">@item.Bus.PlatNumber</MudSelectItem>
+                }
             </MudSelect>
-            <MudSelect T="string" Label="Select your start location" Placeholder="Select your start location" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                <MudSelectItem T="string" Value="@("2285 South Federal Blvd")" />
-                <MudSelectItem T="string" Value="@("location xxx 2")" />
-                <MudSelectItem T="string" Value="@("location xxx 3")" />
+            <MudSelect Label="@L["Select your start location"]"
+                       For="@(() => model.StartingStation)" 
+                       @bind-Value="model.StartingStation"
+                       Placeholder="@L["Select your start location"]" 
+                       Variant="Variant.Outlined" 
+                       AnchorOrigin="Origin.BottomCenter"
+                       Required="true">
+                @foreach (var item in _itineraries)
+                {
+                    <MudSelectItem T="string" Value="@item.StartingStation">@item.StartingStation</MudSelectItem>
+                }
+                
             </MudSelect>
-            <MudSelect T="string" Label="Select your final location" Placeholder="Select your final location" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                <MudSelectItem T="string" Value="@("2160 Cook Street")" />
-                <MudSelectItem T="string" Value="@("location yyy 2")" />
-                <MudSelectItem T="string" Value="@("location yyy 3")" />
+            <MudSelect Label="@L["Select your final location"]"
+                       For="@(() => model.TerminalStation)"
+                       @bind-Value="model.TerminalStation"
+                       Placeholder="@L["Select your final location"]"
+                       Variant="Variant.Outlined"
+                       AnchorOrigin="Origin.BottomCenter"
+                       Required="true">
+                @foreach (var item in _itineraries)
+                {
+                    <MudSelectItem T="string" Value="@item.TerminalStation">@item.TerminalStation</MudSelectItem>
+                }
+
             </MudSelect>
-            <MudButton Class="my-3" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(()=>NavigationManager.NavigateTo("/mobile/tripmap"))">Start a trip</MudButton>
+            <MudLoadingButton Class="my-3" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" Loading="@_saving" OnClick="Submit">@L["Start a trip"]</MudLoadingButton>
+            
        </div>
     </MudForm>
 </MudPaper>
 @code {
+    [CascadingParameter] private UserProfile? UserProfile { get; set; }
+    public AddEditTripReportCommand model = new() {   };
+    private MudForm? _form;
+    private string _tenantId => UserProfile.TenantId;
+    private List<ItineraryDto> _itineraries=new();
+    private bool _saving;
+    protected override async Task OnInitializedAsync()
+    {
+        model.TenantId = UserProfile.TenantId;
+        model.Status = TripStatus.Runing;
+        model.DriverId = UserProfile.UserId;
+        _itineraries = await Mediator.Send(new GetItineraryByDriverIdQuery() { DriverId = UserProfile.UserId });
+    }
+    private void OnBusChanged(int? busid)
+    {
+        var it = _itineraries.First(n => n.BusId == busid);
+        model.BusId = it.BusId;
+        model.PlatNumber = it.Bus.PlatNumber;
+        model.StartingStation = it.StartingStation;
+        model.TerminalStation = it.TerminalStation;
+    }
+    private async Task Submit()
+    {
+        try
+        {
+            _saving = true;
+            await _form!.Validate().ConfigureAwait(false);
 
+            if (!_form!.IsValid)  return;
+
+            var it = _itineraries.First(x => x.BusId == model.BusId && x.StartingStation == model.StartingStation && x.TerminalStation == model.TerminalStation);
+            model.ItineraryId = it.Id;
+            model.DepartureDate = DateTime.Now;
+           
+            var result = await Mediator.Send(model);
+
+            if (result.Succeeded)
+            {
+                Snackbar.Add(ConstantString.SaveSuccess, Severity.Info);
+                NavigationManager.NavigateTo($"/mobile/triponmap/{result.Data}");
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
 }
