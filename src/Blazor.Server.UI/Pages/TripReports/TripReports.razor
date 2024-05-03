@@ -148,9 +148,9 @@
                 <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.PlatNumber</MudText>
             </CellTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Pilot" Title="@L[_currentDto.GetMemberDescription(x=>x.Pilot)]">
+        <PropertyColumn Property="x => x.DriverId" Title="@L[_currentDto.GetMemberDescription(x=>x.Driver)]">
             <CellTemplate>
-                <AvatarCard ImageUrl="@context.Item.Pilot.ProfilePicture" Title="@context.Item.Pilot?.DisplayName" Subtitle="@context.Item.Pilot?.Phone"></AvatarCard>
+                <AvatarCard ImageUrl="@context.Item.Driver?.ProfilePictureDataUrl" Title="@context.Item.Driver?.DisplayName" Subtitle="@context.Item.Driver?.PhoneNumber"></AvatarCard>
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.OnBoard" Title="@L[_currentDto.GetMemberDescription(x=>x.OnBoard)]" />
@@ -201,8 +201,6 @@
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
 
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
     [Inject]
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]

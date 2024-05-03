@@ -4,10 +4,8 @@
 @using CleanArchitecture.Blazor.Application.Features.Dashboard.Queries;
 @using MudBlazor.Utilities
 @using Blazor.Server.UI.Models
-@using Color = MudBlazor.Color
-@using Size=MudBlazor.Size
 @using Theme=Blazor.Server.UI.Theme
-
+@using Size=MudBlazor.Size
 @inherits FluxorComponent
 <PageTitle>@Title</PageTitle>
 <style>
@@ -142,8 +140,6 @@
     public string Title { get; set; } = "Dashboard";
     private AggregationResult result = new AggregationResult();
     private SummaryDto SummaryInfo = new SummaryDto();
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
 
     ApexChart<TotalOfStudentDto>? chart1;
     ApexChart<TotalOfTransportDto>? chart2;

@@ -5,25 +5,28 @@
     <MudSpacer />
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
 </MudAppBar>
-<div class="d-flex mt-2">
-    @Body
-</div>
-<MudAppBar Bottom="true" Color="Color.Transparent" Fixed="true" Elevation="3" Class="py-3">
+<CascadingValue Value="@_userProfile">
+    <div class="d-flex mt-2" style="padding-bottom:60px;padding-top:8px">
+        @Body
+    </div>
+</CascadingValue>
+
+<MudAppBar Bottom="true" Style="@($"background:{Colors.Shades.White};color:{Colors.Grey.Darken4}")" Fixed="true" Elevation="3" Class="py-3">
     <div class="d-flex justify-center flex-grow-1 gap-5">
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.Map"></MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Outlined.Map" Href="/mobile/triponmap"></MudIconButton>
             <MudText Align="Align.Center" Typo="Typo.caption">Map</MudText>
         </div>
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.QrCodeScanner"></MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Outlined.QrCodeScanner" Href="/mobile/scan"></MudIconButton>
             <MudText Align="Align.Center" Typo="Typo.caption">Scan</MudText>
         </div>
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.Checklist"></MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Outlined.Checklist" Href="/mobile/passengerlist"></MudIconButton>
             <MudText Align="Align.Center" Typo="Typo.caption">Roster</MudText>
         </div>
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.Navigation"></MudIconButton>
+            <MudIconButton Icon="@Icons.Material.Outlined.Navigation" Href="/mobile/starttrip"></MudIconButton>
             <MudText Align="Align.Center" Typo="Typo.caption">Drive</MudText>
         </div>
     </div>
@@ -31,5 +34,11 @@
 
 
 @code {
-
+    private UserProfile? _userProfile;
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState;
+        _userProfile = state.User.GetUserProfileFromClaim();
+    }
 }

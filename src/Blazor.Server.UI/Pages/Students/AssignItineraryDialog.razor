@@ -20,7 +20,7 @@
                                    Required="true"
                                    RequiredError="@L["Organization is required."]"
                         @bind-Value="@model.TenantId">
-                            @foreach (var item in TenantsService.DataSource)
+                            @foreach (var item in TenantService.DataSource)
                             {
                                 <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                             }
@@ -57,10 +57,7 @@
     private ItineraryDto? assignedItinerary;
 
     [EditorRequired][Parameter] public UserProfile UserProfile { get; set; } = null!;
-    [Inject]
-    private IItineraryService ItineraryService { get; set; } = default!;
-    [Inject]
-    private ITenantService TenantsService { get; set; } = default!;
+ 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = default!;
     [Inject] private IMediator _mediator { get; set; } = default!;

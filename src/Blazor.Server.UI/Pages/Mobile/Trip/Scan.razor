@@ -1,0 +1,232 @@
+﻿@page "/mobile/scan/{RouteId:int}"
+@using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById
+@using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Create
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.GetOnOff
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById
+@using CleanArchitecture.Blazor.Application.Services
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+@using Html5QrcodeBlazor.Wrapper
+@using Size= MudBlazor.Size
+@inject NavigationManager NavigationManager
+@inject Html5QrcodeReader cameraBarcodeReader
+@inject IBrowserViewportService BrowserViewportService
+@implements IAsyncDisposable
+@implements IBrowserViewportObserver
+@inject IGeolocationService geolocation
+@inject IGeoAddressService addressService
+<PageTitle>General information</PageTitle>
+
+<MudPaper Elevation="0" Class="d-flex flex-column justify-space-between flex-grow-1 pa-4 mt-10 gap-4">
+    @if (_tripReport is null)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    }
+    else
+    {
+        <GeneralInformation Data="@_tripReport"></GeneralInformation>
+    }
+    <div class="d-flex flex-row justify-space-between align-center gap-2">
+        <div class="d-flex flex-column my-2 gap-1">
+            <MudText Typo="Typo.h6">Total passengers on board</MudText>
+            <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        </div>
+        <StudentOnBoardTotalCard @ref="@totalCard" RouteId="@RouteId"></StudentOnBoardTotalCard>
+    </div>
+    <div class="cameracontainer pa-0 d-flex flex-column align-center">
+        <div id="reader" class="mx-auto my-0" style="width:700px">
+        </div>
+
+    </div>
+</MudPaper>
+<style>
+    button.html5-qrcode-element {
+        color: var(--mud-palette-text-primary);
+        border: 1px solid var(--mud-palette-text-primary);
+        padding: 5px 15px;
+        padding: 6px 16px;
+        font-family: var(--mud-typography-button-family);
+        font-size: var(--mud-typography-button-size);
+        font-weight: var(--mud-typography-button-weight);
+        line-height: var(--mud-typography-button-lineheight);
+        letter-spacing: var(--mud-typography-button-letterspacing);
+        text-transform: var(--mud-typography-button-text-transform);
+        min-width: 64px;
+        box-sizing: border-box;
+        transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        border-radius: var(--mud-default-borderradius);
+    }
+</style>
+@code {
+    [Parameter]
+    public int RouteId { get; set; }
+    private StudentOnBoardTotalCard totalCard;
+    private int _width = 0;
+    private int _height = 0;
+    private int scanwith = 650;
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+    string? foundBarcode = "Here you will see scanned barcode...";
+    bool processingScan;
+    private string start { get; set; } = "2285 South Federal Blvd";
+    private string final { get; set; } = "2160 S Cook Street";
+    private string search { get; set; }
+    private GoogleMap? _map1;
+    private MapOptions _mapOptions;
+    private DirectionsRenderer _dirRend;
+    private TripReportDto? _tripReport = null;
+    readonly PositionOptions _options = new()
+        {
+            EnableHighAccuracy = true,
+            MaximumAge = null,
+            Timeout = 15_000
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        _mapOptions = new MapOptions()
+            {
+                Zoom = 13,
+                Center = new LatLngLiteral()
+                {
+                    Lat = 40.603629,
+                    Lng = -75.472518
+                },
+                MapTypeId = MapTypeId.Roadmap
+            };
+        await LoadRoute();
+    }
+    private async Task LoadRoute()
+    {
+        _tripReport = await Mediator.Send(new GetTripReportByIdQuery() { Id = RouteId });
+    }
+    double _watchId;
+    GeolocationPositionError? _positionError;
+    GeolocationPosition? _position;
+    bool _isLoading;
+    private string? _location;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+            cameraBarcodeReader.OnBarcodeScan += HandleBarcodeScanDebounced;
+            await cameraBarcodeReader.Render();
+            _watchId = await geolocation.WatchPositionAsync(
+           component: this,
+           onSuccessCallbackMethodName: nameof(OnPositionRecieved),
+           onErrorCallbackMethodName: nameof(OnPositionError),
+           options: _options);
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    [JSInvokable]
+    public async void OnPositionRecieved(GeolocationPosition position)
+    {
+        _isLoading = false;
+        _position = position;
+        _location = await addressService.GetAddress(position.Coords.Latitude, position.Coords.Longitude);
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnPositionError(GeolocationPositionError positionError)
+    {
+        _isLoading = false;
+        _positionError = positionError;
+        StateHasChanged();
+    }
+    private async Task OnAfterInitAsync()
+    {
+        _dirRend = await DirectionsRenderer.CreateAsync(_map1.JsRuntime, new DirectionsRendererOptions()
+            {
+                Map = _map1.InteropObject
+            });
+    }
+    public async void HandleBarcodeScanDebounced(string barcode)
+    {
+        if (processingScan)
+            return;
+        processingScan = true;
+        foundBarcode = barcode;
+        await InvokeAsync(StateHasChanged);
+        await HandleBarcodeScan(barcode);
+        await Task.Delay(1500);
+        await InvokeAsync(StateHasChanged);
+    }
+    public async Task HandleBarcodeScan(string barcode)
+    {
+        var checkresult = await Mediator.Send(new GetStudentByUIdQuery(barcode, _tripReport.TenantId));
+
+        var options = new DialogOptions { NoHeader = true, DisableBackdropClick=true, CloseOnEscapeKey=false, CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters = new DialogParameters<SutdentConfrmDialog>
+            {
+                { x => x.Successfull, checkresult.Succeeded },
+                { x => x.StudentDto,checkresult.Data  },
+                { x => x.Position,_position  },
+                { x => x.Location,_location  },
+                { x => x.TripReportDto,_tripReport  },
+                { x => x.QRCode,barcode  },
+            };
+        var dialog = DialogService.Show<SutdentConfrmDialog>("", parameters, options);
+        var state = await dialog.Result;
+
+        if (state.Canceled)
+        {
+            await Task.Delay(200);
+            var reportIncident = new AddAccidentCommand(_tripReport.Id, _tripReport.TenantId);
+            reportIncident.ReportDateTime = DateTime.Now;
+            reportIncident.StudentId = checkresult.Data?.Id;
+            reportIncident.Latitude = _position.Coords.Latitude;
+            reportIncident.Longitude = _position.Coords.Longitude;
+            reportIncident.Location = _location;
+            var options1 = new DialogOptions { NoHeader = false, DisableBackdropClick = true, CloseOnEscapeKey = false, CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = true };
+            var parameters1 = new DialogParameters<ReportIncidentDialog>
+            {
+                { x => x.Model, reportIncident },
+                { x => x.DriverName, _tripReport.Driver?.DisplayName },
+                { x => x.Route, $"{_tripReport.Itinerary?.StartingStation} - {_tripReport.Itinerary?.TerminalStation}" },
+                { x => x.SchoolName, $"{_tripReport.Itinerary?.School?.Name}" },
+                { x => x.StudentName, checkresult.Data?.DisplayName },
+                { x => x.Grade, checkresult.Data?.Grade },
+            };
+            var dialog1 = DialogService.Show<ReportIncidentDialog>("Report Incident", parameters1, options1);
+            var state1 = await dialog1.Result;
+        }
+        processingScan = false;
+        await totalCard.Refresh();
+
+
+    }
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        _width = browserViewportEventArgs.BrowserWindowSize.Width;
+        _height = browserViewportEventArgs.BrowserWindowSize.Height;
+
+        if (_width >= 960)
+        {
+            scanwith = 832;
+        }
+        else
+        {
+            scanwith = _width - 10;
+        }
+
+        return InvokeAsync(StateHasChanged);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        await BrowserViewportService.UnsubscribeAsync(this);
+        if (_dirRend is not null)
+        {
+            await _dirRend.SetMap(null);
+            _dirRend.Dispose();
+        }
+
+        cameraBarcodeReader.OnBarcodeScan -= HandleBarcodeScanDebounced;
+        await cameraBarcodeReader.Stop();
+        await geolocation.ClearWatchAsync(_watchId);
+    }
+}

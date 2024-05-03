@@ -17,7 +17,7 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -220,6 +220,9 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.Property<bool>("Disabled")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("DriverId")
+                        .HasColumnType("text");
+
                     b.Property<string>("FirstTime")
                         .IsRequired()
                         .HasColumnType("text");
@@ -239,7 +242,7 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("PilotId")
+                    b.Property<int?>("PilotId")
                         .HasColumnType("integer");
 
                     b.Property<int>("SchoolId")
@@ -260,6 +263,8 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BusId");
+
+                    b.HasIndex("DriverId");
 
                     b.HasIndex("PilotId");
 
@@ -631,6 +636,9 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
 
+                    b.Property<string>("Grade")
+                        .HasColumnType("text");
+
                     b.Property<int?>("ItineraryId")
                         .HasColumnType("integer");
 
@@ -782,6 +790,9 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
+                    b.Property<string>("Infraction")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp without time zone");
 
@@ -815,6 +826,9 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("text");
 
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("TenantId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -823,6 +837,8 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
 
                     b.HasIndex("TenantId");
 
@@ -933,6 +949,9 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                     b.Property<DateTime?>("DepartureDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("DriverId")
+                        .HasColumnType("text");
+
                     b.Property<int?>("ItineraryId")
                         .HasColumnType("integer");
 
@@ -967,6 +986,8 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
 
                     b.HasIndex("ItineraryId");
 
@@ -1269,11 +1290,13 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Identity.ApplicationUser", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId");
+
                     b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Pilot", "Pilot")
                         .WithMany("Itineraries")
-                        .HasForeignKey("PilotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PilotId");
 
                     b.HasOne("CleanArchitecture.Blazor.Domain.Entities.School", "School")
                         .WithMany("Itineraries")
@@ -1288,6 +1311,8 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .IsRequired();
 
                     b.Navigation("Bus");
+
+                    b.Navigation("Driver");
 
                     b.Navigation("Pilot");
 
@@ -1413,6 +1438,10 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
 
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripAccident", b =>
                 {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId");
+
                     b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
@@ -1424,6 +1453,8 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Student");
 
                     b.Navigation("Tenant");
 
@@ -1457,6 +1488,10 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
 
             modelBuilder.Entity("CleanArchitecture.Blazor.Domain.Entities.TripReport", b =>
                 {
+                    b.HasOne("CleanArchitecture.Blazor.Domain.Identity.ApplicationUser", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId");
+
                     b.HasOne("CleanArchitecture.Blazor.Domain.Entities.Itinerary", "Itinerary")
                         .WithMany()
                         .HasForeignKey("ItineraryId");
@@ -1470,6 +1505,8 @@ namespace CleanArchitecture.Blazor.Migrators.PostgreSQL.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Driver");
 
                     b.Navigation("Itinerary");
 

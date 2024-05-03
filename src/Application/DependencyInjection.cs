@@ -73,12 +73,17 @@ public static class DependencyInjection
             service.Initialize();
             return service;
         });
-        services.AddScoped<RegisterFormModelFluentValidator>();
+        services.AddSingleton<UserService>();
+        services.AddSingleton<IUserService>(sp => {
+            var service = sp.GetRequiredService<UserService>();
+            service.Initialize();
+            return service;
+        });
 
 
- 
 
-       
+
+
         return services;
     }
    

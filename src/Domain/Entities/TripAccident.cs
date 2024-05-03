@@ -16,10 +16,13 @@ public  class TripAccident : BaseAuditableEntity, IMustHaveTenant
     public double? Longitude { get; set; }
     public double? Latitude { get; set; }
     public AccidentLevel Level { get; set; } = AccidentLevel.Trouble;
+    public InfractionType? Infraction { get; set; }
     public string? Comments { get; set; }
     public string? Status { get; set; }
     public string? Responder { get; set; }
     public string? Result { get; set; }
     public string TenantId { get; set; } = string.Empty;
     public virtual Tenant Tenant { get; set; } = null!;
+    public int? StudentId { get; set; }
+    public virtual Student? Student { get; set; }
 }

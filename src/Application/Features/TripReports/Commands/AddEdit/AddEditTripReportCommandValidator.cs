@@ -8,7 +8,7 @@ public class AddEditTripReportCommandValidator : AbstractValidator<AddEditTripRe
     public AddEditTripReportCommandValidator()
     {
         RuleFor(v => v.ItineraryId).NotNull();
-        RuleFor(v => v.PilotId).NotNull();
+        RuleFor(v => v.DriverId).NotEmpty();
         RuleFor(v => v.PlatNumber).NotEmpty();
         RuleFor(v => v.DepartureDate).NotNull();
     }

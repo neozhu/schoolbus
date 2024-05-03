@@ -2,13 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
-using AutoMapper.Configuration.Conventions;
+using CleanArchitecture.Blazor.Application.Features.Identity.Dto;
 using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Pilots.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Students.DTOs;
 using CleanArchitecture.Blazor.Application.Features.Tenants.DTOs;
-using CleanArchitecture.Blazor.Application.Features.TransportLogs.DTOs;
-using CleanArchitecture.Blazor.Domain.Common;
 
 namespace CleanArchitecture.Blazor.Application.Features.TripReports.DTOs;
 
@@ -21,11 +19,14 @@ public class TripReportDto
     public int? ItineraryId { get; set; }
     [Description("Itinerary")]
     public ItineraryDto? Itinerary { get; set; }
-    [Description("Pilot Id")]
-    public int? PilotId { get; set; }
-    [Description("Pilot")]
-    public PilotDto? Pilot { get; set; }
-
+    //[Description("Pilot Id")]
+    //public int? PilotId { get; set; }
+    //[Description("Pilot")]
+    //public PilotDto? Pilot { get; set; }
+    [Description("Driver Id")]
+    public string? DriverId { get; set; }
+    [Description("Driver")]
+    public  ApplicationUserDto? Driver { get; set; }
     [Description("Plat Number")]
     public string? PlatNumber { get; set; }
     [Description("On Board")]
@@ -58,7 +59,7 @@ public class TripReportDto
     {
         public Mapping()
         {
-            CreateMap<TripReport, TripReportDto>().ReverseMap();
+            CreateMap<TripReport, TripReportDto>(MemberList.None).ForMember(x=>x.TripLogs, f=>f.Ignore()).ForMember(x=>x.TripAccidents,f=>f.Ignore());
         }
     }
 }
@@ -71,11 +72,14 @@ public class TripReportToPlainDto
     public int? ItineraryId { get; set; }
     [Description("Itinerary")]
     public ItineraryDto? Itinerary { get; set; }
-    [Description("Pilot Id")]
-    public int? PilotId { get; set; }
-    [Description("Pilot")]
-    public PilotDto? Pilot { get; set; }
-
+    //[Description("Pilot Id")]
+    //public int? PilotId { get; set; }
+    //[Description("Pilot")]
+    //public PilotDto? Pilot { get; set; }
+    [Description("Driver Id")]
+    public string? DriverId { get; set; }
+    [Description("Driver")]
+    public ApplicationUserDto? Driver { get; set; }
     [Description("Plat Number")]
     public string? PlatNumber { get; set; }
     [Description("On Board")]
@@ -98,7 +102,7 @@ public class TripReportToPlainDto
     {
         public Mapping()
         {
-            CreateMap<TripReport, TripReportToPlainDto>().ReverseMap();
+            CreateMap<TripReport, TripReportToPlainDto>(MemberList.None);
         }
     }
 }
