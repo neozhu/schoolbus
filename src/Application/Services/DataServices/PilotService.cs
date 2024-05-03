@@ -61,12 +61,12 @@ public class PilotService : IPilotService
         OnChange?.Invoke();
     }
 
-    public Task<int> GetTotalTrip(string driverId)
+    public async Task<int> GetTotalTrip(string driverId)
     {
-        var result = _cache.GetOrAddAsync(PilotCacheKey.GetAllCacheKey,
-            () => _context.Itineraries.CountAsync(x=>x.DriverId==driverId)
+        var result = await _cache.GetOrAddAsync(TripReportCacheKey.GetAllCacheKey,
+            () => _context.TripReports.CountAsync(x=>x.DriverId==driverId)
                 ,
-            ItineraryCacheKey.MemoryCacheEntryOptions);
+            TripReportCacheKey.MemoryCacheEntryOptions);
         return result;
     }
 

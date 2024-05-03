@@ -1,5 +1,4 @@
-﻿@using CleanArchitecture.Blazor.Application.Services.DataServices
- 
+﻿@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetAll
 
 <div class="d-flex flex-column justify-center gap-2 align-self-center my-4">
    
@@ -7,7 +6,6 @@
         @if (string.IsNullOrEmpty(UserProfile.ProfilePictureDataUrl))
         {
             @UserProfile.UserName.First()
-            ;
         }
         else
         {
@@ -26,6 +24,6 @@
     public int Total = 0;
     protected override async Task OnInitializedAsync()
     {
-        Total =await PilotService.GetTotalTrip(UserProfile.UserId);
+        Total = await Mediator.Send(new GetTotalByDriverQuery() { DriverId =  UserProfile.UserId});
     }
 }

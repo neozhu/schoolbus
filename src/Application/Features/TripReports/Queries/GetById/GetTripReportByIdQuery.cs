@@ -13,6 +13,12 @@ public class GetOnBoardTripLogsQuery : ICacheableRequest<List<TripLogDto>>
     public string CacheKey => TripReportCacheKey.GetOnBoardTripLogsCacheKey($"{TripId}");
     public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
 }
+
+public record GetOnBoardTotalQuery : IRequest<int>
+{
+   public  int TripId { get; set; }
+}
+
 public class GetTripAccidentsQuery : ICacheableRequest<List<TripAccidentDto>>
 {
     public required int TripId { get; set; }
@@ -26,6 +32,7 @@ public class GetTripReportByIdQuery : ICacheableRequest<TripReportDto>
     public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
 }
 public class GetTripReportByIdQueryHandler :
+        IRequestHandler<GetOnBoardTotalQuery, int>,
       IRequestHandler<GetTripAccidentsQuery, List<TripAccidentDto>>,
       IRequestHandler<GetOnBoardTripLogsQuery, List<TripLogDto>>,
       IRequestHandler<GetTripReportByIdQuery, TripReportDto>
@@ -56,10 +63,15 @@ public class GetTripReportByIdQueryHandler :
     }
     public async Task<List<TripLogDto>> Handle(GetOnBoardTripLogsQuery request, CancellationToken cancellationToken)
     {
-        var data1 = await _context.TripLogs.ApplySpecification(new TripLogByIdSpecification(request.TripId)).ToListAsync();
         var data = await _context.TripLogs.ApplySpecification(new TripLogByIdSpecification(request.TripId))
                      .ProjectTo<TripLogDto>(_mapper.ConfigurationProvider)
                      .ToListAsync(cancellationToken);
+        return data;
+    }
+    public async Task<int> Handle(GetOnBoardTotalQuery request, CancellationToken cancellationToken)
+    {
+        var data = await _context.TripLogs.ApplySpecification(new TripOnBoardTotalSpecification(request.TripId))
+                      .CountAsync(); 
         return data;
     }
     public async Task<List<TripAccidentDto>> Handle(GetTripAccidentsQuery request, CancellationToken cancellationToken)

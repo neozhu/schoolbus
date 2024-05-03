@@ -103,7 +103,7 @@
             if (result.Succeeded)
             {
                 Snackbar.Add(ConstantString.SaveSuccess, Severity.Info);
-                NavigationManager.NavigateTo($"/mobile/triponmap/{result.Data}");
+                NavigationManager.NavigateTo($"/mobile/scan/{result.Data}");
             }
             else
             {

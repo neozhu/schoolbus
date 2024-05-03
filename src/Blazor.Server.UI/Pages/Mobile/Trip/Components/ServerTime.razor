@@ -11,10 +11,10 @@
     var state = State.ValueOrDefault;
     var error = State.Error;
 }
-<MudText Typo="Typo.h3">@state.ToDateTime().ToString("hh:mm:ss tt")</MudText>
+<MudText Typo="Typo.h3" Style="font-weight:700;line-height:70px;font-size:70px">@state.ToDateTime().ToString("hh:mm:ss tt")</MudText>
 <div class="d-flex flex-row align-center   gap-1 ">
     <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Title="date" />
-    <MudText Typo="Typo.body2">@state.ToDateTime().ToString("dddd, MMMM d") </MudText>
+    <MudText Typo="Typo.body2" Style="font-weight:400;line-height:28px;font-size:24px">@state.ToDateTime().ToString("dddd, MMMM d") </MudText>
 </div>
 @code {
     protected override ComputedState<Moment>.Options GetStateOptions()

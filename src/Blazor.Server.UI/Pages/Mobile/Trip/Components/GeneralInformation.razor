@@ -1,7 +1,7 @@
 ﻿@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
 <div class="d-flex flex-row justify-space-between align-center gap-1">
     <div class="d-flex flex-column justify-space-between my-2  gap-1">
-        <MudText Typo="Typo.h6">General information</MudText>
+        <MudText Typo="Typo.h6">General information #@(Data.Id)</MudText>
         <div class="d-flex flex-row align-center   gap-1">
             <MudIcon Icon="@Icons.Material.Filled.DirectionsBus" Title="bus no." />
             <MudText Typo="Typo.body2">School bus: @Data.PlatNumber</MudText>

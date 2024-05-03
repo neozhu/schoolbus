@@ -2,10 +2,9 @@
 #nullable disable warnings
 public class StudentByUIDSpecification : Specification<Student>
 {
-    public StudentByUIDSpecification(string uid)
+    public StudentByUIDSpecification(string uid, string tenantId)
     {
-        Query.Where(q => q.UID == uid);
-        Query.Include(x => x.School);
+        Query.Where(q => q.UID == uid && q.TenantId== tenantId);
 
     }
 }
