@@ -1,4 +1,4 @@
-﻿@page "/mobile/passengerlist/{RouteId:int}"
+﻿@page "/mobile/passengerlist"
 @using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById
 @inject NavigationManager NavigationManager
@@ -55,8 +55,9 @@
 </MudPaper>
 
 @code {
-    [Parameter]
-    public int RouteId { get; set; }
+    [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
+
+    public int RouteId => UserProfile.RouteId ?? 0;
     private int _width = 0;
     private int _height = 0;
     private int scanwith = 650;

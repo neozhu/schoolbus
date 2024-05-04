@@ -1,4 +1,4 @@
-﻿@page "/mobile/triponmap/{RouteId:int}"
+﻿@page "/mobile/triponmap"
 @using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById
 @using GoogleMapsComponents
@@ -33,8 +33,8 @@
     </div>
 </MudPaper>
 @code {
-    [Parameter]
-    public int RouteId { get; set; }
+    [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
+    public int RouteId => UserProfile.RouteId ?? 0;
     private string start { get; set; } = "2285 South Federal Blvd";
     private string final { get; set; } = "2160 S Cook Street";
     private string search { get; set; }

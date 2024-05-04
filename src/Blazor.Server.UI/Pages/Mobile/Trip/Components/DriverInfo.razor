@@ -18,7 +18,7 @@
 </div>
 
 @code {
-    [CascadingParameter] private UserProfile? UserProfile { get; set; }
+    [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
 
     public string DriverName => UserProfile.DisplayName ?? (UserProfile.UserName ?? "");
     public int Total = 0;

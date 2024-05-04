@@ -58,12 +58,14 @@
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Phone)]" @bind-Value="model.Phone" For="@(() => model.Phone)" Required="false" RequiredError="@L["phone is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Grade)]" @bind-Value="model.Grade" For="@(() => model.Grade)" Required="false" RequiredError="@L["Grade is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Status)]" @bind-Value="model.Status" For="@(() => model.Status)"  ReadOnly></MudTextField>
                 </MudItem>
-               
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                </MudItem>
                 @if (UserProfile.IsSuperAdmin)
                 {
                     <MudItem xs="12" md="6">

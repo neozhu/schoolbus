@@ -33,7 +33,10 @@
                         <MudTextField For="@(()=>Model.Comments)" @bind-Value="Model.Comments" Lines="5" ShrinkLabel="true" Label="Comment" Variant="Variant.Outlined" Placeholder="Comment"></MudTextField>
                     </MudItem>
                     <MudItem xs="12" sm="12">
+                        <div class="d-flex flex-row gap-2">
                         <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" OnClick="OnSubmit">Report information</MudButton>
+                        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Default" OnClick="@(()=>MudDialog.Cancel())">Cancel</MudButton>
+                        </div>
                     </MudItem>
                 </MudGrid>
             </MudForm>

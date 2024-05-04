@@ -11,23 +11,15 @@
             <MudGrid>
                 <MudItem xs="12" sm="12">
                     <MudText Typo="Typo.body2" Class="mud-text-secondary">Assign @(model.Students.Count) students to the corresponding itinerary.</MudText>
+                    <div class="d-flex flex-row gap-3">
+                        @foreach(var st in model.Students)
+                        {
+                            <MudChip Label="true">@st.DisplayName</MudChip>
+                        }
+                    </div>
                 </MudItem>
-                @if (UserProfile.IsSuperAdmin)
-                {
-                    <MudItem xs="12" sm="6">
-                        <MudSelect For="@(() => model.TenantId)"
-                                   Label="@L["Select Organization"]"
-                                   Required="true"
-                                   RequiredError="@L["Organization is required."]"
-                        @bind-Value="@model.TenantId">
-                            @foreach (var item in TenantService.DataSource)
-                            {
-                                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudItem>
-                }
-                <MudItem sm="6" xs="12">
+                
+                <MudItem sm="12" xs="12">
                     <MudSelectExtended T="ItineraryDto" @bind-Value="@model.Itinerary" Label="@L["Assign Itinerary"]" AnchorOrigin="Origin.BottomCenter" Required="true" RequiredError="Assign Itinerary is required.">
                         @foreach (var g in ItineraryService.DataSource.Where(x => x.TenantId == model.TenantId).GroupBy(x=>x.School.Name).Select(x=> new {Key=x.Key,SubItems=x }))
                         {
@@ -58,6 +50,7 @@
 
     [EditorRequired][Parameter] public UserProfile UserProfile { get; set; } = null!;
  
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = default!;
     [Inject] private IMediator _mediator { get; set; } = default!;
@@ -70,6 +63,7 @@
             await _form!.Validate().ConfigureAwait(false);
             if (!_form!.IsValid)
                 return;
+
             var result = await _mediator.Send(model);
             if (result.Succeeded)
             {

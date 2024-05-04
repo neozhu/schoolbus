@@ -3,7 +3,7 @@
 @using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
 <MudDialog>
     <DialogContent>
-        <div class="d-flex flex-column  align-center  gap-4 pa-3">
+        <div class="d-flex flex-column  align-center  gap-3 pa-3">
             @if (Successfull)
             {
                 <div class="d-lg-block mud-theme-success rounded px-4" style="height:100%; width:100%; border-radius:100px !important;background-color:#39B02F">
@@ -22,7 +22,7 @@
             }
             else
             {
-                <div class="d-lg-block mud-theme-success rounded px-4" style="height:100%; width:100%; border-radius:100px !important;background-color:#D7483F">
+                <div class="d-lg-block  mud-theme-error rounded px-4" style="height:100%; width:100%; border-radius:100px !important;background-color:#D7483F">
                     <MudText Typo="Typo.h4" Align="Align.Center" Style="font-size:48px;line-height:68px">Not Successfull</MudText>
                 </div>
                 <MudImage ObjectFit="ObjectFit.Cover" Src="/img/person.png" Alt="Student" Elevation="25" Class="rounded-lg" Width="300" Height="300" />

@@ -64,7 +64,7 @@
     </MudForm>
 </MudPaper>
 @code {
-    [CascadingParameter] private UserProfile? UserProfile { get; set; }
+    [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
     public AddEditTripReportCommand model = new() {   };
     private MudForm? _form;
     private string _tenantId => UserProfile.TenantId;
@@ -97,13 +97,14 @@
             var it = _itineraries.First(x => x.BusId == model.BusId && x.StartingStation == model.StartingStation && x.TerminalStation == model.TerminalStation);
             model.ItineraryId = it.Id;
             model.DepartureDate = DateTime.Now;
-           
+
             var result = await Mediator.Send(model);
 
             if (result.Succeeded)
             {
+                UserProfile.RouteId = result.Data;
                 Snackbar.Add(ConstantString.SaveSuccess, Severity.Info);
-                NavigationManager.NavigateTo($"/mobile/scan/{result.Data}");
+                NavigationManager.NavigateTo($"/mobile/scan");
             }
             else
             {

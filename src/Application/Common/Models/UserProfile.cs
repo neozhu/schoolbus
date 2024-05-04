@@ -24,6 +24,8 @@ public class UserProfile
     public bool IsParents => AssignedRoles?.Any(x => x.Equals(RoleName.Parents)) ?? false;
     public bool IsBasic => AssignedRoles?.Any(x => x.Equals(RoleName.Basic)) ?? false;
 
+    public int? RouteId { get; set; }
+
 }
 
 public class UserProfileEditValidator : AbstractValidator<UserProfile>

@@ -1,4 +1,4 @@
-﻿@page "/mobile/scan/{RouteId:int}"
+﻿@page "/mobile/scan"
 @using CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById
 @using CleanArchitecture.Blazor.Application.Features.TransportLogs.Commands.Create
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident
@@ -60,8 +60,8 @@
     }
 </style>
 @code {
-    [Parameter]
-    public int RouteId { get; set; }
+    [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
+    public int RouteId => UserProfile.RouteId??0;
     private StudentOnBoardTotalCard totalCard;
     private int _width = 0;
     private int _height = 0;
