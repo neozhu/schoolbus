@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CleanArchitecture.Blazor.Domain.Enums;
+using CleanArchitecture.Blazor.Domain.Identity;
 
 namespace CleanArchitecture.Blazor.Domain.Entities;
 public class TripReport: BaseAuditableEntity, IMustHaveTenant
@@ -12,6 +13,8 @@ public class TripReport: BaseAuditableEntity, IMustHaveTenant
     public virtual Itinerary? Itinerary { get; set; }
     public int? PilotId { get; set; }
     public virtual Pilot? Pilot { get; set; }
+    public string? DriverId { get; set; }
+    public virtual ApplicationUser? Driver { get; set; }
     public string PlatNumber { get; set; } = string.Empty;
     public int OnBoard { get; set; }
     public int NotOnBoard { get; set; }

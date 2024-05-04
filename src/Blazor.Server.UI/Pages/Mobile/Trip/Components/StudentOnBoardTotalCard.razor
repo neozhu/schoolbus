@@ -1,0 +1,22 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById
+
+<MudPaper Elevation="0" Class="pa-3" Style="height:100px; width:160px;">
+    <div class="d-lg-block rounded px-5" style="height:100%; width:100%;background-color:#FFD98E;border-radius:100px !important "><MudText Typo="Typo.h3" Style="font-size:80px;font-weight:700;line-height:80px">@Total</MudText></div>
+</MudPaper>
+
+@code {
+
+    [Parameter] 
+    public int RouteId { get; set; }
+    public int Total { get; set; } = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        Total = await Mediator.Send(new GetOnBoardTotalQuery() { TripId = RouteId });
+    }
+
+    public async Task Refresh()
+    {
+        Total = await Mediator.Send(new GetOnBoardTotalQuery() { TripId = RouteId });
+        StateHasChanged();
+    }
+}

@@ -6,8 +6,8 @@
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById;
 @using CleanArchitecture.Blazor.Application.Services.DataServices;
 @using CleanArchitecture.Blazor.Application.Services;
-@using Stl.CommandR.Commands;
-@using Stl.Fusion.UI;
+@using ActualLab.CommandR.Commands;
+@using ActualLab.Fusion.UI;
 @inherits FluxorComponent
 @inject UICommander UICommander
 @inject ITripMonitor _tripMonitor
@@ -40,14 +40,14 @@
                         <MudTextField Label="@L[model.GetMemberDescription(x=>x.PlatNumber)]" @bind-Value="model.PlatNumber" For="@(() => model.PlatNumber)" Required="true" RequiredError="@L["plat number is required!"]"></MudTextField>
                     </MudItem>
                     <MudItem xs="12" md="6">
-                        <MudSelect For="@(() => model.PilotId)"
-                                   Label="@L[model.GetMemberDescription(x=>x.PilotId)]"
+                        <MudSelect For="@(() => model.DriverId)"
+                                   Label="@L[model.GetMemberDescription(x=>x.DriverId)]"
                                    Required="true"
                                    RequiredError="@L["Pilot is required."]"
-                        @bind-Value="@model.PilotId">
-                            @foreach (var item in PilotService.DataSource.Where(x => x.TenantId == model.TenantId))
+                                   @bind-Value="@model.DriverId">
+                            @foreach (var item in UserService.DataSource.Where(x => x.TenantId == model.TenantId))
                             {
-                                <MudSelectItem Class="d-flex align-items-center" T="int?" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePicture" Height="14" /></MudAvatar> @item.DisplayName</MudSelectItem>
+                                <MudSelectItem Class="d-flex align-items-center" T="string" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePictureDataUrl" Height="14" /></MudAvatar> @item.DisplayName</MudSelectItem>
                             }
                         </MudSelect>
                     </MudItem>
@@ -66,7 +66,7 @@
                                        Required="true"
                                        RequiredError="@L["Organization is required."]"
                             @bind-Value="@model.TenantId">
-                                @foreach (var item in TenantsService.DataSource)
+                                @foreach (var item in TenantService.DataSource)
                                 {
                                     <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                                 }
@@ -101,12 +101,7 @@
     AddEditTripReportCommand model { get; set; } = new();
 
     [Inject] private IMediator _mediator { get; set; } = default!;
-    [Inject]
-    private ITenantService TenantsService { get; set; } = default!;
-    [Inject]
-    private IPilotService PilotService { get; set; } = default!;
-    [Inject]
-    private IItineraryService ItineraryService { get; set; } = default!;
+ 
     [Inject]
     protected NavigationManager NavigationManager { get; set; } = null!;
     protected override  Task OnInitializedAsync()

@@ -16,7 +16,9 @@ public class AddEditItineraryCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("Bus Id")]
     public int? BusId {get;set;} 
     [Description("Pilot Id")]
-    public int? PilotId {get;set;} 
+    public int? PilotId {get;set;}
+    [Description("Driver Id")]
+    public string? DriverId { get; set; }
     [Description("School Id")]
     public int? SchoolId {get;set;} 
     [Description("First Time")]
