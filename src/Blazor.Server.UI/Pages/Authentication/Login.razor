@@ -143,9 +143,12 @@
                         }
                         else
                         {
-                            var roles =await UserManager.GetRolesAsync(user);
+                            var roles = await UserManager.GetRolesAsync(user);
                             await TokenProvider.Login(user);
-                            if (roles.Any(d=>d==RoleName.Pilots))
+                            if (roles.Any(x => x == RoleName.Pilots) &&
+                                (!roles.Any(x => x == RoleName.Admin) &&
+                                    !roles.Any(x => x == RoleName.SuperAdmin))
+                                )
                             {
                                 NavigationManager.NavigateTo("/mobile/starttrip", true);
                             }

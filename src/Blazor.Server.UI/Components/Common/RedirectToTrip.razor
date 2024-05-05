@@ -11,8 +11,8 @@
         var auth = await AuthState;
         var roles = auth.User.GetRoles();
         if (roles.Any(x =>x == RoleName.Pilots) && 
-            !roles.Any(x => x == RoleName.Admin) &&
-            !roles.Any(x => x == RoleName.SuperAdmin)
+            (!roles.Any(x => x == RoleName.Admin) &&
+            !roles.Any(x => x == RoleName.SuperAdmin))
             )
         {
             NavigationManager.NavigateTo("/mobile/starttrip");
