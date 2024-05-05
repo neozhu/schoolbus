@@ -1,0 +1,19 @@
+@inject IStringLocalizer<SharedResource> L
+<MudDialog>
+    <DialogContent>
+        <MudText>@ContentText</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(()=>MudDialog.Close())">@ConstantString.Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public string? ContentText { get; set; }
+
+ 
+}
