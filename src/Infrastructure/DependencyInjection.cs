@@ -28,7 +28,7 @@ public static class DependencyInjection
         services.AddSingleton(s => s.GetRequiredService<IOptions<AppConfigurationSettings>>().Value);
         services.AddSingleton(s => s.GetRequiredService<IOptions<IdentitySettings>>().Value);
 
-
+        services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ITenantProvider, TenantProvider>();
         services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();

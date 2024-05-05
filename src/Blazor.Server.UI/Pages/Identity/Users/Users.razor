@@ -314,12 +314,9 @@
     private LazyCacheEntryOptions Options => new LazyCacheEntryOptions().SetAbsoluteExpiration(RefreshInterval, ExpirationMode.LazyExpiration);
     [Inject]
     private IAppCache Cache { get; set; } = null!;
-    [Inject]
-    private ITenantProvider TenantProvider { get; set; } = default!;
-    [Inject]
-    private ITenantService TenantsService { get; set; } = null!;
-    [Inject]
-    private IUserDataProvider UserDataProvider { get; set; } = null!;
+ 
+  
+
     [Inject]
     private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;
     [Inject]
@@ -416,7 +413,8 @@
     private async Task OnRefresh()
     {
         await _table.ReloadServerData();
-        await UserDataProvider.Refresh();
+        await UserService.Refresh();
+        await TenantService.Refresh();
     }
     private async Task OnCreate()
     {
@@ -447,6 +445,7 @@
 
             if (state.Succeeded)
             {
+                await  UserService.Refresh();
                 if (model.AssignedRoles is not null && model.AssignedRoles.Length > 0)
                 {
                     await UserManager.AddToRolesAsync(applicationUser, model.AssignedRoles);
@@ -831,7 +830,7 @@
             {
                 if (!UserManager.Users.Any(x => x.UserName == user.UserName))
                 {
-                    var tenantId = TenantsService.DataSource.Any(x => x.Name == user.TenantName) ? TenantsService.DataSource.First(x => x.Name == user.TenantName).Id : TenantsService.DataSource.First().Id;
+                    var tenantId = TenantService.DataSource.Any(x => x.Name == user.TenantName) ? TenantService.DataSource.First(x => x.Name == user.TenantName).Id : TenantService.DataSource.First().Id;
                     user.TenantId = tenantId;
                     var iResult = await UserManager.CreateAsync(user);
                     if (iResult.Succeeded)

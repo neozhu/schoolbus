@@ -14,3 +14,17 @@ public enum AccidentLevel
     Trouble
  
 }
+
+
+public enum InfractionType
+{
+    [Description("Moving around while bus in motion")]
+    Moving_around_while_bus_in_motion,
+    [Description("Leaving assigned seat")]
+    Leaving_assigned_seat,
+    [Description("Throw object/garbage")]
+    Throw_object_garbage,
+    [Description("Others")]
+    Others
+
+}
