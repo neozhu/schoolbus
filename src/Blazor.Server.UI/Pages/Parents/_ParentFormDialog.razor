@@ -6,7 +6,6 @@
 @using CleanArchitecture.Blazor.Application.Services.DataServices;
 @using SixLabors.ImageSharp
 @using SixLabors.ImageSharp.Processing
-@using Color= MudBlazor.Color
 @using Size=MudBlazor.Size
 @inherits MudComponentBase
 @inject IStringLocalizer<Parents> L
@@ -59,7 +58,7 @@
                                    Required="true"
                                    RequiredError="@L["Organization is required."]"
                         @bind-Value="@model.TenantId">
-                            @foreach (var item in TenantsService.DataSource)
+                            @foreach (var item in TenantService.DataSource)
                             {
                                 <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                             }
@@ -171,10 +170,7 @@
     [Inject] private IMediator _mediator { get; set; } = default!;
     [Parameter] public UserProfile UserProfile { get; set; } = null!;
     [Inject] private IUploadService _uploadService { get; set; } = default!;
-    [Inject]
-    private ITenantService TenantsService { get; set; } = default!;
-    [Inject]
-    private ISchoolService SchoolService { get; set; } = default!;
+ 
 
     void SelectedItemsChanged(HashSet<StudentDto> items)
     {

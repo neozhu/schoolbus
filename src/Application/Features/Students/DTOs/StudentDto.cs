@@ -49,8 +49,8 @@ public class StudentDto
     public string TenantId { get; set; } = null!;
     [Description("Organization")]
     public TenantDto Tenant { get; set; } = null!;
-
-
+    [Description("Grade")]
+    public string? Grade { get; set; }
 
     public List<ParentDto> Parents { get; set; } = new List<ParentDto>();
     public List<TransportLogDto> TransportLogs { get; set; } = new List<TransportLogDto>();
@@ -58,7 +58,8 @@ public class StudentDto
     {
         public Mapping()
         {
-            CreateMap<Student, StudentDto>().ReverseMap();
+            CreateMap<Student, StudentDto>(MemberList.None).ForMember(x=>x.Parents,y=>y.Ignore()).ForMember(x=>x.TransportLogs,y=>y.Ignore());
+            CreateMap<StudentDto,Student>(MemberList.None).ForMember(x => x.Parents, y => y.Ignore()).ForMember(x => x.TransportLogs, y => y.Ignore()).ForMember(x=>x.School,y=>y.Ignore());
         }
     }
 }

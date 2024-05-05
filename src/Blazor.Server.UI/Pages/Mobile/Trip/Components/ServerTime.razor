@@ -1,0 +1,25 @@
+﻿@using ActualLab.Fusion
+@using ActualLab.Fusion.Blazor
+@using ActualLab.Fusion.Extensions
+@using ActualLab.Fusion.UI
+@using ActualLab.Time
+@inherits ComputedStateComponent<Moment>
+@inject IFusionTime Time
+
+@inject IFusionTime Time
+@{
+    var state = State.ValueOrDefault;
+    var error = State.Error;
+}
+<MudText Typo="Typo.h3" Style="font-weight:700;line-height:70px;font-size:70px">@state.ToDateTime().ToString("hh:mm:ss tt")</MudText>
+<div class="d-flex flex-row align-center   gap-1 ">
+    <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Title="date" />
+    <MudText Typo="Typo.body2" Style="font-weight:400;line-height:28px;font-size:24px">@state.ToDateTime().ToString("dddd, MMMM d") </MudText>
+</div>
+@code {
+    protected override ComputedState<Moment>.Options GetStateOptions()
+       => new() { UpdateDelayer = new UpdateDelayer(Services.UIActionTracker(), 0.5) };
+
+    protected override Task<Moment> ComputeState(CancellationToken cancellationToken)
+        => Time.Now(TimeSpan.FromSeconds(1));
+}

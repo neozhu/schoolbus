@@ -45,15 +45,16 @@ public class ExportStudentsQueryHandler :
                 new Dictionary<string, Func<StudentDto, object?>>()
                 {
                     {_localizer[_dto.GetMemberDescription(x=>x.UID)],item => item.UID}, 
-{_localizer[_dto.GetMemberDescription(x=>x.LastName)],item => item.LastName}, 
-{_localizer[_dto.GetMemberDescription(x=>x.FirstName)],item => item.FirstName}, 
-{_localizer[_dto.GetMemberDescription(x=>x.ProfilePicture)],item => item.ProfilePicture}, 
-{_localizer[_dto.GetMemberDescription(x=>x.Phone)],item => item.Phone}, 
-{_localizer[_dto.GetMemberDescription(x=>x.Description)],item => item.Description}, 
-{_localizer[_dto.GetMemberDescription(x=>x.Status)],item => item.Status}, 
-{_localizer[_dto.GetMemberDescription(x=>x.SchoolId)],item => item.SchoolId}, 
-{_localizer[_dto.GetMemberDescription(x=>x.TenantId)],item => item.TenantId}, 
-
+                    {_localizer[_dto.GetMemberDescription(x=>x.LastName)],item => item.LastName}, 
+                    {_localizer[_dto.GetMemberDescription(x=>x.FirstName)],item => item.FirstName}, 
+                    {_localizer[_dto.GetMemberDescription(x=>x.ProfilePicture)],item => item.ProfilePicture}, 
+                    {_localizer[_dto.GetMemberDescription(x=>x.Phone)],item => item.Phone}, 
+                    {_localizer[_dto.GetMemberDescription(x=>x.Description)],item => item.Description}, 
+                    {_localizer[_dto.GetMemberDescription(x=>x.Status)],item => item.Status}, 
+                    {_localizer[_dto.GetMemberDescription(x=>x.SchoolId)],item => item.SchoolId},
+                    {_localizer[_dto.GetMemberDescription(x=>x.School)],item => item.School.Name},
+                    {_localizer[_dto.GetMemberDescription(x=>x.TenantId)],item => item.TenantId},
+                    {_localizer[_dto.GetMemberDescription(x=>x.Tenant)],item => item.Tenant.Name},
                 }
                 , _localizer[_dto.GetClassDescription()]);
             return await Result<byte[]>.SuccessAsync(result);;

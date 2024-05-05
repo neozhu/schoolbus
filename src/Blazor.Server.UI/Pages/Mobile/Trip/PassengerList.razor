@@ -1,0 +1,127 @@
+﻿@page "/mobile/passengerlist"
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Done
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IBrowserViewportService BrowserViewportService
+@implements IAsyncDisposable
+@implements IBrowserViewportObserver
+<PageTitle>General information</PageTitle>
+
+<MudPaper Elevation="0" Class="d-flex flex-column justify-space-between flex-grow-1 pa-4 mt-10 gap-4">
+    @if (_tripReport is null)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+    }
+    else
+    {
+        <GeneralInformation Data="@_tripReport"></GeneralInformation>
+    }
+    <div class="d-flex flex-row justify-space-between align-center gap-2">
+        <div class="d-flex flex-column my-2 gap-1">
+            <MudText Typo="Typo.h6">Total passengers on board</MudText>
+            <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        </div>
+        <StudentOnBoardTotalCard @ref="@totalCard" RouteId="@RouteId"></StudentOnBoardTotalCard>
+    </div>
+    <MudDivider></MudDivider>
+    <div class="d-flex flex-row justify-space-between align-center gap-2">
+        <div class="d-flex flex-column my-2 gap-1">
+            <MudText Typo="Typo.h6">Passenger list</MudText>
+            <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        </div>
+        <div class="d-flex flex-column gap-2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Done">Done</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Large" OnClick="OnReportIncident">Report Incident</MudButton>
+        </div>
+
+    </div>
+    <OnBoardStudentList RouteId="@RouteId"></OnBoardStudentList>
+
+</MudPaper>
+
+@code {
+    [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
+    private StudentOnBoardTotalCard totalCard;
+    public int RouteId => UserProfile.RouteId??0;
+    private int _width = 0;
+    private int _height = 0;
+    private int scanwith = 650;
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+    bool processingScan;
+    private string search { get; set; }
+    private TripReportDto? _tripReport = null;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRoute();
+    }
+    private async Task LoadRoute()
+    {
+        _tripReport = await Mediator.Send(new GetTripReportByIdQuery() { Id = RouteId });
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+    private async Task Done()
+    {
+        var result = await Mediator.Send(new DoneTripReportCommand(_tripReport.Id));
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/pages/starttrip");
+            Snackbar.Add("Finished", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add($"{result.ErrorMessage}", Severity.Error);
+        }
+    }
+
+    private async Task OnReportIncident()
+    {
+        var reportIncident = new AddAccidentCommand(_tripReport.Id, _tripReport.TenantId);
+        reportIncident.ReportDateTime = DateTime.Now;
+
+        var options1 = new DialogOptions { NoHeader = false, DisableBackdropClick = true, CloseOnEscapeKey = false, CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters1 = new DialogParameters<ReportIncidentDialog>
+ {
+     { x => x.Model, reportIncident },
+     { x => x.DriverName, _tripReport.Driver?.DisplayName },
+     { x => x.Route, $"{_tripReport.Itinerary?.StartingStation} - {_tripReport.Itinerary?.TerminalStation}" },
+     { x => x.SchoolName, $"{_tripReport.Itinerary?.School?.Name}" },
+
+ };
+        var dialog1 = DialogService.Show<ReportIncidentDialog>("Report Incident", parameters1, options1);
+        var state1 = await dialog1.Result;
+    }
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        _width = browserViewportEventArgs.BrowserWindowSize.Width;
+        _height = browserViewportEventArgs.BrowserWindowSize.Height;
+
+        if (_width >= 960)
+        {
+            scanwith = 832;
+        }
+        else
+        {
+            scanwith = _width - 10;
+        }
+
+        return InvokeAsync(StateHasChanged);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        await BrowserViewportService.UnsubscribeAsync(this);
+
+    }
+
+ 
+}
