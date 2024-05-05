@@ -59,6 +59,7 @@ public class StudentDto
         public Mapping()
         {
             CreateMap<Student, StudentDto>(MemberList.None).ForMember(x=>x.Parents,y=>y.Ignore()).ForMember(x=>x.TransportLogs,y=>y.Ignore());
+            CreateMap<StudentDto,Student>(MemberList.None).ForMember(x => x.Parents, y => y.Ignore()).ForMember(x => x.TransportLogs, y => y.Ignore()).ForMember(x=>x.School,y=>y.Ignore());
         }
     }
 }
