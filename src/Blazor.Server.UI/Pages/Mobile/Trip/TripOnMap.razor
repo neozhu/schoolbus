@@ -24,9 +24,7 @@
             <MudText Typo="Typo.h6">Total passengers on board</MudText>
             <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
         </div>
-        <MudPaper Elevation="0" Class="pa-3" Style="height:80px; width:160px;">
-            <div class="d-lg-block mud-theme-tertiary rounded px-4" style="height:100%; width:100%;"><MudText Typo="Typo.h3">20</MudText></div>
-        </MudPaper>
+        <StudentOnBoardTotalCard @ref="@totalCard" RouteId="@RouteId"></StudentOnBoardTotalCard>
     </div>
     <div class="mapcontainer pa-0">
         <GoogleMap @ref="@_map1" Id="map1" Options="@_mapOptions" Height="650px" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
@@ -34,6 +32,7 @@
 </MudPaper>
 @code {
     [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
+    private StudentOnBoardTotalCard totalCard;
     public int RouteId => UserProfile.RouteId ?? 0;
     private string start { get; set; } = "2285 South Federal Blvd";
     private string final { get; set; } = "2160 S Cook Street";

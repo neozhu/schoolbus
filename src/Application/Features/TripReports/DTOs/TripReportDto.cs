@@ -108,7 +108,7 @@ public class TripReportToPlainDto
 }
 
 
-[Description("TripAccidents")]
+[Description("TripLog")]
 public class TripLogDto
 {
     public int Id { get; set; }
@@ -116,7 +116,6 @@ public class TripLogDto
     public string? UID { get; set; }
     public StudentDto Student { get; set; } = null!;
     public int TripId { get; set; }
-    // public TripReportDto TripReport { get; set; } = null!;
     public DateTime? GetOnDateTime { get; set; }
     public string? Location { get; set; }
     public double? Longitude { get; set; }

@@ -3,6 +3,7 @@
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.DTOs
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.GetById
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.AddEdit
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Start
 @attribute [Authorize(Roles = "Pilots")]
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<StartTrip> L
@@ -65,7 +66,7 @@
 </MudPaper>
 @code {
     [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
-    public AddEditTripReportCommand model = new() {   };
+    public StartTripReportCommand model = new() { };
     private MudForm? _form;
     private string _tenantId => UserProfile.TenantId;
     private List<ItineraryDto> _itineraries=new();

@@ -1,4 +1,6 @@
 ﻿@page "/mobile/passengerlist"
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Done
 @using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById
 @inject NavigationManager NavigationManager
@@ -23,9 +25,7 @@
             <MudText Typo="Typo.h6">Total passengers on board</MudText>
             <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
         </div>
-        <MudPaper Elevation="0" Class="pa-3" Style="height:80px; width:160px;">
-            <div class="d-lg-block mud-theme-tertiary rounded px-4" style="height:100%; width:100%;"><MudText Typo="Typo.h3">20</MudText></div>
-        </MudPaper>
+        <StudentOnBoardTotalCard @ref="@totalCard" RouteId="@RouteId"></StudentOnBoardTotalCard>
     </div>
     <MudDivider></MudDivider>
     <div class="d-flex flex-row justify-space-between align-center gap-2">
@@ -33,39 +33,25 @@
             <MudText Typo="Typo.h6">Passenger list</MudText>
             <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
         </div>
-        <div class="d-flex align-center">
-            <MudButton Size="Size.Large" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" OnClick="OnReportIncident">Report an incident</MudButton>
+        <div class="d-flex flex-column gap-2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Done">Done</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" Size="Size.Large" OnClick="OnReportIncident">Report Incident</MudButton>
         </div>
+
     </div>
-    <MudSimpleTable Style="overflow-x: auto;">
-        <tbody>
-            @for(int i=1;i<21;i++){
-                <tr>
-                    <td width="80px" style="padding:10px"><MudAvatar Size="Size.Large"  ></MudAvatar></td>
-                    <td width="40px" style="padding:10px">#@i</td>
-                    <td style="padding:10px">Sarah Miller</td>
-                    <td width="60px" style="padding:10px"><MudChip Color="Color.Success">Normal</MudChip></td>
-                    <td width="60px" style="padding:10px"><MudButton>Report</MudButton></td>
-                </tr>
-            }
-          
-            
-        </tbody>
-    </MudSimpleTable>
+    <OnBoardStudentList RouteId="@RouteId"></OnBoardStudentList>
+
 </MudPaper>
 
 @code {
     [CascadingParameter(Name = "UserProfile")] private UserProfile? UserProfile { get; set; }
-
-    public int RouteId => UserProfile.RouteId ?? 0;
+    private StudentOnBoardTotalCard totalCard;
+    public int RouteId => UserProfile.RouteId??0;
     private int _width = 0;
     private int _height = 0;
     private int scanwith = 650;
     Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
-    string? foundBarcode = "Here you will see scanned barcode...";
     bool processingScan;
-    private string start { get; set; } = "2285 South Federal Blvd";
-    private string final { get; set; } = "2160 S Cook Street";
     private string search { get; set; }
     private TripReportDto? _tripReport = null;
     protected override async Task OnInitializedAsync()
@@ -84,9 +70,37 @@
             await InvokeAsync(StateHasChanged);
         }
     }
+    private async Task Done()
+    {
+        var result = await Mediator.Send(new DoneTripReportCommand(_tripReport.Id));
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/pages/starttrip");
+            Snackbar.Add("Finished", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add($"{result.ErrorMessage}", Severity.Error);
+        }
+    }
 
+    private async Task OnReportIncident()
+    {
+        var reportIncident = new AddAccidentCommand(_tripReport.Id, _tripReport.TenantId);
+        reportIncident.ReportDateTime = DateTime.Now;
 
+        var options1 = new DialogOptions { NoHeader = false, DisableBackdropClick = true, CloseOnEscapeKey = false, CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var parameters1 = new DialogParameters<ReportIncidentDialog>
+ {
+     { x => x.Model, reportIncident },
+     { x => x.DriverName, _tripReport.Driver?.DisplayName },
+     { x => x.Route, $"{_tripReport.Itinerary?.StartingStation} - {_tripReport.Itinerary?.TerminalStation}" },
+     { x => x.SchoolName, $"{_tripReport.Itinerary?.School?.Name}" },
 
+ };
+        var dialog1 = DialogService.Show<ReportIncidentDialog>("Report Incident", parameters1, options1);
+        var state1 = await dialog1.Result;
+    }
     Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
     {
         _width = browserViewportEventArgs.BrowserWindowSize.Width;
@@ -109,16 +123,5 @@
 
     }
 
-    private async Task OnReportIncident()
-    {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
-        var dialog = await DialogService.ShowAsync<ReportInfor>("Report", options);
-        var result = await dialog.Result;
-
-    }
-    private async Task OnConfirm()
-    {
-        Snackbar.Add("Confirmed", Severity.Success);
-        NavigationManager.NavigateTo("/mobile/scan");
-    }
+ 
 }

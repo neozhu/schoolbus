@@ -37,4 +37,5 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\EmailTemplates\*" />
     </ItemGroup>
+
 </Project>
