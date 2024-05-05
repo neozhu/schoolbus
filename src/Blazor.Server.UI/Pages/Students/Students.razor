@@ -50,60 +50,60 @@
                 <div class="d-flex">
                     <MudHidden Breakpoint="Breakpoint.SmAndDown">
                         <MudButton DisableElevation Variant="Variant.Outlined"
-                                    Size="Size.Small"
-                                    Disabled="@_loading"
-                                    OnClick="@(()=>OnRefresh())"
-                                    StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Primary"
-                                    Style="margin-right: 4px; margin-bottom:4px">@ConstantString.Refresh</MudButton>
-                         @if (_canCreate)
+                                   Size="Size.Small"
+                                   Disabled="@_loading"
+                                   OnClick="@(()=>OnRefresh())"
+                                   StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Primary"
+                                   Style="margin-right: 4px; margin-bottom:4px">@ConstantString.Refresh</MudButton>
+                        @if (_canCreate)
                         {
                             <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
-                                        StartIcon="@Icons.Material.Filled.Add"
-                                        Size="Size.Small"
-                                        Disabled="@_loading"
-                                        OnClick="OnCreate"
-                                        Style="margin-right: 4px; margin-bottom:4px"
-                                        IconColor="Color.Surface">@ConstantString.New</MudButton>
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       Size="Size.Small"
+                                       Disabled="@_loading"
+                                       OnClick="OnCreate"
+                                       Style="margin-right: 4px; margin-bottom:4px"
+                                       IconColor="Color.Surface">@ConstantString.New</MudButton>
                             <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
-                                        StartIcon="@Icons.Material.Filled.ContentCopy"
-                                        Size="Size.Small"
-                                        Disabled="@(_selectedItems.Count!=1)"
-                                        OnClick="OnClone"
-                                        Style="margin-right: 4px; margin-bottom:4px"
-                                        IconColor="Color.Surface">@ConstantString.Clone</MudButton>
+                                       StartIcon="@Icons.Material.Filled.ContentCopy"
+                                       Size="Size.Small"
+                                       Disabled="@(_selectedItems.Count!=1)"
+                                       OnClick="OnClone"
+                                       Style="margin-right: 4px; margin-bottom:4px"
+                                       IconColor="Color.Surface">@ConstantString.Clone</MudButton>
                         }
                         @if (_canDelete)
                         {
                             <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Error"
-                                        StartIcon="@Icons.Material.Filled.Delete"
-                                        Disabled="@(!(_selectedItems.Count>0))"
-                                        Size="Size.Small"
-                                        Style="margin-right: 4px; margin-bottom:4px"
-                                        OnClick="OnDeleteChecked"
-                                        IconColor="Color.Surface">@ConstantString.Delete</MudButton>
+                                       StartIcon="@Icons.Material.Filled.Delete"
+                                       Disabled="@(!(_selectedItems.Count>0))"
+                                       Size="Size.Small"
+                                       Style="margin-right: 4px; margin-bottom:4px"
+                                       OnClick="OnDeleteChecked"
+                                       IconColor="Color.Surface">@ConstantString.Delete</MudButton>
                         }
                         @if (_canAssign)
                         {
                             <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Info"
-                                        StartIcon="@Icons.Material.Filled.AssignmentInd"
-                                        Disabled="@(!(_selectedItems.Count>0))"
-                                        Size="Size.Small"
-                                        Style="margin-right: 4px; margin-bottom:4px"
-                                        OnClick="OnAssignItinerary"
-                                        IconColor="Color.Surface">@L["Assign Itinerary"]</MudButton>
+                                       StartIcon="@Icons.Material.Filled.AssignmentInd"
+                                       Disabled="@(!(_selectedItems.Count>0))"
+                                       Size="Size.Small"
+                                       Style="margin-right: 4px; margin-bottom:4px"
+                                       OnClick="OnAssignItinerary"
+                                       IconColor="Color.Surface">@L["Assign Itinerary"]</MudButton>
                         }
                         @if (_canExport)
                         {
                             <MudLoadingButton @bind-Loading="_exporting" DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
-                                               Label="@ConstantString.Export"
-                                               Disabled="@_loading"
-                                               StartIcon="@Icons.Custom.FileFormats.FileExcel"
-                                               Size="Size.Small"
-                                               Style="margin-right: 4px; margin-bottom:4px"
-                                               OnClick="OnExport"
-                                               IconColor="Color.Surface">
-                                 @ConstantString.Export
-                             </MudLoadingButton>
+                                              Label="@ConstantString.Export"
+                                              Disabled="@_loading"
+                                              StartIcon="@Icons.Custom.FileFormats.FileExcel"
+                                              Size="Size.Small"
+                                              Style="margin-right: 4px; margin-bottom:4px"
+                                              OnClick="OnExport"
+                                              IconColor="Color.Surface">
+                                @ConstantString.Export
+                            </MudLoadingButton>
                         }
                         @if (_canImport)
                         {
@@ -134,22 +134,22 @@
                         @if (_canCreate)
                         {
                             <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Primary"
-                                        StartIcon="@Icons.Material.Filled.Add"
-                                        Size="Size.Small"
-                                        Disabled="@_loading"
-                                        OnClick="OnCreate"
-                                        Style="margin-right: 4px; margin-bottom:4px"
-                                        IconColor="Color.Surface">@ConstantString.New</MudButton>
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       Size="Size.Small"
+                                       Disabled="@_loading"
+                                       OnClick="OnCreate"
+                                       Style="margin-right: 4px; margin-bottom:4px"
+                                       IconColor="Color.Surface">@ConstantString.New</MudButton>
                         }
                         @if (_canDelete)
                         {
                             <MudButton DisableElevation Variant="Variant.Outlined" Color="Color.Error"
-                                        StartIcon="@Icons.Material.Filled.Delete"
-                                        Disabled="@(!(_selectedItems.Count>0))"
-                                        Size="Size.Small"
-                                        Style="margin-right: 4px; margin-bottom:4px"
-                                        OnClick="OnDeleteChecked"
-                                        IconColor="Color.Surface">@ConstantString.Delete</MudButton>
+                                       StartIcon="@Icons.Material.Filled.Delete"
+                                       Disabled="@(!(_selectedItems.Count>0))"
+                                       Size="Size.Small"
+                                       Style="margin-right: 4px; margin-bottom:4px"
+                                       OnClick="OnDeleteChecked"
+                                       IconColor="Color.Surface">@ConstantString.Delete</MudButton>
                         }
                     </MudHidden>
                 </div>
@@ -207,6 +207,7 @@
                 </div>
             </CellTemplate>
         </PropertyColumn>
+        <PropertyColumn Property="x => x.Grade" Title="@L[_currentDto.GetMemberDescription(x=>x.Grade)]" />
         <PropertyColumn Property="x => x.Status" Title="@L[_currentDto.GetMemberDescription(x=>x.Status)]" />
         <PropertyColumn Property="x => x.Parents" Title="@L[_currentDto.GetMemberDescription(x=>x.Parents)]">
             <CellTemplate>
@@ -267,20 +268,20 @@
             {
                 <MudPaper Class="d-flex flex-row gap-2 align-content-center justify-space-between" Elevation="3">
                     <div class="d-flex align-self-center gap-2 px-3">
-                    <MudAvatar Size="Size.Large">
-                        <MudImage Src="@StudentInfo.ProfilePicture"></MudImage>
-                    </MudAvatar>
-                    <div class="d-flex flex-column align-self-center flex-grow-1 ml-2">
-                        <p class="mud-text-secondary">@StudentInfo.School.Name</p>
-                        <p>@StudentInfo.DisplayName</p>
-                    </div>
+                        <MudAvatar Size="Size.Large">
+                            <MudImage Src="@StudentInfo.ProfilePicture"></MudImage>
+                        </MudAvatar>
+                        <div class="d-flex flex-column align-self-center flex-grow-1 ml-2">
+                            <p class="mud-text-secondary">@StudentInfo.School.Name</p>
+                            <p>@StudentInfo.DisplayName</p>
+                        </div>
                     </div>
                     <div class="d-flex flex-column align-self-center">
                         <MudBarcode Height="100" Width="100" Value="@StudentInfo.UID"></MudBarcode>
                     </div>
                 </MudPaper>
 
-               <TransportLogCard StudentId="@StudentInfo.Id"></TransportLogCard>
+                <TransportLogCard StudentId="@StudentInfo.Id"></TransportLogCard>
             }
         }
     </div>
@@ -306,8 +307,7 @@
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
 
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
     [Inject]
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]
@@ -395,11 +395,22 @@
     }
     private async Task OnAssignItinerary()
     {
-        var command = new AssignItineraryCommand() { TenantId = UserProfile.TenantId, Itinerary = null, Students = _selectedItems.ToList() };
+        if (_selectedItems.Select(x => x.TenantId).Distinct().Count() > 1)
+        {
+            var alert = DialogService.Show<AlertDialog>(L["Message"], new DialogParameters<AlertDialog>
+            {
+                {x=>x.ContentText,L["You can only select students from the same organization."]}
+
+            }, new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = true });
+            return;
+        }
+
+        var command = new AssignItineraryCommand() { TenantId = _selectedItems.First().TenantId, Itinerary = null, Students = _selectedItems.ToList() };
         var parameters = new DialogParameters
             {
                 { nameof(AssignItineraryDialog.UserProfile),UserProfile },
                 { nameof(AssignItineraryDialog.model),command },
+ 
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
         var dialog = DialogService.Show<AssignItineraryDialog>

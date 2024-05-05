@@ -1,7 +1,5 @@
 ﻿@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant;
 @using CleanArchitecture.Blazor.Application.Features.Buses.Commands.AddEdit
-
-@inherits MudComponentBase
 @inject IStringLocalizer<Buses> L
 
 <MudDialog>
@@ -29,7 +27,7 @@
                                    Required="true"
                                    RequiredError="@L["Organization is required."]"
                         @bind-Value="@model.TenantId">
-                            @foreach (var item in TenantsService.DataSource)
+                            @foreach (var item in TenantService.DataSource)
                             {
                                 <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                             }
@@ -56,8 +54,7 @@
     [EditorRequired][Parameter] public AddEditBusCommand model { get; set; } = null!;
     [Inject] private IMediator _mediator { get; set; } = default!;
     [Parameter] public UserProfile UserProfile { get; set; } = null!;
-    [Inject]
-    private ITenantService TenantsService { get; set; } = default!;
+ 
     async Task Submit()
     {
         try

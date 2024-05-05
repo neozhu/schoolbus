@@ -1,0 +1,228 @@
+@inherits OwningComponentBase
+@using Blazor.Server.UI.Pages.Identity.Users
+@using LazyCache
+@using CleanArchitecture.Blazor.Application.Common.Interfaces.Identity
+@using CleanArchitecture.Blazor.Application.Common.Interfaces.MultiTenant
+@using CleanArchitecture.Blazor.Application.Constants.ClaimTypes
+@using CleanArchitecture.Blazor.Application.Constants.Role
+@using CleanArchitecture.Blazor.Application.Features.Identity.Dto
+@using Blazor.Server.UI.Pages.Identity.Roles
+@using BlazorDownloadFile
+@using System.Security.Claims
+@using System.ComponentModel
+@using System.Linq.Expressions
+@using Severity = MudBlazor.Severity
+@using CleanArchitecture.Blazor.Application.Common.ExceptionHandlers
+@using System.Reflection
+@implements IDisposable
+@page "/pages/drivers"
+@inject IStringLocalizer<Users> L
+@attribute [Authorize(Policy = Permissions.Pilots.View)]
+<PageTitle>@Title</PageTitle>
+<style>
+    .mud-table-toolbar {
+        height: 120px !important;
+    }
+</style>
+
+<MudDataGrid @ref="_table"
+             FixedHeader="true"
+             FixedFooter="false"
+             Height="calc(100vh - 300px)"
+             @bind-RowsPerPage="_defaultPageSize"
+             Hover="true"
+             MultiSelection="true"
+             @bind-SelectedItems="_selectedItems"
+             Loading="@_loading"
+             ServerData="@(ServerReload)">
+    <ToolBarContent>
+        <div class="d-flex align-start flex-grow-1">
+            <div class="d-flex gap-4">
+                <MudIcon Icon="@Icons.Material.Filled.FollowTheSigns" Size="Size.Large" />
+                <div class="d-flex flex-column">
+                    <MudText Typo="Typo.caption">@L["Drivers"]</MudText>
+                </div>
+            </div>
+            <div class="flex-grow-1" />
+            <div class="d-flex flex-column justify-end">
+                <div class="d-flex">
+
+                    <MudButton DisableElevation Variant="Variant.Outlined"
+                               Size="Size.Small"
+                               Disabled="@_loading"
+                               OnClick="@(OnRefresh)"
+                               StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Primary"
+                               Style="margin-right: 4px; margin-bottom:4px">@ConstantString.Refresh</MudButton>
+
+                </div>
+
+                <MudStack Row="true" AlignItems="AlignItems.Stretch">
+                    <MudTextField T="string" Immediate="false" ValueChanged="@(OnSearch)" Value="@_searchString" Placeholder="@ConstantString.Search" Adornment="Adornment.End"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Small"></MudTextField>
+                </MudStack>
+
+
+            </div>
+        </div>
+    </ToolBarContent>
+    <Columns>
+        <SelectColumn ShowInFooter="false"></SelectColumn>
+        <PropertyColumn Property="x => x.UserName" Title="@L[_currentDto.GetMemberDescription(x=>x.UserName)]">
+            <CellTemplate>
+                <div class="d-flex align-center">
+
+                    <MudAvatar>
+                        @if (string.IsNullOrEmpty(context.Item.ProfilePictureDataUrl))
+                        {
+                            @context.Item.UserName.First()
+                        }
+                        else
+                        {
+                            <MudImage Src="@context.Item.ProfilePictureDataUrl"></MudImage>
+                        }
+                    </MudAvatar>
+
+                    <div class="pl-3">
+                        <MudText Class="ml-2 align-self-center">@context.Item.UserName</MudText>
+                        <MudText Typo="Typo.body2" Class="ml-2 align-self-center">@context.Item.Email</MudText>
+                    </div>
+                </div>
+            </CellTemplate>
+            <FooterTemplate>
+                @L["Selected"]: @_selectedItems.Count
+            </FooterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Email" Title="@L["Full Name"]">
+            <CellTemplate>
+                @context.Item.DisplayName
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.PhoneNumber" Title="@L[_currentDto.GetMemberDescription(x=>x.PhoneNumber)]">
+            <CellTemplate>
+                @context.Item.PhoneNumber
+            </CellTemplate>
+        </PropertyColumn>
+
+        <PropertyColumn Property="x => x.TenantId" Title="@L[_currentDto.GetMemberDescription(x=>x.TenantName)]">
+            <CellTemplate>
+                <div class="d-flex flex-column">
+                    <MudText Typo="Typo.body2">@context.Item.TenantName</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.TenantId</MudText>
+                </div>
+            </CellTemplate>
+        </PropertyColumn>
+
+    </Columns>
+
+    <PagerContent>
+        <MudDataGridPager PageSizeOptions="@(new[]{10,15,30,50,100,500,1000})" />
+    </PagerContent>
+</MudDataGrid>
+
+
+@code {
+
+    private int _defaultPageSize = 15;
+    private HashSet<ApplicationUserDto> _selectedItems = new();
+    private readonly ApplicationUserDto _currentDto = new();
+    private string _searchString = string.Empty;
+    private string Title { get; set; } = "Drivers";
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+    private UserManager<ApplicationUser> UserManager { get; set; } = default!;
+    private RoleManager<ApplicationRole> RoleManager { get; set; } = default!;
+    private TimeSpan RefreshInterval => TimeSpan.FromSeconds(60);
+    private LazyCacheEntryOptions Options => new LazyCacheEntryOptions().SetAbsoluteExpiration(RefreshInterval, ExpirationMode.LazyExpiration);
+    [Inject]
+    private IAppCache Cache { get; set; } = null!;
+    private bool IsSuperAdmin = false;
+
+
+    [Inject]
+    private IBlazorDownloadFileService BlazorDownloadFileService { get; set; } = null!;
+    [Inject]
+    private IExcelService ExcelService { get; set; } = null!;
+    [Inject]
+    private IMapper Mapper { get; set; } = null!;
+    private MudDataGrid<ApplicationUserDto> _table = null!;
+    private bool _processing;
+    private bool _showPermissionsDrawer;
+    private bool _canCreate;
+    private bool _canSearch;
+    private bool _canEdit;
+    private bool _canDelete;
+    private bool _canActive;
+    private bool _canManageRoles;
+    private bool _canRestPassword;
+    private bool _canManagePermissions;
+    private bool _canImport;
+    private bool _canExport;
+    private bool _loading;
+    private bool _exporting;
+    private bool _uploading;
+    private List<string?> _roles = new();
+    private string? _searchRole;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        UserManager = ScopedServices.GetRequiredService<UserManager<ApplicationUser>>();
+        RoleManager = ScopedServices.GetRequiredService<RoleManager<ApplicationRole>>();
+        Title = L[_currentDto.GetClassDescription()];
+        var state = await AuthState;
+        _canCreate = (await AuthService.AuthorizeAsync(state.User, Permissions.Users.Create)).Succeeded;
+        _canSearch = (await AuthService.AuthorizeAsync(state.User, Permissions.Users.Search)).Succeeded;
+        _canEdit = (await AuthService.AuthorizeAsync(state.User, Permissions.Users.Edit)).Succeeded;
+        _canDelete = (await AuthService.AuthorizeAsync(state.User, Permissions.Users.Delete)).Succeeded;
+
+    }
+
+
+    private async Task<GridData<ApplicationUserDto>> ServerReload(GridState<ApplicationUserDto> state)
+    {
+        try
+        {
+            _loading = true;
+            Expression<Func<ApplicationUser, bool>> searchPredicate = x =>
+            (x.UserName!.ToLower().Contains(_searchString) ||
+            x.Email!.ToLower().Contains(_searchString) ||
+            x.DisplayName!.ToLower().Contains(_searchString) ||
+            x.PhoneNumber!.ToLower().Contains(_searchString) ||
+            x.TenantName!.ToLower().Contains(_searchString) ||
+            x.Provider!.ToLower().Contains(_searchString));
+            var query = UserManager.Users.Where(searchPredicate);
+            query = query.Where(x => x.UserRoles.Any(y => y.Role.Name == RoleName.Pilots && y.Role.Name != RoleName.SuperAdmin && y.Role.Name != RoleName.SuperAdmin));
+
+            var items = await query
+                 .Include(x => x.UserRoles)
+                 .Include(x => x.Superior)
+                 .EfOrderBySortDefinitions(state)
+                 .Skip(state.Page * state.PageSize).Take(state.PageSize).ProjectTo<ApplicationUserDto>(Mapper.ConfigurationProvider).ToListAsync();
+            var total = await UserManager.Users.CountAsync(searchPredicate);
+            return new GridData<ApplicationUserDto> { TotalItems = total, Items = items };
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task OnSearch(string text)
+    {
+        if (_loading) return;
+        _searchString = text.ToLower();
+        await _table.ReloadServerData();
+    }
+
+
+    private async Task OnRefresh()
+    {
+        await _table.ReloadServerData();
+        await UserService.Refresh();
+        await TenantService.Refresh();
+    }
+
+
+
+}

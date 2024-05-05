@@ -226,8 +226,6 @@
     public UserProfile UserProfile { get; set; } = null!;
     private DateTime Now = DateTime.Now;
     private string? Location;
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
     private IEnumerable<TransportLogDto>? _transportLogs { get; set; } = null;
 
     private Queue<string> studentQ = new Queue<string>();
