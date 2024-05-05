@@ -1,0 +1,82 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.Students.DTOs
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Accident
+@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
+@inject ISnackbar Snackbar
+<MudDialog>
+    <DialogContent>
+        <div class="overflow-hidden mb-4">
+            <MudForm Model="@Model" @ref="@_form" Validation="@(Validator.ValidateValue(Model))">
+                <MudGrid>
+                    <MudItem xs="12" sm="6">
+                        <MudDatePicker For="@(()=>Model.ReportDateTime)" @bind-Date="Model.ReportDateTime" Editable="true" Label="Date" Required="true" Placeholder="Select Date" />
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" Value="@StudentName" ShrinkLabel="true" Label="Student's Name" Variant="Variant.Text" Placeholder="Name" ReadOnly></MudTextField>
+                    </MudItem>
+                   <MudItem xs="12" sm="6">
+                        <MudTextField T="string" Value="@SchoolName" ShrinkLabel="true" Label="School" Variant="Variant.Text" Placeholder="School"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" Value="@Grade" ShrinkLabel="true" Label="Grade" Variant="Variant.Text" Placeholder="Grade"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" ShrinkLabel="true" Value="@Route" Label="Bus route" Variant="Variant.Text" Placeholder="Bus route" ReadOnly></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudTextField T="string" ShrinkLabel="true" Value="@DriverName" Label="Driver" Variant="Variant.Text" Placeholder="Driver" ReadOnly></MudTextField>
+                    </MudItem> 
+                    <MudItem xs="12" sm="12">
+                        <MudEnumSelect For="@(()=>Model.Infraction)" TEnum="InfractionType?" @bind-Value="Model.Infraction" Required="true" Placeholder="Select Infraction" Label="Infractions" AnchorOrigin="Origin.BottomCenter">
+                        </MudEnumSelect>
+                    </MudItem>
+                    <MudItem xs="12" sm="12">
+                        <MudTextField For="@(()=>Model.Comments)" @bind-Value="Model.Comments" Lines="5" ShrinkLabel="true" Label="Comment" Variant="Variant.Outlined" Placeholder="Comment"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12" sm="12">
+                        <div class="d-flex flex-row gap-2">
+                        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" OnClick="OnSubmit">Report information</MudButton>
+                        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Default" OnClick="@(()=>MudDialog.Cancel())">Cancel</MudButton>
+                        </div>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+@code {
+    private MudForm? _form;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public AddAccidentCommand Model { get; set; }
+    [Parameter]
+    public string DriverName { get; set; }
+    [Parameter]
+    public string Route { get; set; }
+    [Parameter]
+    public string Grade { get; set; }
+    [Parameter]
+    public string StudentName { get; set; }
+    [Parameter]
+    public string SchoolName { get; set; }
+    private async Task OnSubmit()
+    {
+        await _form!.Validate().ConfigureAwait(false);
+        if (!_form!.IsValid)
+            return;
+
+
+        var result = await Mediator.Send(Model);
+        if (result.Succeeded)
+        {
+            MudDialog.Close(DialogResult.Ok(true));
+            Snackbar.Add("Report successfully", Severity.Success);
+           
+        }
+        else
+        {
+            Snackbar.Add($"{result.ErrorMessage}", MudBlazor.Severity.Error);
+
+        }
+    
+    }
+}

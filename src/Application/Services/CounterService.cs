@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Stl.Fusion;
+using ActualLab.Fusion;
 
 namespace CleanArchitecture.Blazor.Application.Services;
 public class CounterService : IComputeService

@@ -35,7 +35,7 @@ public class MenuService : IMenuService
                     Title = "Pilot",
                     Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.FollowTheSigns,
-                    Href = "/pages/pilots",
+                    Href = "/pages/drivers",
                     PageStatus = PageStatus.Completed
                 },
                 new()
