@@ -13,6 +13,7 @@ public class Student : BaseAuditableEntity, IMustHaveTenant
     public string? ProfilePicture { get; set; }
     public string? Phone { get; set; }
     public string? Description { get; set; }
+    public string? Grade { get; set; }
     public string? Status { get; set; }
     public virtual ICollection<Parent> Parents { get; set; } = new HashSet<Parent>();
     public int SchoolId { get; set; }

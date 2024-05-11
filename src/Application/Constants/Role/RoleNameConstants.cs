@@ -7,7 +7,7 @@ public abstract class RoleName
 {
     public const string SuperAdmin = nameof(SuperAdmin);
     public const string OrgAdmin = nameof(OrgAdmin);
-    public const string Pilots = nameof(Pilots);
+    public const string Driver = nameof(Driver);
     public const string Students = nameof(Students);
     public const string Parents = nameof(Parents);
     public const string Admin = nameof(Admin);

@@ -7,7 +7,7 @@ using CleanArchitecture.Blazor.Application.Features.Tenants.DTOs;
 
 namespace CleanArchitecture.Blazor.Application.Features.Pilots.DTOs;
 
-[Description("Pilots")]
+[Description("Driver")]
 public class PilotDto
 {
     [Description("Id")]

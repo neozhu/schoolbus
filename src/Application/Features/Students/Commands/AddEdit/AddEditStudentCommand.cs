@@ -26,10 +26,11 @@ public class AddEditStudentCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("School Id")]
     public int? SchoolId {get;set;} 
     [Description("Tenant Id")]
-    public string? TenantId {get;set;} 
+    public string? TenantId {get;set;}
+    [Description("Grade")]
+    public string? Grade { get; set; }
 
-
-      public string CacheKey => StudentCacheKey.GetAllCacheKey;
+    public string CacheKey => StudentCacheKey.GetAllCacheKey;
       public CancellationTokenSource? SharedExpiryTokenSource => StudentCacheKey.SharedExpiryTokenSource();
 
     private class Mapping : Profile

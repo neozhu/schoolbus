@@ -1,0 +1,52 @@
+﻿@using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
+@using CleanArchitecture.Blazor.Application.Features.TripReports.Queries.GetById
+@{
+    var i = 1;
+}
+@if (_tripLogs is not null)
+{
+    <MudSimpleTable Style="overflow-x: auto;">
+        <tbody>
+
+            @foreach (var item in _tripLogs)
+            {
+                <tr>
+                    <td width="80px" style="padding:10px">
+                        @if (!string.IsNullOrEmpty(item.Student.ProfilePicture))
+                        {
+                            <MudAvatar Size="Size.Large">
+                                <MudImage Src="@item.Student.ProfilePicture"></MudImage>
+                            </MudAvatar>
+                        }
+                        else
+                        {
+                            <MudAvatar Size="Size.Large">
+                                @item.Student?.FirstName?.First();
+                            </MudAvatar>
+                        }
+
+                    </td>
+                    <td width="45px" style="padding:10px">#@(i++)</td>
+                    <td style="padding:10px">@item.Student.DisplayName</td>
+                    <td width="60px" style="padding:10px"><MudChip Color="Color.Success">Normal</MudChip></td>
+                    <td width="60px" style="padding:10px"><MudButton>Report</MudButton></td>
+                </tr>
+            }
+
+        </tbody>
+    </MudSimpleTable>
+}
+else
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+}
+
+@code {
+    [Parameter] public int RouteId { get; set; }
+
+    private List<TripLogDto>? _tripLogs { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        _tripLogs = await Mediator.Send(new GetTripLogsQuery() { TripId = RouteId });
+    }
+}

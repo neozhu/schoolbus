@@ -13,6 +13,17 @@ public class GetOnBoardTripLogsQuery : ICacheableRequest<List<TripLogDto>>
     public string CacheKey => TripReportCacheKey.GetOnBoardTripLogsCacheKey($"{TripId}");
     public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
 }
+public class GetTripLogsQuery : ICacheableRequest<List<TripLogDto>>
+{
+    public required int TripId { get; set; }
+    public string CacheKey => TripReportCacheKey.GetTripLogsCacheKey($"{TripId}");
+    public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
+}
+public record GetOnBoardTotalQuery : IRequest<int>
+{
+   public  int TripId { get; set; }
+}
+
 public class GetTripAccidentsQuery : ICacheableRequest<List<TripAccidentDto>>
 {
     public required int TripId { get; set; }
@@ -26,8 +37,10 @@ public class GetTripReportByIdQuery : ICacheableRequest<TripReportDto>
     public MemoryCacheEntryOptions? Options => TripReportCacheKey.MemoryCacheEntryOptions;
 }
 public class GetTripReportByIdQueryHandler :
+        IRequestHandler<GetOnBoardTotalQuery, int>,
       IRequestHandler<GetTripAccidentsQuery, List<TripAccidentDto>>,
       IRequestHandler<GetOnBoardTripLogsQuery, List<TripLogDto>>,
+      IRequestHandler<GetTripLogsQuery, List<TripLogDto>>,
       IRequestHandler<GetTripReportByIdQuery, TripReportDto>
 {
     private readonly IApplicationDbContext _context;
@@ -47,17 +60,29 @@ public class GetTripReportByIdQueryHandler :
 
     public async Task<TripReportDto> Handle(GetTripReportByIdQuery request, CancellationToken cancellationToken)
     {
-        var data = await _context.TripReports.ApplySpecification(new TripReportByIdSpecification(request.Id))
-                     .ProjectTo<TripReportDto>(_mapper.ConfigurationProvider)
-                     .FirstAsync(cancellationToken) ?? throw new NotFoundException($"TripReport with id: [{request.Id}] not found."); ;
+            var data = await _context.TripReports.ApplySpecification(new TripReportByIdSpecification(request.Id))
+                         .ProjectTo<TripReportDto>(_mapper.ConfigurationProvider)
+                         .FirstAsync(cancellationToken) ?? throw new NotFoundException($"TripReport with id: [{request.Id}] not found."); 
+            return data;
+    }
+    public async Task<List<TripLogDto>> Handle(GetTripLogsQuery request, CancellationToken cancellationToken)
+    {
+        var data = await _context.TripLogs.ApplySpecification(new TripLogByIdSpecification(request.TripId))
+                     .ProjectTo<TripLogDto>(_mapper.ConfigurationProvider)
+                     .ToListAsync(cancellationToken);
         return data;
     }
     public async Task<List<TripLogDto>> Handle(GetOnBoardTripLogsQuery request, CancellationToken cancellationToken)
     {
-        var data1 = await _context.TripLogs.ApplySpecification(new TripLogByIdSpecification(request.TripId)).ToListAsync();
-        var data = await _context.TripLogs.ApplySpecification(new TripLogByIdSpecification(request.TripId))
+        var data = await _context.TripLogs.ApplySpecification(new OnBoardTripLogByIdSpecification(request.TripId))
                      .ProjectTo<TripLogDto>(_mapper.ConfigurationProvider)
                      .ToListAsync(cancellationToken);
+        return data;
+    }
+    public async Task<int> Handle(GetOnBoardTotalQuery request, CancellationToken cancellationToken)
+    {
+        var data = await _context.TripLogs.ApplySpecification(new TripOnBoardTotalSpecification(request.TripId))
+                      .CountAsync(); 
         return data;
     }
     public async Task<List<TripAccidentDto>> Handle(GetTripAccidentsQuery request, CancellationToken cancellationToken)

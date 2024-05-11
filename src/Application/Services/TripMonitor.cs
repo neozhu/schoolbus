@@ -1,22 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CleanArchitecture.Blazor.Application.Features.Buses.Queries.GetAll;
-using DocumentFormat.OpenXml.Bibliography;
-using Hangfire.Dashboard;
-using MemoryPack;
-using Stl.Async;
-using Stl.Collections;
-using Stl.CommandR;
-using Stl.CommandR.Commands;
-using Stl.CommandR.Configuration;
-using Stl.Fusion;
-using Unit = System.Reactive.Unit;
+﻿using System.Collections.Immutable;
+using ActualLab.Fusion;
 namespace CleanArchitecture.Blazor.Application.Services;
 
 
@@ -36,7 +19,7 @@ public class TripMonitor : ITripMonitor
     public virtual Task AddOrUpdate(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId).Add(tripId);
-        using var invalidating = Computed.Invalidate();
+        using var invalidating = Invalidation.Begin();
         _ = Count(cancellationToken);
         _ = List(cancellationToken);
         
@@ -45,7 +28,7 @@ public class TripMonitor : ITripMonitor
     public virtual  Task Remove(int tripId, CancellationToken cancellationToken = default)
     {
         _tripruning = _tripruning.RemoveAll(i => i == tripId);
-        using var invalidating = Computed.Invalidate();
+        using var invalidating = Invalidation.Begin();
         _ = Count(cancellationToken);
         _ = List(cancellationToken);
 

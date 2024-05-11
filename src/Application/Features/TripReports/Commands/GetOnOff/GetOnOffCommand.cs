@@ -22,7 +22,7 @@ public class GetOffMenualCommand : ICacheInvalidatorRequest<Result<int>>
 public class GetOnOffCommand : ICacheInvalidatorRequest<Result<int>>
 {
     public string TenantId { get; set; }
-    public int TripId { get; }
+    public int TripId { get; set; }
     public int StudentId { get; set; }
     public string? UID { get; set; }
     public bool Manual { get; set; }
@@ -32,6 +32,10 @@ public class GetOnOffCommand : ICacheInvalidatorRequest<Result<int>>
     public double? Latitude { get; set; }
     public string CacheKey => TripReportCacheKey.GetAllCacheKey;
     public CancellationTokenSource? SharedExpiryTokenSource => TripReportCacheKey.SharedExpiryTokenSource();
+    public GetOnOffCommand()
+    {
+       
+    }
     public GetOnOffCommand(int tripId, int studentId, string tenantId)
     {
         TripId = tripId;
@@ -103,6 +107,19 @@ public class GetOnOffCommandHandler :
     }
     public async Task<Result<int>> Handle(GetOnOffCommand request, CancellationToken cancellationToken)
     {
+        if (request.StudentId == 0 && !string.IsNullOrEmpty(request.UID))
+        {
+            var student = await _context.Students.Where(x => x.UID == request.UID && x.TenantId==request.TenantId).FirstOrDefaultAsync();
+            if(student is null)
+            {
+                return await Result<int>.FailureAsync(new string[] { $"not found student with {request.UID}"});
+            }
+            else
+            {
+                request.StudentId = student.Id;
+            }
+        }
+
         var trip = await _context.TripReports.FindAsync(request.TripId, cancellationToken);
         var geton = await _context.TripLogs.Where(x => x.TripId == request.TripId && x.StudentId == request.StudentId && x.GetOffDateTime2 == null).FirstOrDefaultAsync(cancellationToken);
         if (geton is null)
@@ -120,18 +137,24 @@ public class GetOnOffCommandHandler :
                 Manual = request.Manual,
                 Comments = request.Comments
             };
+            geton.AddDomainEvent(new TripLogCreatedEvent(geton));
             _context.TripLogs.Add(geton);
         }
         else
         {
-            geton.Manual2 = request.Manual;
-            geton.Comments2 = request.Comments;
-            geton.Location2 = request.Location;
-            geton.Latitude2 = request.Latitude;
-            geton.Longitude2 = request.Longitude;
-            geton.GetOffDateTime2 = DateTime.Now;
+            var diff= geton.GetOnDateTime - DateTime.Now;
+            if (diff.Value.TotalMinutes <= -10)
+            {
+                geton.Manual2 = request.Manual;
+                geton.Comments2 = request.Comments;
+                geton.Location2 = request.Location;
+                geton.Latitude2 = request.Latitude;
+                geton.Longitude2 = request.Longitude;
+                geton.GetOffDateTime2 = DateTime.Now;
+            }
+           
         }
-        geton.AddDomainEvent(new TripLogCreatedEvent(geton));
+        
 
         if (trip is not null)
         {
