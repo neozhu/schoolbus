@@ -48,7 +48,8 @@ public class StartTripReportCommand : ICacheInvalidatorRequest<Result<int>>
         public Mapping()
         {
             CreateMap<TripReportToPlainDto, StartTripReportCommand>(MemberList.None);
-            CreateMap<StartTripReportCommand, TripReport>(MemberList.None);
+            CreateMap<StartTripReportCommand, TripReport>(MemberList.None).ForMember(x => x.Pilot, y => y.Ignore())
+                .ForMember(x => x.PilotId, y => y.Ignore()); ;
               
 
         }

@@ -30,7 +30,7 @@
     }
     <div class="d-flex flex-row justify-space-between align-center gap-2">
         <div class="d-flex flex-column my-2 gap-1">
-            <MudText Typo="Typo.h6">Total passengers on board</MudText>
+            
             <MudTextField @bind-Value="search" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
         </div>
         <StudentOnBoardTotalCard @ref="@totalCard" RouteId="@RouteId"></StudentOnBoardTotalCard>

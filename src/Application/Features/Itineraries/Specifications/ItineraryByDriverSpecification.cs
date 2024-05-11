@@ -2,9 +2,9 @@
 #nullable disable warnings
 public class ItineraryByDriverSpecification : Specification<Itinerary>
 {
-    public ItineraryByDriverSpecification(string driverId)
+    public ItineraryByDriverSpecification(string tenantId)
     {
-       Query.Where(q => q.DriverId == driverId, driverId!=string.Empty);
+       Query.Where(q => q.TenantId == tenantId, !string.IsNullOrEmpty(tenantId));
 
     }
 }

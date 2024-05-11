@@ -6,7 +6,7 @@
 @using Blazor.Server.UI.Models
 @using Theme=Blazor.Server.UI.Theme
 @using Size=MudBlazor.Size
-@inherits FluxorComponent
+ 
 <PageTitle>@Title</PageTitle>
 <style>
     .lp-app-grid {
@@ -18,11 +18,11 @@
 <MudContainer MaxWidth="MaxWidth.Medium">
     <MudGrid>
         <MudItem xs="6" sm="3">
-            <MudPaper Class="d-flex align-center mud-width-full pa-6">
+            <MudPaper Class="d-flex align-center mud-width-full pa-6" >
                 <MudIcon Icon="@Icons.Material.Filled.Castle" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalSchools</h2>
-                    <p class="mud-text-secondary">School</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalSchools</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/schools" class="mud-text-secondary">School</MudLink>
                 </div>
             </MudPaper>
         </MudItem>
@@ -30,8 +30,9 @@
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.DirectionsBus" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalBuses</h2>
-                    <p class="mud-text-secondary">Bus</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalBuses</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/buses" class="mud-text-secondary">Bus</MudLink>
+                
                 </div>
             </MudPaper>
         </MudItem>
@@ -39,8 +40,8 @@
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.FollowTheSigns" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalPilots</h2>
-                    <p class="mud-text-secondary">Pilot</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalPilots</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/drivers" class="mud-text-secondary">Drivers</MudLink>
                 </div>
             </MudPaper>
         </MudItem>
@@ -48,8 +49,8 @@
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.LinearScale" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalItineraries</h2>
-                    <p class="mud-text-secondary">Itinerary</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalItineraries</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/Itineraries" class="mud-text-secondary">Itineraries</MudLink>
                 </div>
             </MudPaper>
         </MudItem>
@@ -57,8 +58,8 @@
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.Groups" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalStudents</h2>
-                    <p class="mud-text-secondary">Student</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalStudents</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/students" class="mud-text-secondary">Students</MudLink>
                 </div>
             </MudPaper>
         </MudItem>
@@ -66,8 +67,8 @@
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.EscalatorWarning" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalParents</h2>
-                    <p class="mud-text-secondary">Parent</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalParents</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/Parents" class="mud-text-secondary">Parents</MudLink>
                 </div>
             </MudPaper>
         </MudItem>
@@ -75,8 +76,8 @@
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalTransportLogs</h2>
-                    <p class="mud-text-secondary">Transport Logs</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalTransportLogs</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/TransportLogs" class="mud-text-secondary">Transport Logs</MudLink>
                 </div>
             </MudPaper>
         </MudItem>
@@ -84,8 +85,8 @@
             <MudPaper Class="d-flex align-center mud-width-full pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.AirplaneTicket" Color="Color.Info" Size="Size.Large"></MudIcon>
                 <div class="ml-3 d-flex flex-column">
-                    <h2>@SummaryInfo.TotalReports</h2>
-                    <p class="mud-text-secondary">Trip Reports</p>
+                    <MudText Typo="Typo.h4">@SummaryInfo.TotalReports</MudText>
+                    <MudLink Typo="Typo.body1" Href="/pages/TripReports" class="mud-text-secondary">Trip Reports</MudLink>
                 </div>
             </MudPaper>
         </MudItem>
@@ -134,9 +135,9 @@
     <IncrementCountComponent></IncrementCountComponent>
 </MudContainer>
 @code {
-    [Inject]
-    private IState<UserProfileState> UserProfileState { get; set; } = null!;
-    private UserProfile UserProfile => UserProfileState.Value.UserProfile;
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+    private UserProfile? UserProfile;
     public string Title { get; set; } = "Dashboard";
     private AggregationResult result = new AggregationResult();
     private SummaryDto SummaryInfo = new SummaryDto();
@@ -144,52 +145,29 @@
     ApexChart<TotalOfStudentDto>? chart1;
     ApexChart<TotalOfTransportDto>? chart2;
     ApexChart<TotalOfMonthDto>? chart3;
-    protected override async Task OnInitializedAsync()
+    protected override async void OnInitialized()
     {
-        UserProfileState.StateChanged += StateOnStateChanged;
-        
+        var authstate = await AuthState;
+        if (authstate.User.Identity.IsAuthenticated)
+        {
+            UserProfile = authstate.User.GetUserProfileFromClaim();
+        }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (!UserProfileState.Value.IsLoading && !string.IsNullOrEmpty(UserProfileState.Value.UserProfile.UserId))
+            if (UserProfile is not null)
             {
                 result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
                 SummaryInfo = result.Summary;
                 StateHasChanged();
-                if (chart1 is not null && chart2 is not null && chart3 is not null)
-                {
-                    await chart1.RenderAsync();
-                    await chart2.RenderAsync();
-                    await chart3.RenderAsync();
-                    await chart1.UpdateOptionsAsync(false, false, false);
-                    await chart2.UpdateOptionsAsync(false, false, false);
-                }
+                await chart1.UpdateSeriesAsync(true);
+                await chart2.UpdateSeriesAsync(true);
+                await chart3.UpdateSeriesAsync(true);
             }
         }
     }
-    protected override void Dispose(bool disposing)
-    {
-        UserProfileState.StateChanged -= StateOnStateChanged;
-        base.Dispose(disposing);
-    }
-    private void StateOnStateChanged(object? sender, EventArgs args)
-    {
-        InvokeAsync(async () =>
-        {
-            if (!UserProfileState.Value.IsLoading)
-            {
-                result = await Mediator.Send(new SummaryQuery() { UserProfile = UserProfile });
-                SummaryInfo = result.Summary;
-                StateHasChanged();
-                await chart1.RenderAsync();
-                chart1.UpdateOptionsAsync(false, false, false);
-                await chart2.RenderAsync();
-                chart2.UpdateOptionsAsync(false, false, false);
-                await chart3.RenderAsync();
-                chart3.UpdateOptionsAsync(false, false, false);
-            }
-        });
-    }
+     
+    
 }

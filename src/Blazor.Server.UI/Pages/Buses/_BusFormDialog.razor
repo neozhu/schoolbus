@@ -6,15 +6,21 @@
     <DialogContent>
         <MudForm Model="@model" @ref="@_form" Validation="@(_modelValidator.ValidateValue)">
             <MudGrid>
-                @*TODO: define mudform that should be edit fields, for example:*@
-                <MudItem xs="12" md="12">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.PlatNumber)]" @bind-Value="model.PlatNumber" For="@(() => model.PlatNumber)" Required="true" RequiredError="@L["plat number is required!"]"></MudTextField>
-                </MudItem>
-                <MudItem xs="12" md="12">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+            
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.PlatNumber)]" @bind-Value="model.PlatNumber" For="@(() => model.PlatNumber)" Required="true" RequiredError="@L["Vehicle number is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.DeviceId)]" @bind-Value="model.DeviceId" For="@(() => model.DeviceId)" Required="false" RequiredError="@L["device id is required!"]" HelperText="@L["scanning device id"]"></MudTextField>
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Type)]" @bind-Value="model.Type" For="@(() => model.Type)" Required="false"  ></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Make)]" @bind-Value="model.Make" For="@(() => model.Make)" Required="false"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Model)]" @bind-Value="model.Model" For="@(() => model.Model)" Required="false"></MudTextField>
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.DeviceId)]" @bind-Value="model.DeviceId" For="@(() => model.DeviceId)" Required="false"  HelperText="@L["scanning device id"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField ReadOnly Label="@L[model.GetMemberDescription(x=>x.Status)]" @bind-Value="model.Status" For="@(() => model.Status)" ></MudTextField>

@@ -26,7 +26,10 @@
                 </MudItem>
 
                 <MudItem xs="12" md="4">
-                    <MudSelect For="@(() => model.BusId)"
+                    <PickBusAutocomplete For="@(() => model.BusId)" @bind-Value="model.BusId"
+                               Label="@L[model.GetMemberDescription(x=>x.BusId)]"
+                        TenantId="@model.TenantId"></PickBusAutocomplete>
+                    @* <MudSelect For="@(() => model.BusId)"
                                Label="@L[model.GetMemberDescription(x=>x.BusId)]"
                                Required="true"
                                RequiredError="@L["Bus is required."]"
@@ -35,7 +38,7 @@
                         {
                             <MudSelectItem T="int?" Value="@item.Id">@item.PlatNumber</MudSelectItem>
                         }
-                    </MudSelect>
+                    </MudSelect> *@
                     
                 </MudItem>
                 <MudItem xs="12" md="4">
@@ -44,7 +47,7 @@
                                Required="true"
                                RequiredError="@L["Driver is required."]"
                                @bind-Value="@model.DriverId">
-                        @foreach (var item in UserService.DataSource.Where(x => x.TenantId == model.TenantId && x.IsInRole(RoleName.Pilots)))
+                        @foreach (var item in UserService.DataSource.Where(x => x.TenantId == model.TenantId && x.IsInRole(RoleName.Driver)))
                         {
                             <MudSelectItem Class="d-flex align-items-center" T="string" Value="@item.Id"><MudAvatar Size="Size.Small" Style="height:14px;width:14px" Class="mr-1"><MudImage Src="@item.ProfilePictureDataUrl" Height="14" /></MudAvatar>  @item.DisplayName</MudSelectItem>
                         }

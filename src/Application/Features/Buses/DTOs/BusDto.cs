@@ -11,7 +11,7 @@ public class BusDto
 {
     [Description("Id")]
     public int Id { get; set; }
-    [Description("Plat Number")]
+    [Description("Vehicle Number \\ ID")]
     public string? PlatNumber {get;set;} 
     [Description("Device Id")]
     public string? DeviceId {get;set;} 
@@ -24,6 +24,12 @@ public class BusDto
     [Description("Organization")]
     public TenantDto Tenant { get; set; } = null!;
 
+    [Description("Type")]
+    public string? Type { get; set; }
+    [Description("Make")]
+    public string? Make { get; set; }
+    [Description("Model")]
+    public string? Model { get; set; }
     private class Mapping : Profile
     {
         public Mapping()

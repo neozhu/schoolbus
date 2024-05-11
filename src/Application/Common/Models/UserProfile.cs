@@ -20,7 +20,7 @@ public class UserProfile
     public string? TenantName { get; set; }
     public bool IsSuperAdmin => AssignedRoles?.Any(x => x.Equals(RoleName.SuperAdmin)) ?? false;
     public bool IsOrgAdmin => AssignedRoles?.Any(x => x.Equals(RoleName.OrgAdmin)) ?? false;
-    public bool IsPilots => AssignedRoles?.Any(x => x.Equals(RoleName.Pilots)) ?? false;
+    public bool IsPilots => AssignedRoles?.Any(x => x.Equals(RoleName.Driver)) ?? false;
     public bool IsParents => AssignedRoles?.Any(x => x.Equals(RoleName.Parents)) ?? false;
     public bool IsBasic => AssignedRoles?.Any(x => x.Equals(RoleName.Basic)) ?? false;
 

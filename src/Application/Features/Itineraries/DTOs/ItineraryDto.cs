@@ -18,10 +18,10 @@ public class ItineraryDto
     [Description("Name")]
     public string Name {get;set;} = String.Empty; 
     [Description("Description")]
-    public string? Description {get;set;} 
-    [Description("Bus Id")]
+    public string? Description {get;set;}
+    [Description("Vehicle Number \\ ID")]
     public int? BusId {get;set;}
-    [Description("Bus Id")]
+    [Description("Driver Id")]
     public string? DriverId { get; set; }
     [Description("Driver")]
     public ApplicationUserDto? Driver { get; set; } = new();

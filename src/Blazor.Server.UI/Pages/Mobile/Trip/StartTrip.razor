@@ -4,7 +4,7 @@
 @using CleanArchitecture.Blazor.Application.Features.Itineraries.Queries.GetById
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.AddEdit
 @using CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Start
-@attribute [Authorize(Roles = "Pilots")]
+@attribute [Authorize(Roles = "Driver")]
 @inject NavigationManager NavigationManager
 @inject IStringLocalizer<StartTrip> L
 <PageTitle>Start Trip</PageTitle>
@@ -19,7 +19,8 @@
     <MudForm Model="@model" @ref="@_form" Validation="@(Validator.ValidateValue(model))">
        <div class="d-flex flex-column justify-center gap-2 align-self-center my-4">
             
-            <MudSelect Label="@L["Select your bus"]"
+            <PickBusAutocomplete Label="@L["Select your bus"]"
+                       TenantId="@UserProfile.TenantId"
                        For="@(() => model.BusId)" 
                        Value="model.BusId"
                        T="int?"
@@ -27,12 +28,9 @@
                        Variant="Variant.Outlined" 
                        AnchorOrigin="Origin.BottomCenter"
                        ValueChanged="OnBusChanged"
-                       Required="true" RequiredError="@L["Please select your school."]">
-                @foreach (var item in _itineraries)
-                {
-                    <MudSelectItem T="int?" Value="@item.BusId">@item.Bus.PlatNumber</MudSelectItem>
-                }
-            </MudSelect>
+                       Required="true" RequiredError="@L["Please select your bus."]">
+                
+            </PickBusAutocomplete>
             <MudSelect Label="@L["Select your start location"]"
                        For="@(() => model.StartingStation)" 
                        @bind-Value="model.StartingStation"
@@ -76,15 +74,38 @@
         model.TenantId = UserProfile.TenantId;
         model.Status = TripStatus.Runing;
         model.DriverId = UserProfile.UserId;
-        _itineraries = await Mediator.Send(new GetItineraryByDriverIdQuery() { DriverId = UserProfile.UserId });
+        _itineraries = await Mediator.Send(new GetItineraryByDriverIdQuery() { TenantId = UserProfile.TenantId, DriverId = UserProfile.UserId });
     }
     private void OnBusChanged(int? busid)
     {
-        var it = _itineraries.First(n => n.BusId == busid);
-        model.BusId = it.BusId;
-        model.PlatNumber = it.Bus.PlatNumber;
-        model.StartingStation = it.StartingStation;
-        model.TerminalStation = it.TerminalStation;
+        if (busid != null)
+        {
+            var it = _itineraries.FirstOrDefault(n => n.BusId == busid);
+            if(it is not null)
+            {
+                model.BusId = it.BusId;
+                model.PlatNumber = it.Bus.PlatNumber;
+                model.StartingStation = it.StartingStation;
+                model.TerminalStation = it.TerminalStation;
+            }
+            else
+            {
+                model.BusId = null;
+                model.PlatNumber = null;
+                model.StartingStation = null;
+                model.TerminalStation = null;
+                Snackbar.Add(L["No routes maintained for the selected bus. Please contact the administrator."], Severity.Warning);
+            }
+
+        }
+        else
+        {
+            model.BusId =null;
+            model.PlatNumber = null;
+            model.StartingStation = null;
+            model.TerminalStation = null;
+        }
+
     }
     private async Task Submit()
     {

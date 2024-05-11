@@ -1,4 +1,4 @@
-﻿@page "/pages/Pilots"
+﻿@page "/pages/Driver"
 
 @using BlazorDownloadFile
 @using CleanArchitecture.Blazor.Application.Features.Pilots.Caching
@@ -428,7 +428,7 @@
         var result = await Mediator.Send(request);
         if (result.Succeeded)
         {
-            var downloadresult = await BlazorDownloadFileService.DownloadFile($"{L["Pilots"]}.xlsx", result.Data, contentType: "application/octet-stream");
+            var downloadresult = await BlazorDownloadFileService.DownloadFile($"{L["Driver"]}.xlsx", result.Data, contentType: "application/octet-stream");
             Snackbar.Add($"{ConstantString.ExportSuccess}", MudBlazor.Severity.Info);
         }
         else

@@ -192,7 +192,7 @@
             x.TenantName!.ToLower().Contains(_searchString) ||
             x.Provider!.ToLower().Contains(_searchString));
             var query = UserManager.Users.Where(searchPredicate);
-            query = query.Where(x => x.UserRoles.Any(y => y.Role.Name == RoleName.Pilots && y.Role.Name != RoleName.SuperAdmin && y.Role.Name != RoleName.SuperAdmin));
+            query = query.Where(x => x.UserRoles.Any(y => y.Role.Name == RoleName.Driver && y.Role.Name != RoleName.SuperAdmin && y.Role.Name != RoleName.SuperAdmin));
 
             var items = await query
                  .Include(x => x.UserRoles)

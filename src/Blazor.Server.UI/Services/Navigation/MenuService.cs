@@ -32,7 +32,7 @@ public class MenuService : IMenuService
                 },
                 new()
                 {
-                    Title = "Pilot",
+                    Title = "Drivers",
                     Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.FollowTheSigns,
                     Href = "/pages/drivers",

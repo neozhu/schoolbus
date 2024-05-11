@@ -12,14 +12,14 @@ public class AddEditItineraryCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("Name")]
     public string Name => $"{StartingStation} - {TerminalStation}";
     [Description("Description")]
-    public string? Description {get;set;} 
-    [Description("Bus Id")]
+    public string? Description {get;set;}
+    [Description("Vehicle Number \\ ID")]
     public int? BusId {get;set;} 
     [Description("Pilot Id")]
     public int? PilotId {get;set;}
-    [Description("Driver Id")]
+    [Description("Driver")]
     public string? DriverId { get; set; }
-    [Description("School Id")]
+    [Description("School")]
     public int? SchoolId {get;set;} 
     [Description("First Time")]
     public string? FirstTime {get;set;} 
@@ -43,7 +43,8 @@ public class AddEditItineraryCommand: ICacheInvalidatorRequest<Result<int>>
         public Mapping()
         {
             CreateMap<ItineraryDto,AddEditItineraryCommand>(MemberList.None);
-            CreateMap<AddEditItineraryCommand, Itinerary>(MemberList.None);
+            CreateMap<AddEditItineraryCommand, Itinerary>(MemberList.None).ForMember(x=>x.Pilot,y=>y.Ignore())
+                .ForMember(x => x.PilotId, y => y.Ignore());
         }
     }
 }
