@@ -16,10 +16,10 @@
                 <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.PlatNumber)]" Value="@Trip.PlatNumber"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.Pilot)]" Value="@Trip.Pilot?.DisplayName"></MudTextField>
+                <MudTextField T="string" Label="@L[Trip.GetMemberDescription(x=>x.Driver)]" Value="@Trip.Driver?.DisplayName"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField T="string" Label="@L["Phone Number"]" Value="@Trip.Pilot?.Phone"></MudTextField>
+                <MudTextField T="string" Label="@L["Phone Number"]" Value="@Trip.Driver?.PhoneNumber"></MudTextField>
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudTextField Format="s" InputType="InputType.DateTimeLocal" Label="@L[Trip.GetMemberDescription(x=>x.DepartureDate)]" Value="Trip.DepartureDate"></MudTextField>

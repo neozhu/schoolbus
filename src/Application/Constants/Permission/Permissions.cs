@@ -29,17 +29,17 @@ public static class Permissions
         public const string Export = "Permissions.Buses.Export";
         public const string Import = "Permissions.Buses.Import";
     }
-    [DisplayName("Pilots")]
-    [Description("Pilots Permissions")]
+    [DisplayName("Driver")]
+    [Description("Driver Permissions")]
     public static class Pilots
     {
-        public const string View = "Permissions.Pilots.View";
-        public const string Create = "Permissions.Pilots.Create";
-        public const string Edit = "Permissions.Pilots.Edit";
-        public const string Delete = "Permissions.Pilots.Delete";
-        public const string Search = "Permissions.Pilots.Search";
-        public const string Export = "Permissions.Pilots.Export";
-        public const string Import = "Permissions.Pilots.Import";
+        public const string View = "Permissions.Driver.View";
+        public const string Create = "Permissions.Driver.Create";
+        public const string Edit = "Permissions.Driver.Edit";
+        public const string Delete = "Permissions.Driver.Delete";
+        public const string Search = "Permissions.Driver.Search";
+        public const string Export = "Permissions.Driver.Export";
+        public const string Import = "Permissions.Driver.Import";
     }
     [DisplayName("Parents")]
     [Description("Parents Permissions")]

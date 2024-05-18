@@ -6,7 +6,7 @@ namespace CleanArchitecture.Blazor.Application.Features.Pilots.Caching;
 public static class PilotCacheKey
 {
     private static readonly TimeSpan refreshInterval = TimeSpan.FromHours(3);
-    public const string GetAllCacheKey = "all-Pilots";
+    public const string GetAllCacheKey = "all-Driver";
     public static string GetPaginationCacheKey(string parameters) {
         return $"PilotCacheKey:PilotsWithPaginationQuery,{parameters}";
     }

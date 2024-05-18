@@ -2,11 +2,37 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using CleanArchitecture.Blazor.Application.Constants.ClaimTypes;
+using CleanArchitecture.Blazor.Application.Constants.Role;
 
 namespace CleanArchitecture.Blazor.Infrastructure.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
+    public static UserProfile GetUserProfileFromClaim(this
+        ClaimsPrincipal claimsPrincipal
+    )
+    {
+        var profile = new UserProfile { Email = "", UserId = "", UserName = "" };
+        if (claimsPrincipal.Identity?.IsAuthenticated ?? false)
+        {
+            profile.UserId = claimsPrincipal.GetUserId() ?? "";
+            profile.UserName = claimsPrincipal.GetUserName() ?? "";
+            profile.TenantId = claimsPrincipal.GetTenantId();
+            profile.TenantName = claimsPrincipal.GetTenantName();
+            profile.PhoneNumber = claimsPrincipal.GetPhoneNumber();
+            profile.SuperiorName = claimsPrincipal.GetSuperiorName();
+            profile.SuperiorId = claimsPrincipal.GetSuperiorId();
+            profile.Email = claimsPrincipal.GetEmail() ?? "";
+            profile.DisplayName = claimsPrincipal.GetDisplayName();
+            profile.AssignedRoles = claimsPrincipal.GetRoles();
+            profile.DefaultRole = profile.AssignedRoles.Any() ? profile.AssignedRoles.First() : RoleName.Basic;
+            profile.ProfilePictureDataUrl = claimsPrincipal.GetProfilePictureDataUrl();
+            profile.IsActive = true;
+        }
+
+        return profile;
+    }
+
     public static string? GetEmail(this ClaimsPrincipal claimsPrincipal)
         => claimsPrincipal.FindFirstValue(ClaimTypes.Email);
     public static string? GetPhoneNumber(this ClaimsPrincipal claimsPrincipal)

@@ -44,8 +44,11 @@ public class ExportBusesQueryHandler :
             var result = await _excelService.ExportAsync(data,
                 new Dictionary<string, Func<BusDto, object?>>()
                 {
-                    // TODO: Define the fields that should be exported, for example:
-                    {_localizer[_dto.GetMemberDescription(x=>x.PlatNumber)],item => item.PlatNumber}, 
+             
+                    {_localizer[_dto.GetMemberDescription(x=>x.PlatNumber)],item => item.PlatNumber},
+                   {_localizer[_dto.GetMemberDescription(x=>x.Type)],item => item.Type},
+                   {_localizer[_dto.GetMemberDescription(x=>x.Make)],item => item.Make},
+                   {_localizer[_dto.GetMemberDescription(x=>x.Model)],item => item.Model},
 {_localizer[_dto.GetMemberDescription(x=>x.DeviceId)],item => item.DeviceId}, 
 {_localizer[_dto.GetMemberDescription(x=>x.Status)],item => item.Status}, 
 {_localizer[_dto.GetMemberDescription(x=>x.Description)],item => item.Description}, 

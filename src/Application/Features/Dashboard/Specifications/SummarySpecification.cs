@@ -22,7 +22,7 @@ public class SummaryPilotSpecification : Specification<Pilot>
 {
     public SummaryPilotSpecification(UserProfile user)
     {
-        Query.Where(q => q.LastName != "", user.IsSuperAdmin);
+        Query.Where(q => q.TenantId != "", user.IsSuperAdmin);
         Query.Where(q => q.TenantId == user.TenantId && q.LastName != "", !user.IsSuperAdmin);
     }
 }

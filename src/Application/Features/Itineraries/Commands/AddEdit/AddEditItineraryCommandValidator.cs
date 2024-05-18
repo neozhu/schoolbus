@@ -18,7 +18,7 @@ public class AddEditItineraryCommandValidator : AbstractValidator<AddEditItinera
             .MaximumLength(256)
             .NotEmpty();
         RuleFor(v => v.SchoolId).NotNull();
-        RuleFor(v => v.PilotId).NotNull();
+        RuleFor(v => v.DriverId).NotNull();
         RuleFor(v => v.BusId).NotNull();
         RuleFor(v => v.FirstTime).NotEmpty();
         RuleFor(v => v.LastTime).NotEmpty();

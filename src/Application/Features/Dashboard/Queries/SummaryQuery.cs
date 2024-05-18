@@ -1,5 +1,8 @@
-﻿using CleanArchitecture.Blazor.Application.Features.Dashboard.Dto;
+﻿using CleanArchitecture.Blazor.Application.Constants.Role;
+using CleanArchitecture.Blazor.Application.Features.Dashboard.Dto;
 using CleanArchitecture.Blazor.Application.Features.Dashboard.Specifications;
+using CleanArchitecture.Blazor.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace CleanArchitecture.Blazor.Application.Features.Dashboard.Queries;
 public class SummaryQuery:ICacheableRequest<AggregationResult>
@@ -11,16 +14,19 @@ public class SummaryQuery:ICacheableRequest<AggregationResult>
 public class SummaryQueryHandler :
      IRequestHandler<SummaryQuery, AggregationResult>
 {
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IStringLocalizer<SummaryQueryHandler> _localizer;
 
     public SummaryQueryHandler(
+        UserManager<ApplicationUser> userManager,
         IApplicationDbContext context,
         IMapper mapper,
         IStringLocalizer<SummaryQueryHandler> localizer
         )
     {
+        _userManager = userManager;
         _context = context;
         _mapper = mapper;
         _localizer = localizer;
@@ -37,8 +43,9 @@ public class SummaryQueryHandler :
                      .CountAsync();
         var totalstudents = await _context.Students.ApplySpecification(new SummaryStudentSpecification(request.UserProfile))
                      .CountAsync();
-        var totalpilots = await _context.Pilots.ApplySpecification(new SummaryPilotSpecification(request.UserProfile))
-                     .CountAsync();
+        var totalpilots =await _userManager.Users.Where(x => x.UserRoles.Any(y => y.Role.Name == RoleName.Driver)).CountAsync();
+        //await _context.Pilots.ApplySpecification(new SummaryPilotSpecification(request.UserProfile))
+        //         .CountAsync();
         var totaltransportlogs = await _context.TransportLogs.ApplySpecification(new SummaryTransportLogSpecification(request.UserProfile))
                      .CountAsync();
         var totalitineraries = await _context.Itineraries.ApplySpecification(new SummaryItinerarySpecification(request.UserProfile))

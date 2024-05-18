@@ -88,7 +88,7 @@ public class ApplicationDbContextInitializer
         // Default roles
         var role1 = new ApplicationRole(RoleName.SuperAdmin) { Description = "Super Admin Group" };
         var role2 = new ApplicationRole(RoleName.OrgAdmin) { Description = "ORG's Admin Group" };
-        var role3 = new ApplicationRole(RoleName.Pilots) { Description = "Pilots's Admin Group" };
+        var role3 = new ApplicationRole(RoleName.Driver) { Description = "Driver's Admin Group" };
         var role4 = new ApplicationRole(RoleName.Parents) { Description = "Parents's Admin Group" };
         var role5 = new ApplicationRole(RoleName.Students) { Description = "Students's Admin Group" };
         var role6 = new ApplicationRole(RoleName.Basic) { Description = "Basic's Admin Group" };

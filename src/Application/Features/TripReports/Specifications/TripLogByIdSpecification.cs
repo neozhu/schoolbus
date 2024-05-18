@@ -6,9 +6,19 @@ public class TripLogByIdSpecification : Specification<TripLog>
 {
     public TripLogByIdSpecification(int tripId)
     {
-        Query.Where(q => q.TripId == tripId && q.GetOffDateTime2==null);
+        Query.Where(q => q.TripId == tripId);
         Query.OrderByDescending(x => x.GetOnDateTime);
     }
+    
+}
+public class OnBoardTripLogByIdSpecification : Specification<TripLog>
+{
+    public OnBoardTripLogByIdSpecification(int tripId)
+    {
+        Query.Where(q => q.TripId == tripId && q.GetOffDateTime2 == null);
+        Query.OrderByDescending(x => x.GetOnDateTime);
+    }
+
 }
 public class TripAccidentByIdSpecification : Specification<TripAccident>
 {
@@ -17,5 +27,13 @@ public class TripAccidentByIdSpecification : Specification<TripAccident>
         Query.Where(q => q.TripId == tripId);
         Query.Include(x => x.TripReport);
         Query.OrderByDescending(x => x.ReportDateTime);
+    }
+}
+
+public class TripOnBoardTotalSpecification : Specification<TripLog>
+{
+    public TripOnBoardTotalSpecification(int tripId)
+    {
+        Query.Where(q => q.TripId == tripId && q.GetOffDateTime2 == null);
     }
 }

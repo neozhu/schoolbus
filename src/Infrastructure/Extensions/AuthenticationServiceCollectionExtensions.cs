@@ -90,13 +90,7 @@ public static class AuthenticationServiceCollectionExtensions
                  }); 
    
       
-        services.AddSingleton<UserDataProvider>();
-        services.AddSingleton<IUserDataProvider>(sp =>
-        {
-            var service = sp.GetRequiredService<UserDataProvider>();
-            service.Initialize();
-            return service;
-        });
+
         return services;
     }
 
