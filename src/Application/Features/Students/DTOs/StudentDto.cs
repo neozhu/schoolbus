@@ -52,6 +52,8 @@ public class StudentDto
     [Description("Grade")]
     public string? Grade { get; set; }
 
+    public string? OnOff { get; set; }
+
     public List<ParentDto> Parents { get; set; } = new List<ParentDto>();
     public List<TransportLogDto> TransportLogs { get; set; } = new List<TransportLogDto>();
     private class Mapping : Profile

@@ -95,6 +95,10 @@
                 },
                 MapTypeId = MapTypeId.Roadmap
             };
+        if (RouteId == 0)
+        {
+            NavigationManager.NavigateTo("/mobile/starttrip");
+        }
         await LoadRoute();
     }
     private async Task LoadRoute()
@@ -158,7 +162,7 @@
     }
     public async Task HandleBarcodeScan(string barcode)
     {
-        var checkresult = await Mediator.Send(new GetStudentByUIdQuery(barcode, _tripReport.TenantId));
+        var checkresult = await Mediator.Send(new GetStudentByUIdQuery(barcode, _tripReport.TenantId) { TripId = _tripReport.Id });
 
         var options = new DialogOptions { NoHeader = true, DisableBackdropClick=true, CloseOnEscapeKey=false, CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = true };
         var parameters = new DialogParameters<SutdentConfrmDialog>

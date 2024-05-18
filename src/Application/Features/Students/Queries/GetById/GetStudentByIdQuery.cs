@@ -21,7 +21,8 @@ public class GetStudentByUIdQuery : ICacheableRequest<Result<StudentDto>>
 {
     public string UId { get; }
     public string TenantId { get; }
-    public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{UId}");
+    public int? TripId { get; set; }
+    public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{UId},{TripId}");
     public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
     public GetStudentByUIdQuery(string uid, string tenantId)
     {
@@ -66,6 +67,29 @@ public class GetStudentByIdQueryHandler :
         }
         else
         {
+            if(request.TripId is not null)
+            {
+                var geton = await _context.TripLogs.Where(x => x.TripId == request.TripId && x.StudentId == data.Id && x.GetOffDateTime2 == null).FirstOrDefaultAsync(cancellationToken);
+                if(geton is null)
+                {
+                    data.OnOff = "On";
+                }
+                else
+                {
+                   var diff = geton.GetOnDateTime - DateTime.Now;
+                    if (diff.Value.TotalMinutes <= -3)
+                    {
+                        data.OnOff = "Off";
+                    }
+                    else
+                    {
+                        data.OnOff = "On";
+                    }
+                }
+                 
+            }
+            
+
             return await Result<StudentDto>.SuccessAsync(data);
         }
 

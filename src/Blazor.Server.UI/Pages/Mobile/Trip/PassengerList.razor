@@ -6,9 +6,7 @@
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
-@inject IBrowserViewportService BrowserViewportService
-@implements IAsyncDisposable
-@implements IBrowserViewportObserver
+
 <PageTitle>General information</PageTitle>
 
 <MudPaper Elevation="0" Class="d-flex flex-column justify-space-between flex-grow-1 pa-4 mt-10 gap-4">
@@ -50,26 +48,23 @@
     private int _width = 0;
     private int _height = 0;
     private int scanwith = 650;
-    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
     bool processingScan;
     private string search { get; set; }
     private TripReportDto? _tripReport = null;
     protected override async Task OnInitializedAsync()
     {
+        if (RouteId == 0)
+        {
+            NavigationManager.NavigateTo("/mobile/starttrip");
+        }
         await LoadRoute();
     }
     private async Task LoadRoute()
     {
         _tripReport = await Mediator.Send(new GetTripReportByIdQuery() { Id = RouteId });
     }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
-            await InvokeAsync(StateHasChanged);
-        }
-    }
+
     private async Task Done()
     {
         var result = await Mediator.Send(new DoneTripReportCommand(_tripReport.Id));
@@ -101,27 +96,8 @@
         var dialog1 = DialogService.Show<ReportIncidentDialog>("Report Incident", parameters1, options1);
         var state1 = await dialog1.Result;
     }
-    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
-    {
-        _width = browserViewportEventArgs.BrowserWindowSize.Width;
-        _height = browserViewportEventArgs.BrowserWindowSize.Height;
+    
 
-        if (_width >= 960)
-        {
-            scanwith = 832;
-        }
-        else
-        {
-            scanwith = _width - 10;
-        }
-
-        return InvokeAsync(StateHasChanged);
-    }
-    public async ValueTask DisposeAsync()
-    {
-        await BrowserViewportService.UnsubscribeAsync(this);
-
-    }
 
  
 }

@@ -3,11 +3,11 @@
 @using CleanArchitecture.Blazor.Application.Features.TripReports.DTOs
 <MudDialog>
     <DialogContent>
-        <div class="d-flex flex-column  align-center  gap-3 pa-3">
+        <div class="d-flex flex-column  align-center  gap-2 pa-3">
             @if (Successfull)
             {
                 <div class="d-lg-block mud-theme-success rounded px-4" style="height:100%; width:100%; border-radius:100px !important;background-color:#39B02F">
-                    <MudText Typo="Typo.h4" Align="Align.Center" Style="font-size:48px;line-height:68px">Successfull</MudText>
+                    <MudText Typo="Typo.h4" Align="Align.Center" Style="font-size:48px;line-height:68px">Successfull @StudentDto.OnOff</MudText>
                 </div>
                 @if (!string.IsNullOrEmpty(StudentDto.ProfilePicture))
                 {
@@ -17,6 +17,10 @@
                 {
                     <MudImage ObjectFit="ObjectFit.Cover" Src="@StudentDto.ProfilePicture" Alt="Student" Elevation="25" Class="rounded-lg" Width="300" Height="300" />
                 }
+                <div class="d-flex flex-column align-center">
+                    <MudText Typo="Typo.h5">@StudentDto.DisplayName</MudText>
+                    <MudText Typo="Typo.h6" Class="mud-text-secondary">@StudentDto.UID</MudText>
+                </div>
                
                 <MudButton FullWidth="true" Size="Size.Large" Variant="Variant.Filled" OnClick="OnConfirm" Color="Color.Primary">Confirm</MudButton>
             }

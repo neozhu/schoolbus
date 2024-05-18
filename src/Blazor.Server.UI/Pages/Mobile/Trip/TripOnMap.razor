@@ -56,6 +56,10 @@
                 MapTypeId = MapTypeId.Roadmap
             };
 
+        if (RouteId == 0)
+        {
+            NavigationManager.NavigateTo("/mobile/starttrip");
+        }
        await LoadRoute();
     }
     private async Task LoadRoute()
