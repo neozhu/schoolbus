@@ -77,7 +77,7 @@ public class GetStudentByIdQueryHandler :
                 else
                 {
                    var diff = geton.GetOnDateTime - DateTime.Now;
-                    if (diff.Value.TotalMinutes <= -3)
+                    if (diff.Value.TotalSeconds <= -15)
                     {
                         data.OnOff = "Off";
                     }

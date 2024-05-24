@@ -151,7 +151,7 @@ public class GetOnOffCommandHandler :
         else
         {
             var diff = geton.GetOnDateTime - DateTime.Now;
-            if (diff.Value.TotalMinutes <= -3)
+            if (diff.Value.TotalSeconds <= -15)
             {
                 geton.Manual2 = request.Manual;
                 geton.Comments2 = request.Comments;
