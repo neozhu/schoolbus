@@ -167,8 +167,7 @@
     private bool _loading;
     private bool _clearing;
 
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
 
     private bool _canPurge;
     private LogsWithPaginationQuery Query { get; } = new();

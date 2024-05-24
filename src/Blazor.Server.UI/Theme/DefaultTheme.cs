@@ -93,44 +93,44 @@ public class Theme
                 },
                 H1 = new H1
                 {
-                    FontSize = "4rem",
+                    FontSize = "3rem",
                     FontWeight = 700,
                     LineHeight = 1.167,
                     LetterSpacing = "-.01562em"
                 },
                 H2 = new H2
                 {
-                    FontSize = "3.75rem",
+                    FontSize = "2.75rem",
                     FontWeight = 300,
                     LineHeight = 1.2,
                     LetterSpacing = "-.00833em"
                 },
                 H3 = new H3
                 {
-                    FontSize = "3rem",
+                    FontSize = "2rem",
                     FontWeight = 600,
                     LineHeight = 1.167,
                     LetterSpacing = "0"
                 },
                 H4 = new H4
                 {
-                    FontSize = "1.8rem",
+                    FontSize = "1.5rem",
                     FontWeight = 400,
                     LineHeight = 1.235,
                     LetterSpacing = ".00735em"
                 },
                 H5 = new H5
                 {
-                    FontSize = "1.5rem",
+                    FontSize = "1.25rem",
                     FontWeight = 400,
-                    LineHeight = 1.334,
+                    LineHeight = 1.3,
                     LetterSpacing = "0"
                 },
                 H6 = new H6
                 {
-                    FontSize = "1.125rem",
+                    FontSize = "1.12rem",
                     FontWeight = 600,
-                    LineHeight = 1.6,
+                    LineHeight = 1.2,
                     LetterSpacing = ".0075em"
                 },
                 Button = new Button

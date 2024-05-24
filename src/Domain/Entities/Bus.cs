@@ -8,6 +8,10 @@ namespace CleanArchitecture.Blazor.Domain.Entities;
 public class Bus : BaseAuditableEntity, IMustHaveTenant
 {
     public string PlatNumber { get; set; } = string.Empty;
+
+    public string? Type { get; set; }
+    public string? Make { get; set; }
+    public string? Model { get; set; }
     public string? DeviceId { get; set; }
     public string? Status { get; set; }
     public string? Description { get; set; }

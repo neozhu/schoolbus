@@ -53,14 +53,14 @@ namespace CleanArchitecture.Blazor.Application.Features.Students.Commands.Import
             {
 
                 { _localizer[_dto.GetMemberDescription(x=>x.UID)], (row, item) => item.UID = row[_localizer[_dto.GetMemberDescription(x=>x.UID)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.LastName)], (row, item) => item.LastName = row[_localizer[_dto.GetMemberDescription(x=>x.LastName)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.FirstName)], (row, item) => item.FirstName = row[_localizer[_dto.GetMemberDescription(x=>x.FirstName)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.ProfilePicture)], (row, item) => item.ProfilePicture = row[_localizer[_dto.GetMemberDescription(x=>x.ProfilePicture)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.Phone)], (row, item) => item.Phone = row[_localizer[_dto.GetMemberDescription(x=>x.Phone)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.Description)], (row, item) => item.Description = row[_localizer[_dto.GetMemberDescription(x=>x.Description)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.Status)], (row, item) => item.Status = row[_localizer[_dto.GetMemberDescription(x=>x.Status)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.SchoolId)], (row, item) => item.SchoolId = Convert.ToInt32(row[_localizer[_dto.GetMemberDescription(x=>x.SchoolId)]]) }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.TenantId)], (row, item) => item.TenantId = row[_localizer[_dto.GetMemberDescription(x=>x.TenantId)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.LastName)], (row, item) => item.LastName = row[_localizer[_dto.GetMemberDescription(x=>x.LastName)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.FirstName)], (row, item) => item.FirstName = row[_localizer[_dto.GetMemberDescription(x=>x.FirstName)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.ProfilePicture)], (row, item) => item.ProfilePicture = row[_localizer[_dto.GetMemberDescription(x=>x.ProfilePicture)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.Phone)], (row, item) => item.Phone = row[_localizer[_dto.GetMemberDescription(x=>x.Phone)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.Description)], (row, item) => item.Description = row[_localizer[_dto.GetMemberDescription(x=>x.Description)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.Status)], (row, item) => item.Status = row[_localizer[_dto.GetMemberDescription(x=>x.Status)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.SchoolId)], (row, item) => item.SchoolId = Convert.ToInt32(row[_localizer[_dto.GetMemberDescription(x=>x.SchoolId)]]) }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.TenantId)], (row, item) => item.TenantId = row[_localizer[_dto.GetMemberDescription(x=>x.TenantId)]].ToString() }, 
 
             }, _localizer[_dto.GetClassDescription()]);
             if (result.Succeeded && result.Data is not null)
@@ -71,8 +71,6 @@ namespace CleanArchitecture.Blazor.Application.Features.Students.Commands.Import
                     if (!exists)
                     {
                         var item = _mapper.Map<Student>(dto);
-                        // add create domain events if this entity implement the IHasDomainEvent interface
-				        // item.AddDomainEvent(new StudentCreatedEvent(item));
                         await _context.Students.AddAsync(item, cancellationToken);
                     }
                  }

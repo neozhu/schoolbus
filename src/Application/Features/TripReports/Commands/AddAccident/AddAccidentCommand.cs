@@ -8,12 +8,15 @@ namespace CleanArchitecture.Blazor.Application.Features.TripReports.Commands.Acc
 public class AddAccidentCommand : ICacheInvalidatorRequest<Result<int>>
 {
     public int TripId { get; }
+    public DateTime? ReportDateTime { get; set; } = DateTime.Now;
     public AccidentLevel Level { get; set; } = AccidentLevel.Trouble;
+    public InfractionType? Infraction {get;set;}
     public string? Comments { get; set; }
     public string? Location { get; set; }
     public double? Longitude { get; set; }
     public double? Latitude { get; set; }
     public string TenantId { get; set; }
+    public int? StudentId { get; set; }
     public string CacheKey => TripReportCacheKey.GetAllCacheKey;
     public CancellationTokenSource? SharedExpiryTokenSource => TripReportCacheKey.SharedExpiryTokenSource();
     public AddAccidentCommand(int tripId, string tenantId)
@@ -47,6 +50,8 @@ public class GetOnOffCommandHandler :
 
         var item = new TripAccident()
         {
+            ReportDateTime= request.ReportDateTime,
+            Infraction =request.Infraction,
             TenantId = request.TenantId,
             TripId = request.TripId,
             Level = request.Level,
@@ -54,7 +59,7 @@ public class GetOnOffCommandHandler :
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             Location = request.Location,
-            ReportDateTime = DateTime.Now,
+            StudentId = request.StudentId,
             Status = "Pending"
         };
 

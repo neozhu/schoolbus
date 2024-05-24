@@ -32,10 +32,10 @@ public class MenuService : IMenuService
                 },
                 new()
                 {
-                    Title = "Pilot",
+                    Title = "Drivers",
                     Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
                     Icon = Icons.Material.Filled.FollowTheSigns,
-                    Href = "/pages/pilots",
+                    Href = "/pages/drivers",
                     PageStatus = PageStatus.Completed
                 },
                 new()
@@ -62,14 +62,14 @@ public class MenuService : IMenuService
                     Href = "/pages/parents",
                     PageStatus = PageStatus.Completed
                 },
-                new()
-                {
-                    Title = "Scanner",
-                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
-                    Icon = Icons.Material.Filled.QrCodeScanner,
-                    Href = "/pages/scanner",
-                    PageStatus = PageStatus.Completed
-                },
+                //new()
+                //{
+                //    Title = "Scanner",
+                //    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                //    Icon = Icons.Material.Filled.QrCodeScanner,
+                //    Href = "/pages/scanner",
+                //    PageStatus = PageStatus.Completed
+                //},
                 new()
                 {
                     Title = "Transport Logs",
@@ -78,14 +78,14 @@ public class MenuService : IMenuService
                     Href = "/pages/TransportLogs",
                     PageStatus = PageStatus.Completed
                 },
-                new()
-                {
-                    Title = "My Trip",
-                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
-                    Icon = Icons.Material.Filled.Timeline,
-                    Href = "/pages/mytrip",
-                    PageStatus = PageStatus.Completed
-                },
+                //new()
+                //{
+                //    Title = "My Trip",
+                //    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                //    Icon = Icons.Material.Filled.Timeline,
+                //    Href = "/pages/mytrip",
+                //    PageStatus = PageStatus.Completed
+                //},
                 new()
                 {
                     Title = "Trip Reports",
@@ -94,22 +94,22 @@ public class MenuService : IMenuService
                     Href = "/pages/tripreports",
                     PageStatus = PageStatus.Completed
                 },
-                new()
-                {
-                    Title = "Trip Dashboard",
-                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
-                    Icon = Icons.Material.Filled.Dashboard,
-                    Href = "/pages/TripMonitorDashboard",
-                    PageStatus = PageStatus.Completed
-                },
-                new()
-                {
-                    Title = "Messages",
-                    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
-                    Icon = Icons.Material.Filled.Message,
-                    Href = "/pages/messages",
-                    PageStatus = PageStatus.Completed
-                }
+                //new()
+                //{
+                //    Title = "Trip Dashboard",
+                //    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                //    Icon = Icons.Material.Filled.Dashboard,
+                //    Href = "/pages/TripMonitorDashboard",
+                //    PageStatus = PageStatus.Completed
+                //},
+                //new()
+                //{
+                //    Title = "Messages",
+                //    Roles = new[] { RoleName.SuperAdmin, RoleName.OrgAdmin },
+                //    Icon = Icons.Material.Filled.Message,
+                //    Href = "/pages/messages",
+                //    PageStatus = PageStatus.Completed
+                //}
             }
         },
         new MenuSectionModel

@@ -238,12 +238,10 @@
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
 
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
     [Inject]
     private IMapper Mapper { get; set; } = default!;
-    [Inject]
-    private ISchoolService SchoolService { get; set; } = null!;
+ 
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;
 

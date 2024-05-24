@@ -48,15 +48,15 @@ namespace CleanArchitecture.Blazor.Application.Features.Schools.Commands.Import;
         #nullable disable warnings
         public async Task<Result<int>> Handle(ImportSchoolsCommand request, CancellationToken cancellationToken)
         {
-           // TODO: Implement ImportSchoolsCommandHandler method
+   
            var result = await _excelService.ImportAsync(request.Data, mappers: new Dictionary<string, Func<DataRow, SchoolDto, object?>>
             {
-                // TODO: Define the fields that should be read from Excel, for example:
+       
                 { _localizer[_dto.GetMemberDescription(x=>x.Name)], (row, item) => item.Name = row[_localizer[_dto.GetMemberDescription(x=>x.Name)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.Address)], (row, item) => item.Address = row[_localizer[_dto.GetMemberDescription(x=>x.Address)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.Contact)], (row, item) => item.Contact = row[_localizer[_dto.GetMemberDescription(x=>x.Contact)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.Phone)], (row, item) => item.Phone = row[_localizer[_dto.GetMemberDescription(x=>x.Phone)]].ToString() }, 
-{ _localizer[_dto.GetMemberDescription(x=>x.TenantId)], (row, item) => item.TenantId = row[_localizer[_dto.GetMemberDescription(x=>x.TenantId)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.Address)], (row, item) => item.Address = row[_localizer[_dto.GetMemberDescription(x=>x.Address)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.Contact)], (row, item) => item.Contact = row[_localizer[_dto.GetMemberDescription(x=>x.Contact)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.Phone)], (row, item) => item.Phone = row[_localizer[_dto.GetMemberDescription(x=>x.Phone)]].ToString() }, 
+                { _localizer[_dto.GetMemberDescription(x=>x.TenantId)], (row, item) => item.TenantId = row[_localizer[_dto.GetMemberDescription(x=>x.TenantId)]].ToString() }, 
 
             }, _localizer[_dto.GetClassDescription()]);
             if (result.Succeeded && result.Data is not null)
@@ -67,8 +67,6 @@ namespace CleanArchitecture.Blazor.Application.Features.Schools.Commands.Import;
                     if (!exists)
                     {
                         var item = _mapper.Map<School>(dto);
-                        // add create domain events if this entity implement the IHasDomainEvent interface
-				        // item.AddDomainEvent(new SchoolCreatedEvent(item));
                         await _context.Schools.AddAsync(item, cancellationToken);
                     }
                  }

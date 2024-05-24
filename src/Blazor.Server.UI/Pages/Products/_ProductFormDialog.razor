@@ -1,8 +1,6 @@
 @using CleanArchitecture.Blazor.Application.Features.Products.Commands.AddEdit
 @using ResizeMode = SixLabors.ImageSharp.Processing.ResizeMode
-@using Severity = MudBlazor.Severity
 @using Size = SixLabors.ImageSharp.Size
-@using Color= MudBlazor.Color
 @using SixLabors.ImageSharp.Formats.Png
 @using SixLabors.ImageSharp
 @using SixLabors.ImageSharp.Processing
@@ -117,8 +115,7 @@
     [Inject]
     private IUploadService UploadService { get; set; } = default!;
 
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+ 
 
     readonly AddEditProductCommandValidator _modelValidator = new();
 

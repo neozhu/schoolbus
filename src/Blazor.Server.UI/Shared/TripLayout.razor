@@ -1,35 +1,67 @@
 ﻿@layout MobileLayout
 @inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 <MudAppBar   Color="Color.Transparent" Fixed="true" Elevation="0" Class="py-1">
     <MudText Typo="Typo.h5">Student Trackr</MudText>
     <MudSpacer />
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
 </MudAppBar>
-<div class="d-flex mt-2">
-    @Body
-</div>
-<MudAppBar Bottom="true" Color="Color.Transparent" Fixed="true" Elevation="3" Class="py-3">
+<CascadingValue Value="@_userProfile" Name="UserProfile">
+    <div class="d-flex mt-2" style="padding-bottom:60px;padding-top:8px">
+        @Body
+    </div>
+</CascadingValue>
+
+<MudAppBar Bottom="true" Style="@($"background:{Colors.Shades.White};color:{Colors.Grey.Darken4}")" Fixed="true" Elevation="3" Class="py-3">
     <div class="d-flex justify-center flex-grow-1 gap-5">
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.Map"></MudIconButton>
-            <MudText Align="Align.Center" Typo="Typo.caption">Map</MudText>
+            <MudIconButton Icon="@Icons.Material.Outlined.Map" Color="@GetColor("/mobile/triponmap")" Href="/mobile/triponmap"></MudIconButton>
+            <MudText Align="Align.Center" Typo="Typo.caption" Style="@(FontWeight("/mobile/triponmap"))" Color="@GetColor("/mobile/triponmap")">Map</MudText>
         </div>
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.QrCodeScanner"></MudIconButton>
-            <MudText Align="Align.Center" Typo="Typo.caption">Scan</MudText>
+            <MudIconButton Icon="@Icons.Material.Outlined.QrCodeScanner" Color="@GetColor("/mobile/scan")" Href="/mobile/scan"></MudIconButton>
+            <MudText Align="Align.Center" Typo="Typo.caption" Style="@(FontWeight("/mobile/scan"))" Color="@GetColor("/mobile/scan")">Scan</MudText>
         </div>
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.Checklist"></MudIconButton>
-            <MudText Align="Align.Center" Typo="Typo.caption">Roster</MudText>
+            <MudIconButton Icon="@Icons.Material.Outlined.Checklist" Color="@GetColor("/mobile/passengerlist")" Href="/mobile/passengerlist"></MudIconButton>
+            <MudText Align="Align.Center" Typo="Typo.caption" Style="@(FontWeight("/mobile/passengerlist"))" Color="@GetColor("/mobile/passengerlist")">Roster</MudText>
         </div>
         <div class="d-flex flex-column justify-center">
-            <MudIconButton Icon="@Icons.Material.Outlined.Navigation"></MudIconButton>
-            <MudText Align="Align.Center" Typo="Typo.caption">Drive</MudText>
+            <MudIconButton Icon="@Icons.Material.Outlined.Navigation" Color="@GetColor("/mobile/starttrip")" Href="/mobile/starttrip"></MudIconButton>
+            <MudText Align="Align.Center" Typo="Typo.caption"  Style="@(FontWeight("/mobile/starttrip"))" Color="@GetColor("/mobile/starttrip")">Drive</MudText>
         </div>
     </div>
 </MudAppBar>
 
 
 @code {
+    private UserProfile? _userProfile;
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthState;
+        _userProfile = state.User.GetUserProfileFromClaim();
+    }
 
+    private Color GetColor(string path)
+    {
+        if (NavigationManager.Uri.Contains(path, StringComparison.OrdinalIgnoreCase))
+        {
+            return Color.Primary;
+        }else
+        {
+            return Color.Default;
+        }
+    }
+    private string FontWeight(string path)
+    {
+        if (NavigationManager.Uri.Contains(path, StringComparison.OrdinalIgnoreCase))
+        {
+            return "font-weight:600";
+        }
+        else
+        {
+            return "font-weight:400";
+        }
+    }
 }

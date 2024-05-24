@@ -9,9 +9,9 @@ namespace CleanArchitecture.Blazor.Application.Features.Students.Queries.GetById
 
 public class GetStudentByIdQuery : ICacheableRequest<StudentDto>
 {
-   public int Id { get;  }
-   public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{Id}");
-   public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
+    public int Id { get; }
+    public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{Id}");
+    public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
     public GetStudentByIdQuery(int id)
     {
         Id = id;
@@ -21,12 +21,13 @@ public class GetStudentByUIdQuery : ICacheableRequest<Result<StudentDto>>
 {
     public string UId { get; }
     public string TenantId { get; }
-    public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{UId}");
+    public int? TripId { get; set; }
+    public string CacheKey => StudentCacheKey.GetByIdCacheKey($"{UId},{TripId}");
     public MemoryCacheEntryOptions? Options => StudentCacheKey.MemoryCacheEntryOptions;
     public GetStudentByUIdQuery(string uid, string tenantId)
     {
         UId = uid;
-        TenantId =tenantId;
+        TenantId = tenantId;
     }
 }
 public class GetStudentBySchoolIdQuery : ICacheableRequest<List<StudentDto>>
@@ -57,29 +58,45 @@ public class GetStudentByIdQueryHandler :
     }
     public async Task<Result<StudentDto>> Handle(GetStudentByUIdQuery request, CancellationToken cancellationToken)
     {
-        var data = await _context.Students.ApplySpecification(new StudentByUIDSpecification(request.UId))
+        var data = await _context.Students.ApplySpecification(new StudentByUIDSpecification(request.UId, request.TenantId))
                      .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
                      .FirstOrDefaultAsync(cancellationToken);
-        if(data is null)
+        if (data is null)
         {
             return await Result<StudentDto>.FailureAsync(new[] { $"Invalid QR code：{request.UId}" });
         }
         else
         {
-            if(data.TenantId!= request.TenantId)
+            if(request.TripId is not null)
             {
-                return await Result<StudentDto>.FailureAsync(new[] { $"Invalid organization id：{request.TenantId}" });
+                var geton = await _context.TripLogs.Where(x => x.TripId == request.TripId && x.StudentId == data.Id && x.GetOffDateTime2 == null).FirstOrDefaultAsync(cancellationToken);
+                if(geton is null)
+                {
+                    data.OnOff = "On";
+                }
+                else
+                {
+                   var diff = geton.GetOnDateTime - DateTime.Now;
+                    if (diff.Value.TotalSeconds <= -15)
+                    {
+                        data.OnOff = "Off";
+                    }
+                    else
+                    {
+                        data.OnOff = "On";
+                    }
+                }
+                 
             }
-            else
-            {
-                return await Result<StudentDto>.SuccessAsync(data);
-            }
+            
+
+            return await Result<StudentDto>.SuccessAsync(data);
         }
-       
+
     }
     public async Task<StudentDto> Handle(GetStudentByIdQuery request, CancellationToken cancellationToken)
     {
-  
+
         var data = await _context.Students.ApplySpecification(new StudentByIdSpecification(request.Id))
                      .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
                      .FirstAsync(cancellationToken) ?? throw new NotFoundException($"Student with id: [{request.Id}] not found.");
@@ -87,7 +104,7 @@ public class GetStudentByIdQueryHandler :
     }
     public async Task<List<StudentDto>> Handle(GetStudentBySchoolIdQuery request, CancellationToken cancellationToken)
     {
-        var data = await _context.Students.ApplySpecification(new StudentBySchoolIdSpecification(request.SchoolId,request.Name))
+        var data = await _context.Students.ApplySpecification(new StudentBySchoolIdSpecification(request.SchoolId, request.Name))
                      .ProjectTo<StudentDto>(_mapper.ConfigurationProvider)
                      .ToListAsync(cancellationToken);
         return data;
