@@ -12,10 +12,14 @@ public class AddEditTripReportCommand : ICacheInvalidatorRequest<Result<int>>
 {
     [Description("Id")]
     public int Id { get; set; }
+    [Description("Bus Id")]
+    public int? BusId { get; set; }
     [Description("Itinerary Id")]
     public int? ItineraryId { get; set; }
-    [Description("Pilot Id")]
-    public int? PilotId { get; set; }
+    //[Description("Pilot Id")]
+    //public int? PilotId { get; set; }
+    [Description("Driver Id")]
+    public string? DriverId { get; set; }
     [Description("Plat Number")]
     public string? PlatNumber { get; set; }
     [Description("On Board")]
@@ -33,6 +37,8 @@ public class AddEditTripReportCommand : ICacheInvalidatorRequest<Result<int>>
     [Description("Tenant Id")]
     public string? TenantId { get; set; }
 
+    public string? StartingStation { get; set; }
+    public string? TerminalStation { get; set; }
 
     public string CacheKey => TripReportCacheKey.GetAllCacheKey;
     public CancellationTokenSource? SharedExpiryTokenSource => TripReportCacheKey.SharedExpiryTokenSource();
@@ -42,7 +48,8 @@ public class AddEditTripReportCommand : ICacheInvalidatorRequest<Result<int>>
         public Mapping()
         {
             CreateMap<TripReportToPlainDto, AddEditTripReportCommand>(MemberList.None);
-            CreateMap<AddEditTripReportCommand, TripReport>(MemberList.None);
+            CreateMap<AddEditTripReportCommand, TripReport>(MemberList.None).ForMember(x => x.Pilot, y => y.Ignore())
+                .ForMember(x => x.PilotId, y => y.Ignore());
                 //.ForMember(x => x.Tenant, y => y.MapFrom(x => default(Tenant)))
                 //.ForMember(x => x.Itinerary, y => y.MapFrom(x => default(Itinerary)))
                 //.ForMember(x => x.Pilot, y => y.MapFrom(x => default(Pilot)));

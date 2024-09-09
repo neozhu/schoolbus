@@ -1,4 +1,4 @@
-﻿@page "/pages/Pilots"
+﻿@page "/pages/Driver"
 
 @using BlazorDownloadFile
 @using CleanArchitecture.Blazor.Application.Features.Pilots.Caching
@@ -194,7 +194,7 @@
                 <CellTemplate>
                     <div class="d-flex flex-column">
                         <MudText Typo="Typo.body2">@context.Item.Tenant.Name</MudText>
-                        <MudText Typo="Typo.body2" Style="color:var(--mud-palette-text-secondary) !important">@context.Item.TenantId</MudText>
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.TenantId</MudText>
                     </div>
                 </CellTemplate>
             </PropertyColumn>
@@ -228,13 +228,10 @@
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
 
     [Inject]
-    private IMediator Mediator { get; set; } = default!;
-    [Inject]
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;
-    [Inject]
-    private IPilotService PilotService { get; set; } = null!;
+ 
 
     private PilotsWithPaginationQuery Query { get; set; } = new();
     [Inject]
@@ -431,7 +428,7 @@
         var result = await Mediator.Send(request);
         if (result.Succeeded)
         {
-            var downloadresult = await BlazorDownloadFileService.DownloadFile($"{L["Pilots"]}.xlsx", result.Data, contentType: "application/octet-stream");
+            var downloadresult = await BlazorDownloadFileService.DownloadFile($"{L["Driver"]}.xlsx", result.Data, contentType: "application/octet-stream");
             Snackbar.Add($"{ConstantString.ExportSuccess}", MudBlazor.Severity.Info);
         }
         else

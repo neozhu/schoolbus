@@ -10,6 +10,10 @@ public static class TripReportCacheKey
     public static string GetPaginationCacheKey(string parameters) {
         return $"TripReportCacheKey:TripReportsWithPaginationQuery,{parameters}";
     }
+    public static string GetTotalTripCacheKey(string parameters)
+    {
+        return $"TripReportCacheKey:GetTotalTripCacheKey,{parameters}";
+    }
     public static string GetByNameCacheKey(string parameters) {
         return $"TripReportCacheKey:GetByNameCacheKey,{parameters}";
     }
@@ -23,6 +27,11 @@ public static class TripReportCacheKey
     public static string GetOnBoardTripLogsCacheKey(string parameters)
     {
         return $"TripReportCacheKey:GetOnBoardTripLogsCacheKey,{parameters}";
+    }
+
+    public static string GetTripLogsCacheKey(string parameters)
+    {
+        return $"TripReportCacheKey:GetTripLogsCacheKey,{parameters}";
     }
     public static string GetTripAccidentsCacheKey(string parameters)
     {

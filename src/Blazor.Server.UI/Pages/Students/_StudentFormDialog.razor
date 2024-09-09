@@ -58,12 +58,14 @@
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Phone)]" @bind-Value="model.Phone" For="@(() => model.Phone)" Required="false" RequiredError="@L["phone is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Grade)]" @bind-Value="model.Grade" For="@(() => model.Grade)" Required="false" RequiredError="@L["Grade is required!"]"></MudTextField>
                 </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField Label="@L[model.GetMemberDescription(x=>x.Status)]" @bind-Value="model.Status" For="@(() => model.Status)"  ReadOnly></MudTextField>
                 </MudItem>
-               
+                <MudItem xs="12" md="6">
+                    <MudTextField Label="@L[model.GetMemberDescription(x=>x.Description)]" For="@(() => model.Description)" @bind-Value="model.Description"></MudTextField>
+                </MudItem>
                 @if (UserProfile.IsSuperAdmin)
                 {
                     <MudItem xs="12" md="6">
@@ -72,7 +74,7 @@
                                    Required="true"
                                    RequiredError="@L["Organization is required."]"
                         @bind-Value="@model.TenantId">
-                            @foreach (var item in TenantsService.DataSource)
+                            @foreach (var item in TenantService.DataSource)
                             {
                                 <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
                             }
@@ -101,10 +103,7 @@
     [Inject] private IMediator _mediator { get; set; } = default!;
     [Parameter] public UserProfile UserProfile { get; set; } = null!;
     [Inject] private IUploadService _uploadService { get; set; } = default!;
-    [Inject]
-    private ITenantService TenantsService { get; set; } = default!;
-    [Inject]
-    private ISchoolService SchoolService { get; set; } = default!;
+ 
     void GenerateUID()
     {
         var uid = ShortId.Generate(new GenerationOptions(length: 8));

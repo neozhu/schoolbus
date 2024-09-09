@@ -10,24 +10,22 @@
       <UserSecretsId>8118d19e-a6db-4446-bdb6-fa62b17f843d</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+        <PackageReference Include="ActualLab.Fusion" Version="7.9.6" />
+        <PackageReference Include="ActualLab.Fusion.Blazor" Version="7.9.6" />
         <PackageReference Include="Blazor-Analytics" Version="3.12.0" />
-        <PackageReference Include="Blazor-ApexCharts" Version="3.1.0" />
+        <PackageReference Include="Blazor-ApexCharts" Version="3.3.0" />
         <PackageReference Include="Blazor.Geolocation" Version="8.0.0" />
         <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
+        <PackageReference Include="BlazorGoogleMaps" Version="4.2.0" />
         <PackageReference Include="BlazorTime" Version="1.0.3" />
-       <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.9.1" />
-       <PackageReference Include="Html5QrcodeBlazor.Wrapper" Version="1.0.0" />
+       <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="6.9.2" />
+       <PackageReference Include="Html5QrcodeBlazor.Wrapper" Version="1.0.1" />
        <PackageReference Include="MudBlazor" Version="6.19.1" />
-       <PackageReference Include="SixLabors.ImageSharp" Version="3.1.3" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
+       <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Stl.Fusion.Blazor" Version="6.8.11" />
-        <PackageReference Include="Stl.Fusion.Server" Version="6.8.11" />
-       
-     
-
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Application\Application.csproj" />

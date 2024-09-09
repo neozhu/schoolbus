@@ -110,15 +110,11 @@
         <SelectColumn ShowInFooter="false"></SelectColumn>
         <TemplateColumn CellStyle="width:60px" Title="@ConstantString.Actions" Sortable="false">
             <CellTemplate>
-                @if (_canEdit || _canDelete)
+                @if (_canDelete)
                 {
                     <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" DisableElevation="true" Size="Size.Small"
                              Dense="true"
                              EndIcon="@Icons.Material.Filled.KeyboardArrowDown" IconColor="Color.Info" AnchorOrigin="Origin.CenterLeft">
-                        @if (_canEdit)
-                        {
-                            <MudMenuItem OnClick="@(()=>OnEdit(context.Item))">@ConstantString.Edit</MudMenuItem>
-                        }
                         @if (_canDelete)
                         {
                             <MudMenuItem OnClick="@(()=>OnDelete(context.Item))">@ConstantString.Delete</MudMenuItem>
@@ -145,7 +141,8 @@
         </PropertyColumn>
         <PropertyColumn Property="x => x.Itinerary" Title="@L[_currentDto.GetMemberDescription(x=>x.Itinerary)]">
             <CellTemplate>
-                @context.Item.Itinerary.Name
+                <MudText Typo="Typo.body2">@context.Item.Itinerary.Name</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@context.Item.Itinerary.Bus.PlatNumber - @context.Item.Itinerary.Bus.Make</MudText>
             </CellTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.SwipeDateTime" Title="@L[_currentDto.GetMemberDescription(x=>x.SwipeDateTime)]" />
@@ -192,8 +189,7 @@
     private IState<UserProfileState> UserProfileState { get; set; } = null!;
     private UserProfile UserProfile => UserProfileState.Value.UserProfile;
 
-    [Inject]
-    private IMediator Mediator { get; set; } = default!;
+
     [Inject]
     private IMapper Mapper { get; set; } = default!;
     [CascadingParameter]

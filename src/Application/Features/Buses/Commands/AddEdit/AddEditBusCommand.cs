@@ -9,7 +9,7 @@ public class AddEditBusCommand: ICacheInvalidatorRequest<Result<int>>
 {
     [Description("Id")]
     public int Id { get; set; }
-    [Description("Plat Number")]
+    [Description("Vehicle Number \\ ID")]
     public string? PlatNumber {get;set;} 
     [Description("Device Id")]
     public string? DeviceId {get;set;}
@@ -18,10 +18,15 @@ public class AddEditBusCommand: ICacheInvalidatorRequest<Result<int>>
     [Description("Description")]
     public string? Description {get;set;} 
     [Description("Tenant Id")]
-    public string? TenantId {get;set;} 
+    public string? TenantId {get;set;}
+    [Description("Type")]
+    public string? Type { get; set; }
+    [Description("Make")]
+    public string? Make { get; set; }
+    [Description("Model")]
+    public string? Model { get; set; }
 
-
-      public string CacheKey => BusCacheKey.GetAllCacheKey;
+    public string CacheKey => BusCacheKey.GetAllCacheKey;
       public CancellationTokenSource? SharedExpiryTokenSource => BusCacheKey.SharedExpiryTokenSource();
 
     private class Mapping : Profile
