@@ -11,9 +11,13 @@ With School Bus Transport Management System the whole transportation tracking pr
 ## Live Demo
 
 - https://schoolbus.blazorserver.com/
+- administrator / Password123!
+  
 
 ## Screenshots and video
+![image](https://github.com/user-attachments/assets/9617c7d4-0322-49ca-b625-3e8df8dce501)
 
+![image](https://github.com/user-attachments/assets/a79a8c54-82bd-475a-95f9-c20fe368179d)
 
 
 ## Development Environment
